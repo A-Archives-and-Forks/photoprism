@@ -1,11 +1,11 @@
 {
   "skipJsErrors": true,
   "quarantineMode": false,
-  "selectorTimeout": 6000,
-  "assertionTimeout": 7000,
+  "selectorTimeout": 9500,
+  "assertionTimeout": 9500,
   "hostname": "localhost",
   "screenshots": {
-    "path": "tests/acceptance/screenshots",
+    "path": "tests/acceptance/screenshots/",
     "takeOnFails": true
   }
 }

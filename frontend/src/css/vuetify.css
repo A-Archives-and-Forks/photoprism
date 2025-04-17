@@ -129,6 +129,11 @@ body.dark-theme {
     border-radius: 0;
 }
 
+.v-overlay.v-dialog.v-dialog--sidepanel.v-dialog--sidepanel-wide:not(.v-dialog--fullscreen) .v-overlay__content {
+    min-width: 950px;
+    width: 56vw;
+}
+
 .v-overlay.v-dialog > .v-overlay__content > .v-card,
 .v-overlay.v-dialog > .v-overlay__content > form > .v-card {
     border-radius: 8px;

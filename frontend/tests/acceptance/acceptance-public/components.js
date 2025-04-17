@@ -30,7 +30,7 @@ test.meta("testID", "components-002").meta({ type: "short", mode: "public" })("C
 });
 
 test.meta("testID", "components-003").meta({ type: "short", mode: "public" })("Common: Mosaic view", async (t) => {
-  await toolbar.setFilter("view", "Mosaic");
+  await t.click(toolbar.mosaicViewAction);
 
   await t
     .expect(Selector("div.type-image.result").visible)

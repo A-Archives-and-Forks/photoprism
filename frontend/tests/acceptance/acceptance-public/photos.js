@@ -33,8 +33,8 @@ test.meta("testID", "photos-001").meta({ mode: "public" })("Common: Scroll to to
     .expect(Selector("div.type-image.result").nth(0).visible)
     .ok();
 
-    await t.scroll("bottom")
-    await t.pressKey("pageUp")
+  await t.scroll("bottom");
+  await t.pressKey("pageUp");
 
   await t.click(Selector("button.p-scroll")).expect(getcurrentPosition()).eql(0);
 });
@@ -215,9 +215,7 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   const FirstPhotoKeywords = await photoedit.keywords.value;
   const FirstPhotoNotes = await photoedit.notes.value;
 
-  await t
-    .typeText(photoedit.title, "Not saved photo title", { replace: true })
-    .click(photoedit.detailsClose);
+  await t.typeText(photoedit.title, "Not saved photo title", { replace: true }).click(photoedit.detailsClose);
   await page.clickCardTitleOfUID(FirstPhotoUid);
 
   await t.expect(photoedit.title.value).eql(FirstPhotoTitle);
@@ -253,7 +251,9 @@ test.meta("testID", "photos-005").meta({ type: "short", mode: "public" })("Commo
   }
   await toolbar.search("uid:" + FirstPhotoUid);
 
-  await t.expect(Selector('div[data-uid="' +FirstPhotoUid +'"] button.action-title-edit').innerText).eql("New Photo Title");
+  await t
+    .expect(Selector('div[data-uid="' + FirstPhotoUid + '"] button.action-title-edit').innerText)
+    .eql("New Photo Title");
 
   await photo.triggerHoverAction("uid", FirstPhotoUid, "select");
   await contextmenu.triggerContextMenuAction("edit", "");
@@ -381,7 +381,7 @@ test.meta("testID", "photos-007").meta({ mode: "public" })("Common: Mark photos/
   await t.click(photoedit.dialogClose);
   await t.wait(9000);
 
-    await contextmenu.clearSelection();
+  await contextmenu.clearSelection();
   if (t.browser.platform === "mobile") {
     await t.eval(() => location.reload());
   } else {

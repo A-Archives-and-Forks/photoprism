@@ -8,10 +8,10 @@ export default class Page {
   }
 
   async openNav() {
-    if (!(await this.navDrawer.visible)) {
-      if (await this.expandButtonContainer.visible) {
-        await t.click(this.expandButton.with({ boundTestRun: t }));
-      }
+    if (await this.expandButton.visible) {
+      await t.click(this.expandButton);
+    } else if (await this.expandButtonContainer.visible) {
+      await t.click(this.expandButton);
     }
   }
 

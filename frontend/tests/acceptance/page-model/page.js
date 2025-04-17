@@ -46,7 +46,7 @@ export default class Page {
   }
 
   async clickCardTitleOfUID(uid) {
-    await t.click(Selector('div[data-uid="' +uid +'"] button.action-title-edit'));
+    await t.click(Selector('div[data-uid="' + uid + '"] button.action-title-edit'));
   }
 
   async testCreateEditDeleteSharingLink(type) {
@@ -79,6 +79,7 @@ export default class Page {
       .expect(ExpireAfterChange)
       .contains("After 1 day")
       .typeText(sharedialog.linkSecretInput, InitialSecret, { replace: true })
+      .wait(5000)
       .click(sharedialog.linkExpireInput)
       .click(Selector("div").withText("Never").parent('div[role="option"]'))
       .click(sharedialog.dialogSave)

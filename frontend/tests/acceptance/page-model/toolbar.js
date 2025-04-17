@@ -175,6 +175,8 @@ export default class Page {
       await t.click(Selector('div[role="option"]').nth(1));
     }
 
-    await t.click(Selector("i.mdi-tune"));
+    if (await Selector(filterSelector).visible) {
+      await t.click(Selector("i.mdi-tune"));
+    }
   }
 }

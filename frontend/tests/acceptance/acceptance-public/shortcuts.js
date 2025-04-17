@@ -10,8 +10,7 @@ import Subject from "../page-model/subject";
 import Label from "../page-model/label";
 import Library from "../page-model/library";
 
-fixture`Test Keyboard Shortcuts`
-  .page`${testcafeconfig.url}`;
+fixture`Test Keyboard Shortcuts`.page`${testcafeconfig.url}`;
 
 const menu = new Menu();
 const toolbar = new Toolbar();
@@ -24,25 +23,26 @@ const label = new Label();
 const library = new Library();
 
 const triggerKeyPress = ClientFunction((key, code, keyCode, ctrlKey, shiftKey, targetSelector) => {
-    const target = targetSelector ? document.querySelector(targetSelector) : document;
-    if (!target) {
-        console.error("Target element not found for selector:", targetSelector);
-        return;
-    }
-    target.dispatchEvent(new KeyboardEvent('keydown', {
-        key: key,
-        code: code,
-        keyCode: keyCode,
-        which: keyCode,
-        bubbles: true,
-        cancelable: true,
-        ctrlKey: ctrlKey,
-        shiftKey: shiftKey,
-        altKey: false,
-        metaKey: false
-    }));
-}, {
-});
+  const target = targetSelector ? document.querySelector(targetSelector) : document;
+  if (!target) {
+    console.error("Target element not found for selector:", targetSelector);
+    return;
+  }
+  target.dispatchEvent(
+    new KeyboardEvent("keydown", {
+      key: key,
+      code: code,
+      keyCode: keyCode,
+      which: keyCode,
+      bubbles: true,
+      cancelable: true,
+      ctrlKey: ctrlKey,
+      shiftKey: shiftKey,
+      altKey: false,
+      metaKey: false,
+    })
+  );
+}, {});
 
 const isFullscreen = ClientFunction(() => !!document.fullscreenElement);
 const getcurrentPosition = ClientFunction(() => window.scrollY);
@@ -52,7 +52,7 @@ test.meta("testID", "shortcuts-001").meta({ type: "short", mode: "public" })(
   async (t) => {
     await menu.openPage("browse");
     await t.expect(toolbar.search1.focused).notOk();
-    await triggerKeyPress('f', 'KeyF', 70, true, false);
+    await triggerKeyPress("f", "KeyF", 70, true, false);
     await t.expect(toolbar.search1.focused).ok();
 
     // Test Refresh (Ctrl+R) with scroll restoration
@@ -61,14 +61,14 @@ test.meta("testID", "shortcuts-001").meta({ type: "short", mode: "public" })(
     const initialScrollY = await getcurrentPosition();
     await t.expect(initialScrollY).gt(0, "Should have scrolled down before refresh");
 
-    await triggerKeyPress('r', 'KeyR', 82, true, false);
+    await triggerKeyPress("r", "KeyR", 82, true, false);
     await t.wait(2000); // Wait for page to reload
 
     const finalScrollY = await getcurrentPosition();
     await t.expect(finalScrollY).eql(initialScrollY, "Scroll position should be restored after refresh");
 
     // Test Upload (Ctrl+U)
-    await triggerKeyPress('u', 'KeyU', 85, true, false);
+    await triggerKeyPress("u", "KeyU", 85, true, false);
     await t.expect(Selector(".p-upload-dialog").visible).ok();
     await t.pressKey("esc");
     await t.expect(Selector(".p-upload-dialog").visible).notOk();
@@ -79,33 +79,41 @@ test.meta("testID", "shortcuts-002").meta({ type: "short", mode: "public" })(
   "Common: Test Lightbox Shortcuts",
   async (t) => {
     await menu.openPage("browse");
-    await t.navigateTo('/library/videos');
+    await t.navigateTo("/library/videos");
     const videoUid = await photo.getNthPhotoUid("all", 0);
     await photoviewer.openPhotoViewer("uid", videoUid);
 
     await t.wait(500);
-    const infoPanelSelector = Selector('div').withText('Information').nth(4);
+    const infoPanelSelector = Selector("div").withText("Information").nth(4);
     await t.expect(infoPanelSelector.visible).notOk("Information panel should not be visible initially");
 
-    await triggerKeyPress('i', 'KeyI', 73, true, false, 'div.p-lightbox__pswp');
+    await triggerKeyPress("i", "KeyI", 73, true, false, "div.p-lightbox__pswp");
     await t.expect(infoPanelSelector.visible).ok("Information panel should be visible after first Ctrl+I");
 
-    await triggerKeyPress('i', 'KeyI', 73, true, false, 'div.p-lightbox__pswp');
+    await triggerKeyPress("i", "KeyI", 73, true, false, "div.p-lightbox__pswp");
     await t.expect(infoPanelSelector.visible).notOk("Information panel should be hidden after second Ctrl+I");
 
-    await triggerKeyPress('m', 'KeyM', 77, true, false, 'div.p-lightbox__pswp');
-    await t.expect(Selector('.p-lightbox__content').hasClass("is-muted")).ok("Video should be muted after first Ctrl+M");
+    await triggerKeyPress("m", "KeyM", 77, true, false, "div.p-lightbox__pswp");
+    await t
+      .expect(Selector(".p-lightbox__content").hasClass("is-muted"))
+      .ok("Video should be muted after first Ctrl+M");
 
-    await triggerKeyPress('m', 'KeyM', 77, true, false, 'div.p-lightbox__pswp');
-    await t.expect(Selector('.p-lightbox__content').hasClass("is-muted")).notOk("Video should be unmuted after second Ctrl+M");
+    await triggerKeyPress("m", "KeyM", 77, true, false, "div.p-lightbox__pswp");
+    await t
+      .expect(Selector(".p-lightbox__content").hasClass("is-muted"))
+      .notOk("Video should be unmuted after second Ctrl+M");
 
-    await triggerKeyPress('s', 'KeyS', 83, true, false, 'div.p-lightbox__pswp');
-    await t.expect(Selector('.p-lightbox__content').hasClass("slideshow-active")).ok("Slideshow should be active after first Ctrl+S");
+    await triggerKeyPress("s", "KeyS", 83, true, false, "div.p-lightbox__pswp");
+    await t
+      .expect(Selector(".p-lightbox__content").hasClass("slideshow-active"))
+      .ok("Slideshow should be active after first Ctrl+S");
 
-    await triggerKeyPress('s', 'KeyS', 83, true, false, 'div.p-lightbox__pswp');
-    await t.expect(Selector('.p-lightbox__content').hasClass("slideshow-active")).notOk("Slideshow should be inactive after second Ctrl+S");
+    await triggerKeyPress("s", "KeyS", 83, true, false, "div.p-lightbox__pswp");
+    await t
+      .expect(Selector(".p-lightbox__content").hasClass("slideshow-active"))
+      .notOk("Slideshow should be inactive after second Ctrl+S");
 
-    await triggerKeyPress('Escape', 'Escape', 27, false, false, 'div.p-lightbox__pswp');
+    await triggerKeyPress("Escape", "Escape", 27, false, false, "div.p-lightbox__pswp");
   }
 );
 
@@ -120,19 +128,23 @@ test.meta("testID", "shortcuts-003").meta({ type: "short", mode: "public" })(
 
     await t.getBrowserConsoleMessages();
 
-    await triggerKeyPress('a', 'KeyA', 65, true, false);
+    await triggerKeyPress("a", "KeyA", 65, true, false);
 
     await t.wait(500);
     let consoleMessages = await t.getBrowserConsoleMessages();
-    await t.expect(consoleMessages.log).contains('success: archived', 'Console should contain "success: archived" after Ctrl+A');
+    await t
+      .expect(consoleMessages.log)
+      .contains("success: archived", 'Console should contain "success: archived" after Ctrl+A');
 
     await t.getBrowserConsoleMessages();
 
-    await triggerKeyPress('d', 'KeyD', 68, true, false);
+    await triggerKeyPress("d", "KeyD", 68, true, false);
 
     await t.wait(500);
     consoleMessages = await t.getBrowserConsoleMessages();
-    await t.expect(consoleMessages.log).contains('success: downloading\u2026', 'Console should contain "success: downloading..." after Ctrl+D');
+    await t
+      .expect(consoleMessages.log)
+      .contains("success: downloading\u2026", 'Console should contain "success: downloading..." after Ctrl+D');
 
     await t.pressKey("esc");
   }
@@ -147,7 +159,7 @@ test.meta("testID", "shortcuts-004").meta({ type: "short", mode: "public" })(
     await t.wait(500); // Wait for lightbox
 
     // Edit Test
-    await triggerKeyPress('e', 'KeyE', 69, true, false);
+    await triggerKeyPress("e", "KeyE", 69, true, false);
     await t.expect(photoEdit.dialog.visible).ok();
     await t.pressKey("esc");
 
@@ -155,24 +167,24 @@ test.meta("testID", "shortcuts-004").meta({ type: "short", mode: "public" })(
     await t.wait(500); // Wait for lightbox again
 
     // Fullscreen Test
-    await triggerKeyPress('f', 'KeyF', 70, true, false, 'div.p-lightbox__pswp');
+    await triggerKeyPress("f", "KeyF", 70, true, false, "div.p-lightbox__pswp");
     await t.wait(1000);
     await t.expect(isFullscreen()).ok("Browser did not enter fullscreen mode.");
 
-    await triggerKeyPress('f', 'KeyF', 70, true, false, 'div.p-lightbox__pswp');
+    await triggerKeyPress("f", "KeyF", 70, true, false, "div.p-lightbox__pswp");
     await t.wait(1000);
     await t.expect(isFullscreen()).notOk("Browser did not exit fullscreen mode.");
 
     // Like Test
-    const isLikedInitially = await Selector('.p-lightbox__content').hasClass('is-favorite');
-    await triggerKeyPress('l', 'KeyL', 76, true, false, 'div.p-lightbox__pswp');
+    const isLikedInitially = await Selector(".p-lightbox__content").hasClass("is-favorite");
+    await triggerKeyPress("l", "KeyL", 76, true, false, "div.p-lightbox__pswp");
     await t.wait(2000); // Wait for potential UI updates
     await t.expect(photoviewer.menuButton.exists).ok("Menu button does not exist after Ctrl+L");
-    const isLikedAfterToggle = await Selector('.p-lightbox__content').hasClass('is-favorite');
+    const isLikedAfterToggle = await Selector(".p-lightbox__content").hasClass("is-favorite");
     if (isLikedInitially) {
-        await t.expect(isLikedAfterToggle).notOk("Failed to unlike photo after Ctrl+L");
+      await t.expect(isLikedAfterToggle).notOk("Failed to unlike photo after Ctrl+L");
     } else {
-        await t.expect(isLikedAfterToggle).ok("Failed to like photo after Ctrl+L");
+      await t.expect(isLikedAfterToggle).ok("Failed to like photo after Ctrl+L");
     }
 
     await t.pressKey("esc");
@@ -184,9 +196,11 @@ test.meta("testID", "shortcuts-005").meta({ type: "short", mode: "public" })(
   async (t) => {
     await menu.openPage("browse");
     await t.wait(500);
-    await triggerKeyPress('f', 'KeyF', 70, true, true);
+    await triggerKeyPress("f", "KeyF", 70, true, true);
     await t.wait(500);
-    await t.expect(Selector(".toolbar-expansion-panel").find('div').withText('All Countries').exists).ok("Expansion panel content ('All Countries') not found after Shift+Ctrl+F");
+    await t
+      .expect(Selector(".toolbar-expansion-panel").find("div").withText("All Countries").exists)
+      .ok("Expansion panel content ('All Countries') not found after Shift+Ctrl+F");
     // Close expansion panel
     // TODO: Currently no close functionality implemented
     // await triggerKeyPress('f', 'KeyF', 70, true, true); // Toggle it off
@@ -195,17 +209,17 @@ test.meta("testID", "shortcuts-005").meta({ type: "short", mode: "public" })(
 
     await menu.openPage("people");
     await t.wait(500);
-    await triggerKeyPress('f', 'KeyF', 70, true, false);
+    await triggerKeyPress("f", "KeyF", 70, true, false);
     await t.expect(subject.search.focused).ok();
 
     await menu.openPage("labels");
     await t.wait(500);
-    await triggerKeyPress('f', 'KeyF', 70, true, false);
+    await triggerKeyPress("f", "KeyF", 70, true, false);
     await t.expect(label.search.focused).ok();
 
-    await t.navigateTo('/library/errors');
+    await t.navigateTo("/library/errors");
     await t.wait(500);
-    await triggerKeyPress('f', 'KeyF', 70, true, false);
+    await triggerKeyPress("f", "KeyF", 70, true, false);
     await t.expect(library.searchInput.focused).ok();
   }
 );

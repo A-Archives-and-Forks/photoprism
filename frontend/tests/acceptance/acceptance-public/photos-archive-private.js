@@ -293,7 +293,7 @@ test.meta("testID", "photos-archive-private-003").meta({ mode: "public" })(
       } else {
         await toolbar.triggerToolbarAction("refresh");
       }
-      await toolbar.setFilter("view", "Mosaic");
+      await t.click(toolbar.mosaicViewAction);
 
       const PhotoCountInArchiveAfterArchive = await photo.getPhotoCount("all");
       await t.expect(PhotoCountInArchiveAfterArchive).eql(InitialPhotoCountInArchive + 14);
@@ -331,7 +331,7 @@ test.meta("testID", "photos-archive-private-003").meta({ mode: "public" })(
       await photo.checkPhotoVisibility(FolderPhoto, false);
 
       await menu.openPage("archive");
-      await toolbar.setFilter("view", "Mosaic");
+      await t.click(toolbar.mosaicViewAction);
 
       await photo.triggerHoverAction("uid", MonochromePhoto, "select");
       await photo.triggerHoverAction("uid", PanoramaPhoto, "select");
@@ -349,7 +349,8 @@ test.meta("testID", "photos-archive-private-003").meta({ mode: "public" })(
       await photo.triggerHoverAction("uid", FolderPhoto, "select");
       await contextmenu.checkContextMenuCount("14");
       await contextmenu.triggerContextMenuAction("restore", "");
-      await toolbar.setFilter("view", "Mosaic");
+
+      await t.click(toolbar.mosaicViewAction);
 
       const PhotoCountInArchiveAfterRestore = await photo.getPhotoCount("all");
       await t.expect(PhotoCountInArchiveAfterRestore).eql(InitialPhotoCountInArchive);
@@ -431,8 +432,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       } else {
         await toolbar.triggerToolbarAction("refresh");
       }
-      await toolbar.setFilter("view", "Mosaic");
-
+      await t.click(toolbar.mosaicViewAction);
       const PhotoCountInPrivateAfterArchive = await photo.getPhotoCount("all");
 
       await t.expect(PhotoCountInPrivateAfterArchive).eql(InitialPhotoCountInPrivate + 14);
@@ -470,7 +470,7 @@ test.meta("testID", "photos-archive-private-004").meta({ type: "short", mode: "p
       await photo.checkPhotoVisibility(FolderPhoto, false);
 
       await menu.openPage("private");
-      await toolbar.setFilter("view", "Mosaic");
+      await t.click(toolbar.mosaicViewAction);
 
       await photo.triggerHoverAction("uid", MonochromePhoto, "select");
       await photo.triggerHoverAction("uid", PanoramaPhoto, "select");
