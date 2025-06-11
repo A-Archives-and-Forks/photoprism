@@ -30,18 +30,18 @@ func (w *Convert) ToJson(f *MediaFile, force bool) (jsonName string, err error) 
 
 	log.Debugf("exiftool: extracting metadata from %s", clean.Log(f.RootRelName()))
 
-	// Command arguments.
+	// ExifTool command arguments.
 	var args []string
 
-	// Extract embedded metadata from MPEG-2 transport stream and AVCHD video files
+	// Use the "-ee" flag to extract embedded metadata from MPEG-2 Transport Stream and AVCHD video files,
 	// see https://exiftool.org/exiftool_pod.html#ee-NUM--extractEmbedded for details.
-	if f.IsM2TS() {
+	if f.IsVideo() {
 		args = []string{"-n", "-ee", "-m", "-api", "LargeFileSupport", "-j", f.FileName()}
 	} else {
 		args = []string{"-n", "-m", "-api", "LargeFileSupport", "-j", f.FileName()}
 	}
 
-	// Compose ExifTool command to run.
+	// Create ExifTool command with arguments.
 	cmd := exec.Command(w.conf.ExifToolBin(), args...)
 
 	// Command environment, output and errors.
