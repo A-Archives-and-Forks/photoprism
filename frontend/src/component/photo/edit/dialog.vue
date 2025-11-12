@@ -12,7 +12,7 @@
     @after-leave="afterLeave"
     @keydown.left.exact="onKeyLeft"
     @keydown.right.exact="onKeyRight"
-    @keydown.esc.stop="onClose"
+    @keydown.esc.exact.stop="onClose"
   >
     <v-card ref="content" tabindex="-1" :tile="$vuetify.display.smAndDown">
       <v-toolbar flat color="navigation" :density="$vuetify.display.smAndDown ? 'compact' : 'comfortable'">

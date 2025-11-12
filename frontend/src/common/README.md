@@ -64,10 +64,12 @@ Vuetify dialogs are teleported to the overlay container, so consistent refs and 
 
    ```vue
    <v-card-actions class="action-buttons">
-     <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
+     <v-btn variant="flat" color="button"
+         class="action-cancel" @click.stop="close">
        {{ $gettext(`Cancel`) }}
      </v-btn>
-     <v-btn variant="flat" color="highlight" class="action-confirm" @click.stop="confirm">
+     <v-btn variant="flat" color="highlight"
+         class="action-confirm" @click.stop="confirm">
        {{ $gettext(`Delete`) }}
      </v-btn>
    </v-card-actions>
@@ -124,7 +126,8 @@ Both snippets allow focused inputs to veto shortcuts by calling `event.stopPropa
 `common/view.js` registers a single `keydown` listener that forwards shortcut keys to the active component:
 
 ```js
-// onKeyDown forwards global shortcuts (Escape, Ctrl/⌘ combos) to the active component when supported.
+// onKeyDown forwards global shortcuts (Escape, Ctrl/⌘ combos)
+// to the active component when supported.
 onKeyDown(ev) {
   if (!this.current || !ev || !(ev instanceof KeyboardEvent) || !ev.code) {
     return;
@@ -162,13 +165,15 @@ onKeyDown(ev) {
     <v-card ref="content" tabindex="-1">
       <v-card-title class="d-flex justify-start align-center ga-3">
         <v-icon icon="mdi-delete-outline" size="54" color="primary"></v-icon>
-        <p class="text-subtitle-1">{{ $gettext(`Are you sure you want to permanently delete this file?`) }}</p>
+        <p class="text-subtitle-1">{{ $gettext(`Are you sure?`) }}</p>
       </v-card-title>
       <v-card-actions class="action-buttons mt-1">
-        <v-btn variant="flat" color="button" class="action-cancel" @click.stop="close">
+        <v-btn variant="flat" color="button"
+               class="action-cancel" @click.stop="close">
           {{ $gettext(`Cancel`) }}
         </v-btn>
-        <v-btn color="highlight" variant="flat" class="action-confirm" @click.stop="confirm">
+        <v-btn color="highlight" variant="flat"
+               class="action-confirm" @click.stop="confirm">
           {{ $gettext(`Delete`) }}
         </v-btn>
       </v-card-actions>

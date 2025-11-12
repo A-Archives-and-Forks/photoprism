@@ -1,6 +1,6 @@
 # PhotoPrism® Repository Guidelines
 
-**Last Updated:** November 11, 2025
+**Last Updated:** November 12, 2025
 
 ## Purpose
 
@@ -224,6 +224,8 @@ Note: Across our public documentation, official images, and in production, the c
 
 - Dialogs must follow the shared focus pattern documented in `frontend/src/common/README.md`.
 - Always expose `ref="dialog"` on `<v-dialog>` overlays, call `$view.enter/leave` in `@after-enter` / `@after-leave`, and avoid positive `tabindex` values.
+- Persistent dialogs (those with the `persistent` prop) must handle Escape via `@keydown.esc.exact` so Vuetify’s default rejection animation is suppressed; keep other shortcuts on `@keyup` so inner inputs can cancel them first.
+- Global shortcuts run through `onShortCut(ev)` in `common/view.js`; it only forwards Escape and `ctrl`/`meta` combinations, so do not rely on it for arbitrary keys.
 - When a dialog opens nested menus (for example, combobox suggestion lists), ensure they work with the global trap; see the README for troubleshooting tips.
 
 ## Safety & Data
