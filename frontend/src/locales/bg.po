@@ -396,6 +396,10 @@ msgstr "Позволява редактиране на метаданни кат
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Позволява редактиране на метаданните, етикетите и албумите на няколко снимки едновременно."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Позволете окончателно изтриване на файлове, за да освободите място за съхранение."
@@ -1353,10 +1357,6 @@ msgstr "Разрешаване на нови функции, които може
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Активирайте файловия браузър за навигация в структурата на папките с оригинали."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Активирайте инструмента за импортиране, за да копирате или премествате файлове от папката за импортиране в Originals."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Активира предварителните настройки на конвертора RAW. Може да намали производителността."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Скрий"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Скрийте личните елементи от глобалните изгледи, като същевременно ги запазите достъпни в раздел Лични."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Заглавие"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Архив"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Активирайте инструмента за импортиране, за да копирате или премествате файлове от папката за импортиране в Originals."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Скрийте личните елементи от глобалните изгледи, като същевременно ги запазите достъпни в раздел Лични."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Добавете файлове към своята библиотека през Web Upload."

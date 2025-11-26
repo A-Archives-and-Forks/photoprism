@@ -396,6 +396,10 @@ msgstr "Дозволяє редагувати метадані, такі як н
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Дозволяє редагувати метадані, мітки та альбоми кількох зображень одночасно."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Дозволяє безповоротно видаляти файли, щоб звільнити місце у сховищі."
@@ -1353,10 +1357,6 @@ msgstr "Увімкніть нові функції, які можуть бути
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Увімкніть браузер файлів для навігації по структурі папок Оригіналів."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Увімкніть інструмент \"Імпорт\", щоб скопіювати або перемістити файли з теки \"Імпорт\" до теки \"Оригінали\"."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Увімкнути попередньо встановлені налаштування конвертера RAW. Може знизити продуктивність."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Приховати"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Приховуйте приватні елементи від загального перегляду, залишаючи їх доступними в розділі \"Приватне\"."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Заголовок"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Архів"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Увімкніть інструмент \"Імпорт\", щоб скопіювати або перемістити файли з теки \"Імпорт\" до теки \"Оригінали\"."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Приховуйте приватні елементи від загального перегляду, залишаючи їх доступними в розділі \"Приватне\"."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Додайте файли до своєї бібліотеки за допомогою Веб-завантаження."

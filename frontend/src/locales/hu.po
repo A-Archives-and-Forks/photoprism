@@ -395,6 +395,10 @@ msgstr "Lehetővé teszi a metaadatok, például a cím, a leírás, a dátum é
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Lehetővé teszi több kép metaadatainak, címkéinek és albumainak szerkesztését egyszerre."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Engedélyezi a fájlok végleges törlését a tárhely felszabadítása érdekében."
@@ -1352,10 +1356,6 @@ msgstr "Engedélyezze az új funkciókat, amelyek hiányosak vagy instabilak leh
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Engedélyezze a fájlböngésző használatát az Eredeti mappaszerkezetben való navigáláshoz."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Engedélyezze az Importálás eszközt a fájlok másolásához vagy áthelyezéséhez az Importálás mappából az Eredeti mappába."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Engedélyezi a RAW konverter előbeállításait. Csökkentheti a teljesítményt."
@@ -1688,8 +1688,8 @@ msgid "Hide"
 msgstr "Elrejt"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "A privát elemek elrejtése a globális nézetekből, miközben a Privát szekcióban elérhetőek maradnak."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4015,6 +4015,12 @@ msgstr "Cím"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archívum"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Engedélyezze az Importálás eszközt a fájlok másolásához vagy áthelyezéséhez az Importálás mappából az Eredeti mappába."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "A privát elemek elrejtése a globális nézetekből, miközben a Privát szekcióban elérhetőek maradnak."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Fájlok hozzáadása a könytárhoz Webes feltöltés segítéségével."

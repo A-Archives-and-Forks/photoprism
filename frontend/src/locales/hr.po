@@ -396,6 +396,10 @@ msgstr "Omogući uređivanje metapodataka kao što su naslov, opis, datum i loka
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Omogući uređivanje metapodataka, oznaka i albuma više slika odjednom."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Dopustite trajno brisanje datoteka kako biste oslobodili prostor za pohranu."
@@ -1353,10 +1357,6 @@ msgstr "Omogućite nove značajke koje mogu biti nepotpune ili nestabilne."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Omogućite pregledniku datoteka navigaciju strukturom mapa Izvornici."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Omogućite alat za uvoz da biste kopirali ili premjestili datoteke iz mape Uvoz u izvornike."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Omogućuje unaprijed postavljene postavke RAW pretvarača. Može smanjiti performanse."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Sakriti"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Sakrijte privatne stavke iz globalnih prikaza, a istovremeno ih ostavite dostupnima u odjeljku Privatno."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Naslov"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiva"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Omogućite alat za uvoz da biste kopirali ili premjestili datoteke iz mape Uvoz u izvornike."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Sakrijte privatne stavke iz globalnih prikaza, a istovremeno ih ostavite dostupnima u odjeljku Privatno."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Dodajte datoteke u svoju biblioteku putem Web Uploada."

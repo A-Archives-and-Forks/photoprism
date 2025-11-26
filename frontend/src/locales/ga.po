@@ -393,6 +393,10 @@ msgstr "Ceadaigh eagarthóireacht meiteashonraí amhail teideal, cur síos, dát
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Ceadaigh eagarthóireacht a dhéanamh ar mheiteashonraí, lipéid agus albaim ilphictiúr ag an am céanna."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Ceadaigh comhaid a scriosadh go buan chun spás stórála a shaoradh."
@@ -1350,10 +1354,6 @@ msgstr "Cumasaigh gnéithe nua a d'fhéadfadh a bheith neamhiomlán nó éagobhs
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Cumasaigh an brabhsálaí comhad chun nascleanúint a dhéanamh trí struchtúr na bhfillteán Bunleaganacha."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Cumasaigh an uirlis Iompórtála chun comhaid a chóipeáil nó a bhogadh ón bhfillteán Iompórtála go dtí na Bunchóipeanna."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Cumasaíonn sé réamhshocruithe tiontaire RAW. D'fhéadfadh sé feidhmíocht a laghdú."
@@ -1686,8 +1686,8 @@ msgid "Hide"
 msgstr "Folaigh"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Folaigh míreanna príobháideacha ó radhairc dhomhanda agus coinnigh rochtain orthu sa rannán Príobháideach."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4013,6 +4013,12 @@ msgstr "Teideal"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Cartlann"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Cumasaigh an uirlis Iompórtála chun comhaid a chóipeáil nó a bhogadh ón bhfillteán Iompórtála go dtí na Bunchóipeanna."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Folaigh míreanna príobháideacha ó radhairc dhomhanda agus coinnigh rochtain orthu sa rannán Príobháideach."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Cuir comhaid le do leabharlann trí Uaslódáil Gréasáin."

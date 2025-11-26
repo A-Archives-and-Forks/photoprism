@@ -396,6 +396,10 @@ msgstr "Tillad redigering af metadata som titel, beskrivelse, dato og placering.
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Gør det muligt at redigere metadata, etiketter og album for flere billeder på én gang."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Gør det muligt at slette filer permanent for at frigøre lagerplads."
@@ -1353,10 +1357,6 @@ msgstr "Aktivér nye funktioner, der kan være ufuldstændige eller ustabile."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Aktivér filbrowseren for at navigere i mappestrukturen for originaler."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Aktivér importværktøjet for at kopiere eller flytte filer fra importmappen til originaler."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Aktiverer RAW-konverteringsindstillinger. Kan reducere ydeevnen."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Skjul"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Skjul private elementer fra globale visninger, men hold dem tilgængelige i sektionen Privat."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Titel"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkiver"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Aktivér importværktøjet for at kopiere eller flytte filer fra importmappen til originaler."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Skjul private elementer fra globale visninger, men hold dem tilgængelige i sektionen Privat."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Føj filer til dit bibliotek via Web Upload."

@@ -396,6 +396,10 @@ msgstr "Bewerken van metadata zoals titel, beschrijving, datum en locatie toesta
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Laat het bewerken van de metadata, labels en albums van meerdere foto's tegelijk toe."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Laat bestanden permanent verwijderen om opslagruimte vrij te maken."
@@ -1353,10 +1357,6 @@ msgstr "Nieuwe functies inschakelen die mogelijk incompleet of instabiel zijn."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Schakel de bestandsbrowser in om door de mappenstructuur van Originals te navigeren."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Schakel het hulpmiddel Importeren in om bestanden te kopiëren of te verplaatsen van de map Importeren naar Originelen."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Schakelt RAW-converterpresets in. Kan de prestaties verminderen."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Verberg"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Verberg privé-items uit globale weergaven terwijl ze toegankelijk blijven in het gedeelte Privé."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Titel"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archief"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Schakel het hulpmiddel Importeren in om bestanden te kopiëren of te verplaatsen van de map Importeren naar Originelen."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Verberg privé-items uit globale weergaven terwijl ze toegankelijk blijven in het gedeelte Privé."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Voeg bestanden toe aan uw bibliotheek via Web Upload."

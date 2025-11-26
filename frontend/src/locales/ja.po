@@ -396,6 +396,10 @@ msgstr "タイトル、説明、日付、場所などのメタデータを編集
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "複数の写真のメタデータ、ラベル、アルバムを一度に編集できる。"
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "ファイルを完全に削除して、ストレージスペースを空ける。"
@@ -1353,10 +1357,6 @@ msgstr "不完全または不安定な新機能を有効にします。"
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "ファイルブラウザを有効にして、Originalsフォルダ構造をナビゲートする。"
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "インポートツールを有効にして、インポートフォルダからオリジナルにファイルをコピーまたは移動する。"
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "RAW 現像機のプリセットを有効にします。パフォーマンスが低下する場合があります。"
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "非表示"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "グローバルビューからプライベートアイテムを非表示にし、プライベートセクションからはアクセスできるようにする。"
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "タイトル"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "アーカイブ"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "インポートツールを有効にして、インポートフォルダからオリジナルにファイルをコピーまたは移動する。"
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "グローバルビューからプライベートアイテムを非表示にし、プライベートセクションからはアクセスできるようにする。"
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "あなたのライブラリに Web アップロード経由でファイルを追加します。"

@@ -393,6 +393,10 @@ msgstr "Võimaldab metaandmete, nagu pealkiri, kirjeldus, kuupäev ja asukoht, r
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Võimaldab korraga mitme pildi metaandmete, siltide ja albumite redigeerimist."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Lubab failide lõplikku kustutamist, et vabastada salvestusruumi."
@@ -1350,10 +1354,6 @@ msgstr "Võta kasutusele uued funktsioonid, mis võivad olla ebatäielikud või 
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Võta failibrauser kasutusele, et navigeerida originaalide kaustade struktuuris."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Lubage tööriist Import, et kopeerida või teisaldada faile kaustast Import originaalidesse."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Lubab RAW-konverteri eelseadistused. Võib vähendada jõudlust."
@@ -1686,8 +1686,8 @@ msgid "Hide"
 msgstr "Peida"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Peida privaatsed elemendid globaalsetest vaadetest, säilitades samas nende kättesaadavuse privaatses sektsioonis."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4015,6 +4015,12 @@ msgstr "Pealkiri"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiiv"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Lubage tööriist Import, et kopeerida või teisaldada faile kaustast Import originaalidesse."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Peida privaatsed elemendid globaalsetest vaadetest, säilitades samas nende kättesaadavuse privaatses sektsioonis."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Lisa faile oma fototeeki üleslaadimise teel."

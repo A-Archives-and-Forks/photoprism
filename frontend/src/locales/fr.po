@@ -397,6 +397,10 @@ msgstr "Permettre la modification des métadonnées telles que le titre, la desc
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Permet de modifier les métadonnées, les étiquettes et les albums de plusieurs photos à la fois."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Permet de supprimer définitivement des fichiers pour libérer de l'espace de stockage."
@@ -1355,10 +1359,6 @@ msgstr "Activer les nouvelles fonctionnalités, potentiellement incomplètes ou 
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Active le navigateur de fichiers pour naviguer dans la structure des dossiers Originaux."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Active l'outil d'importation pour copier ou déplacer des fichiers du dossier d'importation vers les originaux."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Active les préréglages du convertisseur RAW. Cela peut réduire les performances."
@@ -1693,8 +1693,8 @@ msgid "Hide"
 msgstr "Cacher"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Masque les éléments privés des vues globales tout en les laissant accessibles dans la section privée."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4026,6 +4026,12 @@ msgstr "Titre"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archives"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Active l'outil d'importation pour copier ou déplacer des fichiers du dossier d'importation vers les originaux."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Masque les éléments privés des vues globales tout en les laissant accessibles dans la section privée."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Ajouter des fichiers à votre bibliothèque par Web Upload."

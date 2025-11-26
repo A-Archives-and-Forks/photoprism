@@ -396,6 +396,10 @@ msgstr "允许编辑标题、描述、日期和地点等元数据。"
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "允许同时编辑多张图片的元数据、标签和相册。"
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "允许永久删除文件以释放存储空间。"
@@ -1353,10 +1357,6 @@ msgstr "启用可能不完整或不稳定的新功能。"
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "启用文件浏览器以浏览原版文件夹结构。"
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "启用 \"导入 \"工具，将文件从 \"导入 \"文件夹复制或移动到 \"原始文件\"。"
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "启用 RAW 转换器预设，可能会降低性能。"
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "隐藏"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "从全局视图中隐藏私人项目，同时在 \"私人 \"部分保持其可访问性。"
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4018,6 +4018,12 @@ msgstr "标题"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "归档"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "启用 \"导入 \"工具，将文件从 \"导入 \"文件夹复制或移动到 \"原始文件\"。"
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "从全局视图中隐藏私人项目，同时在 \"私人 \"部分保持其可访问性。"
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "从网页上传文件到库。"

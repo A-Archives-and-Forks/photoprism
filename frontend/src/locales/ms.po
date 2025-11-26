@@ -396,6 +396,10 @@ msgstr "Benarkan pengeditan metadata seperti tajuk, perihalan, tarikh dan lokasi
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Benarkan pengeditan metadata, label dan album berbilang gambar sekaligus."
 
+#: src/page/settings/general.vue:194
+msgid "Allow files to be copied or moved from the Import to the Originals folder."
+msgstr ""
+
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Benarkan fail dipadamkan secara kekal untuk mengosongkan ruang storan."
@@ -1353,10 +1357,6 @@ msgstr "Dayakan ciri baharu yang mungkin tidak lengkap atau tidak stabil."
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Dayakan penyemak imbas fail untuk menavigasi struktur folder Asal."
 
-#: src/page/settings/general.vue:194
-msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-msgstr "Dayakan alat Import untuk menyalin atau mengalihkan fail daripada folder Import ke Originals."
-
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
 msgstr "Mendayakan pratetap penukar RAW. Boleh mengurangkan prestasi."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Sembunyi"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private items from global views while keeping them accessible in the Private section."
-msgstr "Sembunyikan item peribadi daripada paparan global sambil memastikan ia boleh diakses dalam bahagian Peribadi."
+msgid "Hide private content from global views while keeping it accessible in the Private section."
+msgstr ""
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,6 +4016,12 @@ msgstr "Tajuk"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkib"
+
+#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+#~ msgstr "Dayakan alat Import untuk menyalin atau mengalihkan fail daripada folder Import ke Originals."
+
+#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
+#~ msgstr "Sembunyikan item peribadi daripada paparan global sambil memastikan ia boleh diakses dalam bahagian Peribadi."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Tambahkan fail ke pustaka anda melalui Muat Naik Web."
