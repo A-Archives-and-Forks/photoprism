@@ -127,7 +127,7 @@ msgstr "Hozzáférési jelszó"
 #: src/component/navigation.vue:1068 src/component/navigation.vue:868
 #: src/component/service/upload.vue:25 src/locales.js:331
 #: src/model/service.js:72 src/model/user.js:151 src/page/settings.vue:112
-#: src/page/settings/general.vue:344
+#: src/page/settings/general.vue:334
 msgid "Account"
 msgstr "Fiók"
 
@@ -383,35 +383,35 @@ msgstr "Összes eredeti"
 msgid "All Years"
 msgstr "Összes év"
 
-#: src/page/settings/general.vue:255
+#: src/page/settings/general.vue:246
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
 msgstr "Lehetővé teszi a csatlakoztatott alkalmazások és szolgáltatások konfigurálását és használatát távoli feltöltéshez és szinkronizáláshoz."
 
-#: src/page/settings/general.vue:209
+#: src/page/settings/general.vue:201
 msgid "Allow editing of metadata such as title, description, date, and location."
 msgstr "Lehetővé teszi a metaadatok, például a cím, a leírás, a dátum és a helyszín szerkesztését."
 
-#: src/page/settings/general.vue:224
+#: src/page/settings/general.vue:216
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
 msgstr "Lehetővé teszi több kép metaadatainak, címkéinek és albumainak szerkesztését egyszerre."
 
-#: src/page/settings/general.vue:194
+#: src/page/settings/general.vue:186
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
 msgstr "Engedélyezze az Importálás eszközt a fájlok másolásához vagy áthelyezéséhez az Importálás mappából az Eredeti mappába."
 
-#: src/page/settings/general.vue:286
+#: src/page/settings/general.vue:276
 msgid "Allow files to be permanently deleted to free up storage space."
 msgstr "Engedélyezi a fájlok végleges törlését a tárhely felszabadítása érdekében."
 
-#: src/page/settings/general.vue:271
+#: src/page/settings/general.vue:261
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
 msgstr "Lehetővé teszi a felhasználók számára a fényképek és videók archiválását, így azok törlés nélkül elrejthetők."
 
-#: src/page/settings/general.vue:239
+#: src/page/settings/general.vue:231
 msgid "Allow users to create and share links, and enable sharing with connected services."
 msgstr "Lehetővé teszi a felhasználók számára, hogy linkeket hozzanak létre és osszanak meg, és lehetővé teszi a megosztást a kapcsolódó szolgáltatásokkal."
 
-#: src/page/settings/general.vue:164
+#: src/page/settings/general.vue:156
 msgid "Allow users to upload new photos and videos through the web interface."
 msgstr "Lehetővé teszi a felhasználók számára, hogy új fényképeket és videókat töltsenek fel a webes felületen keresztül."
 
@@ -442,7 +442,7 @@ msgstr "AM"
 msgid "Animated"
 msgstr "Mozgó"
 
-#: src/page/settings/general.vue:401
+#: src/page/settings/general.vue:391
 msgid "Animation"
 msgstr "Animáció"
 
@@ -584,7 +584,7 @@ msgstr "Bázis útvonal"
 msgid "Batch"
 msgstr "Batch"
 
-#: src/page/settings/general.vue:223
+#: src/page/settings/general.vue:215
 msgid "Batch Edit"
 msgstr "Batch szerkesztés"
 
@@ -624,8 +624,8 @@ msgstr "Barna"
 
 #: src/component/photo/edit/files.vue:107 src/component/photo/edit/files.vue:67
 #: src/component/photo/edit/files.vue:75 src/component/photo/toolbar.vue:94
-#: src/component/upload/dialog.vue:123 src/component/upload/dialog.vue:75
-#: src/component/upload/dialog.vue:76 src/component/upload/dialog.vue:87
+#: src/component/upload/dialog.vue:112 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 msgid "Browse"
 msgstr "Böngésszen a  oldalon."
 
@@ -650,7 +650,7 @@ msgid "By using the software and services we provide, you agree to our terms of 
 msgstr "Az általunk biztosított szoftver és szolgáltatások használatával Ön elfogadja szolgáltatási feltételeinket, adatvédelmi szabályzatunkat és magatartási kódexünket."
 
 #: src/app/routes.js:218 src/component/navigation.vue:506
-#: src/options/options.js:263 src/page/settings/general.vue:102
+#: src/options/options.js:263 src/page/settings/general.vue:96
 msgid "Calendar"
 msgstr "Naptár"
 
@@ -755,7 +755,7 @@ msgstr "Módosításokat nem sikerült menteni"
 #: src/component/share/dialog.vue:240 src/component/share/dialog.vue:259
 #: src/page/albums.vue:1268 src/page/people/recognized.vue:320
 #: src/page/settings/advanced.vue:535 src/page/settings/content.vue:300
-#: src/page/settings/general.vue:527
+#: src/page/settings/general.vue:515
 msgid "Changes successfully saved"
 msgstr "Módosítások sikeresen mentve"
 
@@ -811,7 +811,7 @@ msgstr "Ügyfél hitelesítő adatok"
 #: src/component/share/dialog.vue:142 src/component/share/dialog.vue:72
 #: src/component/share/dialog.vue:73 src/component/share/dialog.vue:82
 #: src/component/sidebar/info.vue:6 src/component/update.vue:25
-#: src/component/upload/dialog.vue:120 src/locales.js:206
+#: src/component/upload/dialog.vue:109 src/locales.js:206
 #: src/page/library/errors.vue:139
 msgid "Close"
 msgstr "Bezárás"
@@ -1063,7 +1063,7 @@ msgstr "Alapértelmezett mappa"
 #: src/component/photo/clipboard.vue:140 src/component/photo/edit/files.vue:62
 #: src/component/photo/edit/files.vue:70 src/component/photo/edit/files.vue:94
 #: src/component/service/remove.vue:22 src/component/share/dialog.vue:112
-#: src/locales.js:317 src/page/settings/general.vue:285
+#: src/locales.js:317 src/page/settings/general.vue:275
 msgid "Delete"
 msgstr "Törlés"
 
@@ -1235,7 +1235,7 @@ msgstr "Ne használja a RawTherapee-t RAW képek konvertálására."
 msgid "Done"
 msgstr "Kész"
 
-#: src/component/upload/dialog.vue:43 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Kész."
@@ -1244,7 +1244,7 @@ msgstr "Kész."
 #: src/component/file/clipboard.vue:32 src/component/lightbox.vue:1479
 #: src/component/people/clipboard.vue:31 src/component/photo/clipboard.vue:92
 #: src/component/photo/edit/files.vue:51 src/page/settings/content.vue:183
-#: src/page/settings/general.vue:178
+#: src/page/settings/general.vue:170
 msgid "Download"
 msgstr "Letöltés"
 
@@ -1305,7 +1305,7 @@ msgstr "Email"
 
 #: src/component/album/clipboard.vue:43 src/component/album/toolbar.vue:174
 #: src/component/lightbox.vue:1378 src/component/lightbox.vue:1379
-#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:208
+#: src/component/photo/clipboard.vue:68 src/page/settings/general.vue:200
 msgid "Edit"
 msgstr "Szerkesztés"
 
@@ -1340,11 +1340,11 @@ msgstr "E-mail"
 msgid "Enable debug mode to display additional logs and help with troubleshooting."
 msgstr "A hibakeresési mód engedélyezése további naplók megjelenítéséhez és a hibaelhárítás segítéséhez."
 
-#: src/page/settings/general.vue:179
+#: src/page/settings/general.vue:171
 msgid "Enable downloading of original and sidecar files from the web interface."
 msgstr "Engedélyezze az eredeti és oldalkocsis fájlok letöltését a webes felületről."
 
-#: src/page/settings/general.vue:88
+#: src/page/settings/general.vue:82
 msgid "Enable face recognition and the People view to easily find people you know."
 msgstr "Az arcfelismerés és az Emberek nézet bekapcsolásával könnyedén megtalálhatja az ismerősöket."
 
@@ -1352,7 +1352,7 @@ msgstr "Az arcfelismerés és az Emberek nézet bekapcsolásával könnyedén me
 msgid "Enable new features that may be incomplete or unstable."
 msgstr "Engedélyezze az új funkciókat, amelyek hiányosak vagy instabilak lehetnek."
 
-#: src/page/settings/general.vue:315
+#: src/page/settings/general.vue:305
 msgid "Enable the file browser to navigate the Originals folder structure."
 msgstr "Engedélyezze a fájlböngésző használatát az Eredeti mappaszerkezetben való navigáláshoz."
 
@@ -1687,7 +1687,7 @@ msgstr "Rejtett fájlok"
 msgid "Hide"
 msgstr "Elrejt"
 
-#: src/page/settings/general.vue:148
+#: src/page/settings/general.vue:141
 msgid "Hide private content from global views while keeping it accessible in the Private section."
 msgstr "A privát elemek elrejtése a globális nézetekből, miközben a Privát szekcióban elérhetőek maradnak."
 
@@ -1724,7 +1724,7 @@ msgstr "Képminőség"
 
 #: src/page/library.vue:73 src/page/library/import.vue:44
 #: src/page/library/import.vue:45 src/page/library/import.vue:73
-#: src/page/library/import.vue:86 src/page/settings/general.vue:193
+#: src/page/library/import.vue:86 src/page/settings/general.vue:185
 msgid "Import"
 msgstr "Importálás"
 
@@ -1763,7 +1763,7 @@ msgstr "RAW képfájlok felvétele a verem és az archívumok letöltésekor."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Oldalkocsis fájlok bevonása a verem és az archívumok letöltésekor."
 
-#: src/component/upload/dialog.vue:45 src/page/library/import.vue:9
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:9
 msgid "Increase storage size or delete files to continue."
 msgstr "A folytatáshoz növelje a tároló méretét vagy törölje a fájlokat."
 
@@ -1797,7 +1797,7 @@ msgstr "Példányazonosító"
 msgid "Instances"
 msgstr "Instances"
 
-#: src/component/upload/dialog.vue:44 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Elégtelen tárolás."
 
@@ -1892,7 +1892,7 @@ msgstr "Címke"
 #: src/component/photo/edit/dialog.vue:50
 #: src/component/photo/edit/dialog.vue:52
 #: src/component/photo/edit/dialog.vue:53 src/locales.js:325
-#: src/options/options.js:265 src/page/settings/general.vue:132
+#: src/options/options.js:265 src/page/settings/general.vue:126
 msgid "Labels"
 msgstr "Címkék"
 
@@ -1904,7 +1904,7 @@ msgstr "Címkék törölve"
 msgid "Lanczos: Detail Preservation, Minimal Artifacts"
 msgstr "Lanczos: Részletmegőrzés, minimális műtárgyak"
 
-#: src/page/settings/general.vue:38
+#: src/page/settings/general.vue:32
 msgid "Language"
 msgstr "Nyelv"
 
@@ -1957,7 +1957,7 @@ msgid "Lens"
 msgstr "Lencse"
 
 #: src/app/routes.js:475 src/app/routes.js:491 src/app/routes.js:507
-#: src/component/navigation.vue:613 src/page/settings/general.vue:299
+#: src/component/navigation.vue:613 src/page/settings/general.vue:289
 msgid "Library"
 msgstr "Könyvtár"
 
@@ -2027,7 +2027,7 @@ msgstr "Betöltés..."
 
 #: src/options/admin.js:39 src/locales.js:341 src/options/auth.js:23
 #: src/options/auth.js:28 src/options/options.js:93
-#: src/page/settings/general.vue:52
+#: src/page/settings/general.vue:46
 msgid "Local"
 msgstr "Helyi"
 
@@ -2061,7 +2061,7 @@ msgid "Logout"
 msgstr "Kijelentkezés"
 
 #: src/component/navigation.vue:948 src/component/navigation.vue:951
-#: src/page/library.vue:86 src/page/settings/general.vue:329
+#: src/page/library.vue:86 src/page/settings/general.vue:319
 msgid "Logs"
 msgstr "Naplók"
 
@@ -2109,7 +2109,7 @@ msgstr "Kézi"
 msgid "Manual Upload"
 msgstr "Kézi feltöltés"
 
-#: src/page/settings/general.vue:385
+#: src/page/settings/general.vue:375
 msgid "Maps"
 msgstr "Térképek"
 
@@ -2174,7 +2174,7 @@ msgid "mixed"
 msgstr "vegyes"
 
 #: src/app/routes.js:192 src/component/navigation.vue:533
-#: src/options/options.js:264 src/page/settings/general.vue:117
+#: src/options/options.js:264 src/page/settings/general.vue:111
 msgid "Moments"
 msgstr "Pillanatok"
 
@@ -2353,7 +2353,7 @@ msgstr "Csomópontok"
 
 #: src/component/photo/view/cards.vue:26 src/component/photo/view/list.vue:217
 #: src/component/photo/view/list.vue:26 src/component/photo/view/mosaic.vue:26
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:101
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "A rossz minőségű képek ellenörzésre kerülnek, mielőtt megjelennének a keresési eredmények között."
 
@@ -2511,7 +2511,7 @@ msgstr "Eredeti Név"
 #: src/component/navigation.vue:627 src/component/navigation.vue:633
 #: src/model/file.js:172 src/options/options.js:474
 #: src/page/library/browse.vue:12 src/page/settings/content.vue:193
-#: src/page/settings/general.vue:314
+#: src/page/settings/general.vue:304
 msgid "Originals"
 msgstr "Eredetiek"
 
@@ -2580,7 +2580,7 @@ msgstr "A jelszó megváltozott"
 #: src/component/photo/edit/dialog.vue:59
 #: src/component/photo/edit/dialog.vue:61
 #: src/component/photo/edit/dialog.vue:62 src/options/options.js:260
-#: src/page/settings/general.vue:87
+#: src/page/settings/general.vue:81
 msgid "People"
 msgstr "Személyek"
 
@@ -2645,8 +2645,8 @@ msgstr "Hely és idő"
 #: src/app/routes.js:335 src/app/routes.js:341 src/app/routes.js:347
 #: src/app/routes.js:362 src/component/navigation.vue:462
 #: src/component/navigation.vue:927 src/options/options.js:262
-#: src/page/places.vue:18 src/page/settings/general.vue:359
-#: src/page/settings/general.vue:373
+#: src/page/places.vue:18 src/page/settings/general.vue:349
+#: src/page/settings/general.vue:363
 msgid "Places"
 msgstr "Helyek"
 
@@ -2658,11 +2658,11 @@ msgstr "Kérjük, erősítse meg új jelszavát."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Kérjük, másolja ki a következő véletlenszerűen generált alkalmazásjelszót, és tartsa biztonságos helyen, mert nem fogja többé látni:"
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:94
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Kérjük, ne töltsön fel magánjellegű, jogellenes vagy sértő képeket."
 
-#: src/component/upload/dialog.vue:104
+#: src/component/upload/dialog.vue:97
 msgid "Please don't upload photos containing offensive content."
 msgstr "Kérjük, ne töltsön fel sértő tartalmat tartalmazó fotókat."
 
@@ -2704,7 +2704,7 @@ msgstr "Portré"
 msgid "Preserve filenames"
 msgstr "Fájlnevek megőrzése"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:72
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
 msgid "Press enter to create a new album."
 msgstr "Új album létrehozásához nyomja meg az Enter billentyűt."
 
@@ -2756,7 +2756,7 @@ msgstr "Elsődleges"
 #: src/component/navigation.vue:226 src/component/navigation.vue:233
 #: src/component/photo/batch-edit.vue:1491
 #: src/component/photo/edit/info.vue:139 src/component/photo/edit/info.vue:140
-#: src/page/settings/general.vue:146
+#: src/page/settings/general.vue:140
 msgid "Private"
 msgstr "Privát"
 
@@ -2867,7 +2867,7 @@ msgid "Reload"
 msgstr "Újratöltés"
 
 #: src/component/navigation.vue:1089 src/component/update.vue:62
-#: src/page/settings/general.vue:523
+#: src/page/settings/general.vue:511
 msgid "Reloading…"
 msgstr "Újratöltés…"
 
@@ -3084,7 +3084,7 @@ msgid "Select dates"
 msgstr "Válassza ki a dátumokat"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:65
+#: src/component/photo/batch-edit.vue:479 src/component/upload/dialog.vue:58
 msgid "Select or create albums"
 msgstr "Albumok kiválasztása vagy létrehozása"
 
@@ -3092,7 +3092,7 @@ msgstr "Albumok kiválasztása vagy létrehozása"
 msgid "Select or create labels"
 msgstr "Címkék kiválasztása vagy létrehozása"
 
-#: src/component/upload/dialog.vue:48
+#: src/component/upload/dialog.vue:41
 msgid "Select the files to upload…"
 msgstr "Válassza ki a feltölteni kívánt fájlokat…"
 
@@ -3134,7 +3134,7 @@ msgid "Service URL"
 msgstr "Szolgáltatás URL-je"
 
 #: src/locales.js:359 src/page/settings.vue:99
-#: src/page/settings/general.vue:253
+#: src/page/settings/general.vue:245
 msgid "Services"
 msgstr "Szolgáltatások"
 
@@ -3185,7 +3185,7 @@ msgid "Severity"
 msgstr "Súlyosság"
 
 #: src/component/album/clipboard.vue:32 src/component/album/toolbar.vue:183
-#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:238
+#: src/component/photo/clipboard.vue:32 src/page/settings/general.vue:230
 msgid "Share"
 msgstr "Megosztás"
 
@@ -3217,31 +3217,31 @@ msgstr "Rejtett megjelenítése"
 msgid "Show Important Only"
 msgstr "Csak a fontosak megjelenítése"
 
-#: src/page/settings/general.vue:330
+#: src/page/settings/general.vue:320
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
 msgstr "Naplók megjelenítése a webes felületen a tevékenység nyomon követése és a problémák elhárítása érdekében."
 
-#: src/page/settings/general.vue:118
+#: src/page/settings/general.vue:112
 msgid "Show smart albums that group pictures by occasion, trip, or location."
 msgstr "Olyan intelligens albumok megjelenítése, amelyek a képeket alkalom, utazás vagy helyszín szerint csoportosítják."
 
-#: src/page/settings/general.vue:345
+#: src/page/settings/general.vue:335
 msgid "Show the Account page so users can manage their profile and security settings."
 msgstr "A Fiók oldal megjelenítése, hogy a felhasználók kezelhessék profiljukat és biztonsági beállításaikat."
 
-#: src/page/settings/general.vue:103
+#: src/page/settings/general.vue:97
 msgid "Show the Calendar view to browse the library by year and month."
 msgstr "A Naptár nézet megjelenítése a könyvtár év és hónap szerinti böngészéséhez."
 
-#: src/page/settings/general.vue:133
+#: src/page/settings/general.vue:127
 msgid "Show the Labels section to view and manage AI-generated labels."
 msgstr "A Címkék szakasz megjelenítése az AI által generált címkék megtekintéséhez és kezeléséhez."
 
-#: src/page/settings/general.vue:300
+#: src/page/settings/general.vue:290
 msgid "Show the Library section to index, manage, and monitor the media library."
 msgstr "A Könyvtár szakasz megjelenítése a médiatár indexeléséhez, kezeléséhez és felügyeletéhez."
 
-#: src/page/settings/general.vue:360
+#: src/page/settings/general.vue:350
 msgid "Show the Places view with interactive maps so you can browse photos by location."
 msgstr "Mutassa meg a Helyek nézetet interaktív térképekkel, hogy a fényképeket hely szerint böngészhesse."
 
@@ -3377,7 +3377,7 @@ msgstr "Stackek"
 msgid "Start"
 msgstr "Rajt"
 
-#: src/page/settings/general.vue:67
+#: src/page/settings/general.vue:61
 msgid "Start Page"
 msgstr "Kezdőlap"
 
@@ -3483,7 +3483,7 @@ msgstr "Az index jelenleg %{n} rejtett fájlt tartalmaz."
 msgid "Their format may not be supported, they haven't been converted to JPEG yet or there are duplicates."
 msgstr "Előfordulhat, hogy a formátumuk nem támogatott, még nem konvertálták JPEG formátumba, vagy ismétlődők vannak."
 
-#: src/locales.js:324 src/page/settings/general.vue:24
+#: src/locales.js:324 src/page/settings/general.vue:18
 msgid "Theme"
 msgstr "Téma"
 
@@ -3511,7 +3511,7 @@ msgid "Time UTC"
 msgstr "Idő UTC"
 
 #: src/component/photo/batch-edit.vue:295
-#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:53
+#: src/component/photo/edit/details.vue:139 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Időzóna"
 
@@ -3563,7 +3563,7 @@ msgstr "Nézet váltása"
 msgid "Token"
 msgstr "Jelképes"
 
-#: src/component/upload/dialog.vue:359
+#: src/component/upload/dialog.vue:342
 msgid "Too many files selected"
 msgstr "Túl sok fájl van kiválasztva"
 
@@ -3695,18 +3695,18 @@ msgstr "Frissítés most"
 #: src/component/photo/toolbar.vue:475 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/service/upload.vue:70
-#: src/component/upload/dialog.vue:190 src/page/albums.vue:556
+#: src/component/upload/dialog.vue:173 src/page/albums.vue:556
 #: src/page/labels.vue:351 src/page/library/import.vue:69
-#: src/page/library/import.vue:75 src/page/settings/general.vue:163
+#: src/page/library/import.vue:75 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:184
 msgid "Upload"
 msgstr "Feltöltés"
 
-#: src/component/upload/dialog.vue:42
+#: src/component/upload/dialog.vue:36
 msgid "Upload complete. Indexing…"
 msgstr "Feltöltés kész. Indexelés…"
 
-#: src/component/upload/dialog.vue:38 src/component/upload/dialog.vue:443
+#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
 msgid "Upload failed"
 msgstr "Feltöltés sikertelen"
 
@@ -3719,12 +3719,12 @@ msgstr "Helyi fájlok feltöltése"
 msgid "Upload Path"
 msgstr "Feltöltési útvonal"
 
-#: src/component/upload/dialog.vue:40
+#: src/component/upload/dialog.vue:34
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{n}/%{t} feltöltése…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:395
+#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
+#: src/component/upload/dialog.vue:378
 msgid "Uploading photos…"
 msgstr "Fényképek feltöltése…"
 
@@ -3732,7 +3732,7 @@ msgstr "Fényképek feltöltése…"
 msgid "Uploading…"
 msgstr "Feltöltés…"
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:98
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Az esetlegesen ilyen képeket tartalmazó feltöltések automatikusan elutasításra kerülnek."
 
@@ -3760,7 +3760,7 @@ msgstr "Felhasználó"
 msgid "User Guide"
 msgstr "Felhasználói útmutató"
 
-#: src/page/settings/general.vue:12
+#: src/page/settings/general.vue:6
 msgid "User Interface"
 msgstr "Felhasználói felület"
 
@@ -3949,7 +3949,7 @@ msgstr "Csak egy címkét tölthet le"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Kereshet egy helyszínt, vagy a térképen mozgathatja a jelölőt a pozíció megváltoztatásához:"
 
-#: src/component/upload/dialog.vue:100
+#: src/component/upload/dialog.vue:93
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Legfeljebb %{n} fájlt tölthet fel tesztelés céljából."
 
@@ -3998,7 +3998,7 @@ msgstr "Tartalom"
 #: src/component/navigation.vue:128 src/component/navigation.vue:152
 #: src/component/navigation.vue:158 src/component/navigation.vue:173
 #: src/component/navigation.vue:188 src/component/navigation.vue:240
-#: src/component/navigation.vue:246 src/page/settings/general.vue:270
+#: src/component/navigation.vue:246 src/page/settings/general.vue:260
 msgctxt "Noun"
 msgid "Archive"
 msgstr "Archívum"
