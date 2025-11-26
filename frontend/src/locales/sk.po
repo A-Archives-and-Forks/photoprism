@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Umožňuje upravovať metadáta, štítky a albumy viacerých obrázkov naraz."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Povoľte nástroj Import, aby ste mohli kopírovať alebo presúvať súbory z priečinka Import do priečinka Originály."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "Skryť"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Skryť súkromné položky z globálnych zobrazení a zároveň ich ponechať prístupné v časti Súkromné."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "Titulok"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archivovať"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Povoľte nástroj Import, aby ste mohli kopírovať alebo presúvať súbory z priečinka Import do priečinka Originály."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Skryť súkromné položky z globálnych zobrazení a zároveň ich ponechať prístupné v časti Súkromné."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Pridať súbory do vašej knižnice pomocou Web Upload."

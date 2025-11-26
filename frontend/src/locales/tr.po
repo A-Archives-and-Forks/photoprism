@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Birden fazla resmin meta verilerini, etiketlerini ve albümlerini aynı anda düzenlemeye izin verin."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Dosyaları İçe Aktarma klasöründen Orijinallere kopyalamak veya taşımak için İçe Aktarma aracını etkinleştirin."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "Gizle"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Özel öğeleri genel görünümlerden gizlerken Özel bölümünde erişilebilir tutun."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "Başlık"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arşiv"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Dosyaları İçe Aktarma klasöründen Orijinallere kopyalamak veya taşımak için İçe Aktarma aracını etkinleştirin."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Özel öğeleri genel görünümlerden gizlerken Özel bölümünde erişilebilir tutun."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Web Yükleme aracılığıyla kitaplığınıza dosya ekleyin."

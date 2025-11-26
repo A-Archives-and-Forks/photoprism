@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Ceadaigh eagarthóireacht a dhéanamh ar mheiteashonraí, lipéid agus albaim ilphictiúr ag an am céanna."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Cumasaigh an uirlis Iompórtála chun comhaid a chóipeáil nó a bhogadh ón bhfillteán Iompórtála go dtí na Bunchóipeanna."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Folaigh"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Folaigh míreanna príobháideacha ó radhairc dhomhanda agus coinnigh rochtain orthu sa rannán Príobháideach."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4013,12 +4015,6 @@ msgstr "Teideal"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Cartlann"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Cumasaigh an uirlis Iompórtála chun comhaid a chóipeáil nó a bhogadh ón bhfillteán Iompórtála go dtí na Bunchóipeanna."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Folaigh míreanna príobháideacha ó radhairc dhomhanda agus coinnigh rochtain orthu sa rannán Príobháideach."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Cuir comhaid le do leabharlann trí Uaslódáil Gréasáin."

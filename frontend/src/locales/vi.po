@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Cho phép chỉnh sửa metadata, nhãn và album của nhiều hình ảnh cùng một lúc."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Bật công cụ Nhập để sao chép hoặc di chuyển tệp từ thư mục Nhập sang thư mục Gốc."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Trốn"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Ẩn các mục riêng tư khỏi các chế độ xem chung trong khi vẫn giữ chúng có thể truy cập được trong phần Riêng tư."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4015,12 +4017,6 @@ msgstr "Tiêu đề"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Lưu trữ"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Bật công cụ Nhập để sao chép hoặc di chuyển tệp từ thư mục Nhập sang thư mục Gốc."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Ẩn các mục riêng tư khỏi các chế độ xem chung trong khi vẫn giữ chúng có thể truy cập được trong phần Riêng tư."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Thêm tệp vào thư viện của bạn thông qua Tải lên web."

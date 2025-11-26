@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "여러 사진의 메타데이터, 레이블 및 앨범을 한 번에 편집할 수 있습니다."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "가져오기 도구를 활성화하여 가져오기 폴더에서 원본으로 파일을 복사하거나 이동합니다."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "숨기기"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "비공개 항목은 글로벌 보기에서 숨기고 비공개 섹션에서는 계속 액세스할 수 있습니다."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "주제"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "보관"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "가져오기 도구를 활성화하여 가져오기 폴더에서 원본으로 파일을 복사하거나 이동합니다."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "비공개 항목은 글로벌 보기에서 숨기고 비공개 섹션에서는 계속 액세스할 수 있습니다."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "웹 업로드로 라이브러리에 파일을 추가하세요."

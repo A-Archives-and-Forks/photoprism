@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Mahdollistaa useiden kuvien metatietojen, tarrojen ja albumien muokkaamisen kerralla."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Ota käyttöön Tuo-työkalu kopioidaksesi tai siirtäksesi tiedostoja Tuo-kansiosta Alkuperäiset-kansioon."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Piilota"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Piilota yksityiset kohteet globaaleista näkymistä, mutta pidä ne saatavilla Yksityiset-osiossa."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4013,12 +4015,6 @@ msgstr "Otsikko"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arkisto"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Ota käyttöön Tuo-työkalu kopioidaksesi tai siirtäksesi tiedostoja Tuo-kansiosta Alkuperäiset-kansioon."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Piilota yksityiset kohteet globaaleista näkymistä, mutta pidä ne saatavilla Yksityiset-osiossa."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Lisää tiedostoja kirjastoosi verkkoselaimen kautta."

@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "允許一次性編輯多張圖片的元資料、標籤和相簿。"
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "啟用匯入工具，即可將檔案從匯入資料夾複製或移至原始資料夾。"
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "隱藏"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "將私人項目從全域視圖隱藏，同時保留其在私人部分的存取權限。"
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "標題"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "封存"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "啟用匯入工具，即可將檔案從匯入資料夾複製或移至原始資料夾。"
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "將私人項目從全域視圖隱藏，同時保留其在私人部分的存取權限。"
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "從網頁上傳檔案到收藏庫。"

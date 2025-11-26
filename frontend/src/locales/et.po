@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Võimaldab korraga mitme pildi metaandmete, siltide ja albumite redigeerimist."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Lubage tööriist Import, et kopeerida või teisaldada faile kaustast Import originaalidesse."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Peida"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Peida privaatsed elemendid globaalsetest vaadetest, säilitades samas nende kättesaadavuse privaatses sektsioonis."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4015,12 +4017,6 @@ msgstr "Pealkiri"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Arhiiv"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Lubage tööriist Import, et kopeerida või teisaldada faile kaustast Import originaalidesse."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Peida privaatsed elemendid globaalsetest vaadetest, säilitades samas nende kättesaadavuse privaatses sektsioonis."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Lisa faile oma fototeeki üleslaadimise teel."

@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Galima vienu metu redaguoti kelių nuotraukų metaduomenis, etiketes ir albumus."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Įjunkite importavimo įrankį, kad kopijuotumėte arba perkeltumėte failus iš aplanko Importas į aplanko Originalai."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "Paslėpti"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Paslėpkite privačius elementus nuo bendrųjų rodinių, tačiau palikite juos prieinamus privačiame skyriuje."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "Pavadinimas"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Archyvas"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Įjunkite importavimo įrankį, kad kopijuotumėte arba perkeltumėte failus iš aplanko Importas į aplanko Originalai."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Paslėpkite privačius elementus nuo bendrųjų rodinių, tačiau palikite juos prieinamus privačiame skyriuje."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Pridėkite failų į savo biblioteką naudodami \"Web Upload\"."

@@ -397,8 +397,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Destûrê bide guherandina metadata, etîket û albûmên gelek wêneyan di heman demê de."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Amûra Import çalak bike da ku pelan ji peldanka Import ber bi Orjînalan ve kopî bike an jî biguhezîne."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1689,8 +1690,9 @@ msgid "Hide"
 msgstr "Veşartin"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Tiştên taybet ji dîtinên gerdûnî veşêre û di heman demê de wan di beşa Taybet de gihînbar bihêle."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4016,12 +4018,6 @@ msgstr "ناونیشان"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "ئەرشیف"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Amûra Import çalak bike da ku pelan ji peldanka Import ber bi Orjînalan ve kopî bike an jî biguhezîne."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Tiştên taybet ji dîtinên gerdûnî veşêre û di heman demê de wan di beşa Taybet de gihînbar bihêle."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "زیادکردنی پەڕگەکان بۆ کتێبخانەکەت لەڕێگای بارکردنی وێب."

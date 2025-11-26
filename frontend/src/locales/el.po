@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Επιτρέπει την επεξεργασία των μεταδεδομένων, των ετικετών και των άλμπουμ πολλών εικόνων ταυτόχρονα."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Ενεργοποιήστε το εργαλείο Εισαγωγή για να αντιγράψετε ή να μετακινήσετε αρχεία από το φάκελο Εισαγωγή στα Πρωτότυπα."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Απόκρυψη"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Απόκρυψη ιδιωτικών στοιχείων από τις γενικές προβολές, διατηρώντας τα όμως προσβάσιμα στην ενότητα Ιδιωτικά."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4013,12 +4015,6 @@ msgstr "Τίτλος"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Αρχείο"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Ενεργοποιήστε το εργαλείο Εισαγωγή για να αντιγράψετε ή να μετακινήσετε αρχεία από το φάκελο Εισαγωγή στα Πρωτότυπα."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Απόκρυψη ιδιωτικών στοιχείων από τις γενικές προβολές, διατηρώντας τα όμως προσβάσιμα στην ενότητα Ιδιωτικά."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Προσθήκη αρχείων στην βιβλιοθήκη μέσω Web Upload."

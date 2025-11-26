@@ -394,8 +394,9 @@ msgid "Allow editing the metadata, labels, and albums of multiple pictures at on
 msgstr "Baimendu hainbat argazkiren metadatuak, etiketak eta albumak aldi berean editatzea."
 
 #: src/page/settings/general.vue:194
+#, fuzzy
 msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Gaitu Inportazio tresna fitxategiak Inportazio karpetatik Jatorrizkoak karpetara kopiatu edo mugitzeko."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
@@ -1686,8 +1687,9 @@ msgid "Hide"
 msgstr "Ezkutatu"
 
 #: src/page/settings/general.vue:148
+#, fuzzy
 msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgstr "Ezkutatu elementu pribatuak ikuspegi orokorretatik, Pribatua atalean eskuragarri mantenduz."
 
 #: src/options/options.js:381
 msgid "High"
@@ -4013,12 +4015,6 @@ msgstr "Izenburua"
 msgctxt "Verb"
 msgid "Archive"
 msgstr "Artxiboa"
-
-#~ msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
-#~ msgstr "Gaitu Inportazio tresna fitxategiak Inportazio karpetatik Jatorrizkoak karpetara kopiatu edo mugitzeko."
-
-#~ msgid "Hide private items from global views while keeping them accessible in the Private section."
-#~ msgstr "Ezkutatu elementu pribatuak ikuspegi orokorretatik, Pribatua atalean eskuragarri mantenduz."
 
 #~ msgid "Add files to your library via Web Upload."
 #~ msgstr "Gehitu fitxategiak zure liburutegian web-karga bidez."
