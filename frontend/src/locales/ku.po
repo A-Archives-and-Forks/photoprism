@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Kurdish <https://translate.photoprism.app/projects/photoprism/frontend/ku/>\n"
 "Language: ku\n"
@@ -386,35 +386,31 @@ msgstr "هەموو ساڵەکان"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Destûrê bide mîhengkirin û bikaranîna sepan û karûbarên girêdayî ji bo barkirin û senkronîzasyona ji dûr ve."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Destûrê bide guherandina metadatayên wekî sernav, ravekirin, dîrok û cih."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Destûrê bide guherandina metadata, etîket û albûmên gelek wêneyan di heman demê de."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Ji bo azadkirina cîhê hilanînê, destûr bidin ku pel bi awayekî mayînde werin jêbirin."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Destûrê bide bikarhêneran ku wêne û vîdyoyan arşîv bikin da ku ew bêyî ku werin jêbirin werin veşartin."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Destûrê bide bikarhêneran ku girêdanan biafirînin û parve bikin, û parvekirinê bi karûbarên girêdayî re çalak bikin."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Destûrê bide bikarhêneran ku wêne û vîdyoyên nû bi rêya navrûya webê bar bikin."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1343,11 +1339,11 @@ msgstr "Moda debugê çalak bike da ku têketinên zêde nîşan bide û di çar
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Daxistina pelên orîjînal û yên alîgir ji navrûya webê çalak bike."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Naskirina rû û dîtina Mirovan çalak bike da ku bi hêsanî kesên ku hûn nas dikin bibînî."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1355,7 +1351,11 @@ msgstr "Taybetmendiyên nû yên ku dibe ku netemam an bêîstiqrar bin çalak b
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Geroka pelan çalak bike da ku di nav avahiya peldanka Originals de bigere."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Amûra Import çalak bike da ku pelan ji peldanka Import ber bi Orjînalan ve kopî bike an jî biguhezîne."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Veşartin"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Tiştên taybet ji dîtinên gerdûnî veşêre û di heman demê de wan di beşa Taybet de gihînbar bihêle."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3220,31 +3220,31 @@ msgstr "Tenê Girîng Nîşan Bide"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Ji bo şopandina çalakiyê û çareserkirina pirsgirêkan, tomarên di navrûya webê de nîşan bide."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Albûmên jîr nîşan bidin ku wêneyan li gorî bûyer, rêwîtî, an cîhê kom dikin."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Rûpela Hesabê nîşan bide da ku bikarhêner bikaribin profîl û mîhengên ewlehiyê yên xwe birêve bibin."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Dîtina Salnameyê nîşan bide da ku pirtûkxaneyê li gorî sal û mehê bigerî."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Beşa Etîketan nîşan bide da ku etîketên ji hêla AI ve hatine çêkirin bibînin û birêve bibin."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Beşa Pirtûkxaneyê nîşan bide da ku pirtûkxaneya medyayê navnîş bike, birêve bibe û çavdêrî bike."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Dîtina Cihan bi nexşeyên înteraktîf nîşan bide da ku tu bikaribî wêneyan li gorî cihê bigerî."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

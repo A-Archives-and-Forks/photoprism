@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language-Team: Chinese (Traditional) <https://translate.photoprism.app/projects/photoprism/frontend/zh_Hant/>\n"
 "Language: zh_TW\n"
@@ -386,35 +386,31 @@ msgstr "所有年份"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "允許配置和使用已連接的應用程式和服務進行遠端上傳和同步。"
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "允許編輯元數據，例如標題、描述、日期和地點。"
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "允許一次性編輯多張圖片的元資料、標籤和相簿。"
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "允許永久刪除檔案以釋放儲存空間。"
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "允許用戶將照片和影片存檔，使其隱藏而不被刪除。"
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "允許用戶建立和共享鏈接，並啟用與已連接服務的共享。"
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "允許用戶透過網頁介面上傳新的照片和影片。"
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1343,11 +1339,11 @@ msgstr "启用调试模式可显示更多日志，帮助排除故障。"
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "允許從網頁介面下載原始文件和邊車文件。"
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "啟用人臉辨識和人物視圖，輕鬆找到您認識的人。"
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1355,7 +1351,11 @@ msgstr "啟用可能不完整或不穩定的新功能。"
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "啟用檔案瀏覽器以瀏覽 Originals 資料夾結構。"
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "啟用匯入工具，即可將檔案從匯入資料夾複製或移至原始資料夾。"
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "隱藏"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "將私人項目從全域視圖隱藏，同時保留其在私人部分的存取權限。"
 
 #: src/options/options.js:381
 msgid "High"
@@ -3220,31 +3220,31 @@ msgstr "僅顯示重要內容"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "在網頁介面中顯示日誌，以便監控活動和解決問題。"
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "顯示智慧相冊，按場合、旅行或地點將照片分組。"
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "顯示「帳戶」頁面，以便使用者可以管理其個人資料和安全性設定。"
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "顯示日曆視圖，按年和月瀏覽圖書館。"
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "顯示「標籤」部分，以查看和管理 AI 產生的標籤。"
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "顯示「媒體庫」部分，用於索引、管理和監控媒體庫。"
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "顯示帶有互動式地圖的地點視圖，以便您可以按位置瀏覽照片。"
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

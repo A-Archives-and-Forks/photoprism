@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Slovak <https://translate.photoprism.app/projects/photoprism/frontend/sk/>\n"
 "Language: sk\n"
@@ -386,35 +386,31 @@ msgstr "Všetky Roky"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Umožňuje konfiguráciu a používanie pripojených aplikácií a služieb na vzdialené odosielanie a synchronizáciu."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Umožniť úpravu metadát, ako je názov, opis, dátum a umiestnenie."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Umožňuje upravovať metadáta, štítky a albumy viacerých obrázkov naraz."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Povoľte trvalé odstránenie súborov, aby ste uvoľnili miesto v úložisku."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Umožnite používateľom archivovať fotografie a videá tak, aby boli skryté bez vymazania."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Umožnite používateľom vytvárať a zdieľať odkazy a umožnite zdieľanie s pripojenými službami."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Umožniť používateľom nahrávať nové fotografie a videá prostredníctvom webového rozhrania."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1343,11 +1339,11 @@ msgstr "Zapnutím režimu ladenia zobrazíte ďalšie protokoly a pomôžete pri
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Povolenie sťahovania pôvodných a vedľajších súborov z webového rozhrania."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Povoľte rozpoznávanie tváre a zobrazenie Ľudia, aby ste mohli ľahko nájsť známych ľudí."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1355,7 +1351,11 @@ msgstr "Povolenie nových funkcií, ktoré môžu byť neúplné alebo nestabiln
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Povoľte prehliadač súborov na navigáciu v štruktúre priečinkov Originály."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Povoľte nástroj Import, aby ste mohli kopírovať alebo presúvať súbory z priečinka Import do priečinka Originály."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Skryť"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Skryť súkromné položky z globálnych zobrazení a zároveň ich ponechať prístupné v časti Súkromné."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3220,31 +3220,31 @@ msgstr "Zobraziť iba dôležité"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Zobrazenie protokolov vo webovom rozhraní na monitorovanie činnosti a riešenie problémov."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Zobrazte inteligentné albumy, ktoré zoskupujú obrázky podľa príležitosti, cesty alebo miesta."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Zobrazte stránku Konto, aby používatelia mohli spravovať svoj profil a nastavenia zabezpečenia."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Zobrazenie zobrazenia Kalendár na prehľadávanie knižnice podľa rokov a mesiacov."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Zobrazte časť Štítky na zobrazenie a správu štítkov vytvorených umelou inteligenciou."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Zobrazenie časti Knižnica na indexovanie, správu a monitorovanie knižnice médií."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Zobrazte zobrazenie Miesta s interaktívnymi mapami, aby ste si mohli prezerať fotografie podľa miesta."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

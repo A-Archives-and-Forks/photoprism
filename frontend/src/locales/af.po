@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:50+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: af\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -383,35 +383,31 @@ msgstr "Alle Jare"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Laat die konfigurasie en gebruik van gekoppelde programme en dienste toe vir oplaaie en sinkronisering op afstand."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Laat redigering van metadata soos titel, beskrywing, datum en ligging toe."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Laat die redigering van die metadata, etikette en albums van verskeie prente gelyktydig toe."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Laat toe dat lêers permanent verwyder word om stoorplek vry te maak."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Laat gebruikers toe om foto's en video's te argiveer sodat hulle versteek word sonder om uitgevee te word."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Laat gebruikers toe om skakels te skep en te deel, en aktiveer deling met gekoppelde dienste."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Laat gebruikers toe om nuwe foto's en video's deur die webkoppelvlak op te laai."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1340,11 +1336,11 @@ msgstr "Aktiveer ontfoutmodus om bykomende logs te vertoon en help met foutspori
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Aktiveer die aflaai van oorspronklike en sykarlêers vanaf die webkoppelvlak."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Aktiveer gesigsherkenning en die Mense-aansig om maklik mense wat jy ken te vind."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1352,7 +1348,11 @@ msgstr "Aktiveer nuwe kenmerke wat onvolledig of onstabiel kan wees."
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Aktiveer die lêerblaaier om deur die Originals-lêergidsstruktuur te navigeer."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Aktiveer die Invoer-instrument om lêers van die Invoer-vouer na Oorspronklikes te kopieer of te skuif."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1686,8 +1686,8 @@ msgid "Hide"
 msgstr "Versteek"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Versteek private items van globale aansigte terwyl hulle toeganklik bly in die Privaat-afdeling."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3217,31 +3217,31 @@ msgstr "Wys slegs belangrike"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Wys logboeke in die webkoppelvlak om aktiwiteit te monitor en probleme op te los."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Wys slim albums wat foto's volgens geleentheid, reis of ligging groepeer."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Wys die Rekeningbladsy sodat gebruikers hul profiel en sekuriteitsinstellings kan bestuur."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Wys die Kalender-aansig om die biblioteek volgens jaar en maand te blaai."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Wys die Etikette-afdeling om KI-gegenereerde etikette te sien en te bestuur."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Wys die Biblioteek-afdeling om die mediabiblioteek te indekseer, te bestuur en te monitor."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Wys die Plekke-aansig met interaktiewe kaarte sodat jy foto's volgens ligging kan blaai."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

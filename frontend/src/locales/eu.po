@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:50+0000\n"
 "Last-Translator: Google Cloud Translation Basic <noreply-mt-google-translate@weblate.org>\n"
 "Language: eu\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -383,35 +383,31 @@ msgstr "Urte guztiak"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Baimendu konektatutako aplikazio eta zerbitzuen konfigurazioa eta erabilera urruneko kargatze eta sinkronizaziorako."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Baimendu metadatuak editatzea, hala nola izenburua, deskribapena, data eta kokapena."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Baimendu hainbat argazkiren metadatuak, etiketak eta albumak aldi berean editatzea."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Biltegiratze espazioa askatzeko, fitxategiak behin betiko ezabatzea baimendu."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Erabiltzaileei argazkiak eta bideoak artxibatzeko aukera eman, ezabatu gabe ezkutatuta egon daitezen."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Utzi erabiltzaileei estekak sortu eta partekatzen, eta gaitu konektatutako zerbitzuekin partekatzea."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Erabiltzaileei argazki eta bideo berriak web interfazearen bidez igotzeko aukera eman."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1340,11 +1336,11 @@ msgstr "Gaitu arazketa modua erregistro gehigarriak bistaratzeko eta arazoak kon
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Gaitu jatorrizko eta alboko fitxategiak web interfazetik deskargatzea."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Gaitu aurpegi-ezagutza eta Pertsonen ikuspegia ezagutzen dituzun pertsonak erraz aurkitzeko."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1352,7 +1348,11 @@ msgstr "Gaitu osatugabeak edo ezegonkorrak izan daitezkeen eginbide berriak."
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Gaitu fitxategi-arakatzailea Jatorrizkoak karpeta-egitura arakatzeko."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Gaitu Inportazio tresna fitxategiak Inportazio karpetatik Jatorrizkoak karpetara kopiatu edo mugitzeko."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1686,8 +1686,8 @@ msgid "Hide"
 msgstr "Ezkutatu"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Ezkutatu elementu pribatuak ikuspegi orokorretatik, Pribatua atalean eskuragarri mantenduz."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3217,31 +3217,31 @@ msgstr "Garrantzitsua bakarrik erakutsi"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Erakutsi erregistroak web interfazean jarduera kontrolatu eta arazoak konpontzeko."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Erakutsi argazkiak gertaera, bidaia edo kokapenaren arabera taldekatzen dituzten album adimendunak."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Erakutsi Kontuaren orria erabiltzaileek beren profila eta segurtasun-ezarpenak kudeatu ahal izan ditzaten."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Erakutsi Egutegiaren ikuspegia liburutegia urtez hilabetez hilabete arakatzeko."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Erakutsi Etiketak atala IA bidez sortutako etiketak ikusteko eta kudeatzeko."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Erakutsi Liburutegia atala multimedia liburutegia indexatzeko, kudeatzeko eta kontrolatzeko."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Erakutsi Lekuen ikuspegia mapa interaktiboekin, argazkiak kokapenaren arabera arakatu ahal izateko."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

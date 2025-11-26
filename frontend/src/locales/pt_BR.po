@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Portuguese (Brazil) <https://translate.photoprism.app/projects/photoprism/frontend/pt_BR/>\n"
 "Language: pt_BR\n"
@@ -386,35 +386,31 @@ msgstr "Todos os Anos"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Permitir a configuração e o uso de aplicativos e serviços conectados para uploads e sincronização remotos."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Permitir a edição de metadados, como título, descrição, data e local."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Permitir a edição de metadados, rótulos e álbuns de várias fotos ao mesmo tempo."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Permitir que os arquivos sejam excluídos permanentemente para liberar espaço de armazenamento."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Permita que os usuários arquivem fotos e vídeos para que eles fiquem ocultos sem serem excluídos."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Permita que os usuários criem e compartilhem links e ative o compartilhamento com serviços conectados."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Permitir que os usuários carreguem novas fotos e vídeos por meio da interface da Web."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1343,11 +1339,11 @@ msgstr "Ative o modo de depuração para exibir logs adicionais e ajudar na solu
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Permitir o download de arquivos originais e sidecar da interface da Web."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Ative o reconhecimento facial e a exibição Pessoas para encontrar facilmente pessoas que você conhece."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1355,7 +1351,11 @@ msgstr "Habilitar novos recursos que podem estar incompletos ou instáveis."
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Ative o navegador de arquivos para navegar na estrutura da pasta Originals."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Ative a ferramenta Importar para copiar ou mover arquivos da pasta Importar para Originais."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Esconder"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Oculte itens privados de exibições globais e mantenha-os acessíveis na seção Privado."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3220,31 +3220,31 @@ msgstr "Mostrar somente o importante"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Mostre os registros na interface da Web para monitorar a atividade e solucionar problemas."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Mostre álbuns inteligentes que agrupam fotos por ocasião, viagem ou local."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Mostre a página Account para que os usuários possam gerenciar suas configurações de perfil e segurança."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Mostre a visualização Calendar para navegar na biblioteca por ano e mês."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Mostre a seção Labels (Rótulos) para visualizar e gerenciar rótulos gerados por IA."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Mostre a seção Biblioteca para indexar, gerenciar e monitorar a biblioteca de mídia."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Mostre a visualização Places com mapas interativos para que você possa procurar fotos por local."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

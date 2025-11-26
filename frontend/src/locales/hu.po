@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: photoprism\n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Hungarian <https://translate.photoprism.app/projects/photoprism/frontend/hu/>\n"
 "Language: hu\n"
@@ -385,35 +385,31 @@ msgstr "Összes év"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Lehetővé teszi a csatlakoztatott alkalmazások és szolgáltatások konfigurálását és használatát távoli feltöltéshez és szinkronizáláshoz."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Lehetővé teszi a metaadatok, például a cím, a leírás, a dátum és a helyszín szerkesztését."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Lehetővé teszi több kép metaadatainak, címkéinek és albumainak szerkesztését egyszerre."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Engedélyezi a fájlok végleges törlését a tárhely felszabadítása érdekében."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Lehetővé teszi a felhasználók számára a fényképek és videók archiválását, így azok törlés nélkül elrejthetők."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Lehetővé teszi a felhasználók számára, hogy linkeket hozzanak létre és osszanak meg, és lehetővé teszi a megosztást a kapcsolódó szolgáltatásokkal."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Lehetővé teszi a felhasználók számára, hogy új fényképeket és videókat töltsenek fel a webes felületen keresztül."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1342,11 +1338,11 @@ msgstr "A hibakeresési mód engedélyezése további naplók megjelenítéséhe
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Engedélyezze az eredeti és oldalkocsis fájlok letöltését a webes felületről."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Az arcfelismerés és az Emberek nézet bekapcsolásával könnyedén megtalálhatja az ismerősöket."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1354,7 +1350,11 @@ msgstr "Engedélyezze az új funkciókat, amelyek hiányosak vagy instabilak leh
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Engedélyezze a fájlböngésző használatát az Eredeti mappaszerkezetben való navigáláshoz."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Engedélyezze az Importálás eszközt a fájlok másolásához vagy áthelyezéséhez az Importálás mappából az Eredeti mappába."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1688,8 +1688,8 @@ msgid "Hide"
 msgstr "Elrejt"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "A privát elemek elrejtése a globális nézetekből, miközben a Privát szekcióban elérhetőek maradnak."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3219,31 +3219,31 @@ msgstr "Csak a fontosak megjelenítése"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Naplók megjelenítése a webes felületen a tevékenység nyomon követése és a problémák elhárítása érdekében."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Olyan intelligens albumok megjelenítése, amelyek a képeket alkalom, utazás vagy helyszín szerint csoportosítják."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "A Fiók oldal megjelenítése, hogy a felhasználók kezelhessék profiljukat és biztonsági beállításaikat."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "A Naptár nézet megjelenítése a könyvtár év és hónap szerinti böngészéséhez."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "A Címkék szakasz megjelenítése az AI által generált címkék megtekintéséhez és kezeléséhez."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "A Könyvtár szakasz megjelenítése a médiatár indexeléséhez, kezeléséhez és felügyeletéhez."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Mutassa meg a Helyek nézetet interaktív térképekkel, hogy a fényképeket hely szerint böngészhesse."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"

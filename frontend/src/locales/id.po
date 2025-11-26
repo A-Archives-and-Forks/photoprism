@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: ci@photoprism.app\n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2025-11-23 13:04+0000\n"
+"PO-Revision-Date: 2025-11-26 10:49+0000\n"
 "Last-Translator: DeepL <noreply-mt-deepl@weblate.org>\n"
 "Language-Team: Indonesian <https://translate.photoprism.app/projects/photoprism/frontend/id/>\n"
 "Language: id\n"
@@ -386,35 +386,31 @@ msgstr "Dalam semua tahun"
 
 #: src/page/settings/general.vue:284
 msgid "Allow configuration and use of connected apps and services for remote uploads and sync."
-msgstr ""
+msgstr "Memungkinkan konfigurasi dan penggunaan aplikasi dan layanan yang terhubung untuk unggahan dan sinkronisasi jarak jauh."
 
 #: src/page/settings/general.vue:224
 msgid "Allow editing of metadata such as title, description, date, and location."
-msgstr ""
+msgstr "Memungkinkan pengeditan metadata seperti judul, deskripsi, tanggal, dan lokasi."
 
 #: src/page/settings/general.vue:239
 msgid "Allow editing the metadata, labels, and albums of multiple pictures at once."
-msgstr ""
-
-#: src/page/settings/general.vue:194
-msgid "Allow files to be copied or moved from the Import to the Originals folder."
-msgstr ""
+msgstr "Memungkinkan pengeditan metadata, label, dan album beberapa gambar sekaligus."
 
 #: src/page/settings/general.vue:269
 msgid "Allow files to be permanently deleted to free up storage space."
-msgstr ""
+msgstr "Izinkan file dihapus secara permanen untuk mengosongkan ruang penyimpanan."
 
 #: src/page/settings/general.vue:254
 msgid "Allow users to archive photos and videos so they are hidden without being deleted."
-msgstr ""
+msgstr "Memungkinkan pengguna untuk mengarsipkan foto dan video agar tersembunyi tanpa terhapus."
 
 #: src/page/settings/general.vue:209
 msgid "Allow users to create and share links, and enable sharing with connected services."
-msgstr ""
+msgstr "Memungkinkan pengguna untuk membuat dan berbagi tautan, dan mengaktifkan berbagi dengan layanan yang terhubung."
 
 #: src/page/settings/general.vue:164
 msgid "Allow users to upload new photos and videos through the web interface."
-msgstr ""
+msgstr "Memungkinkan pengguna mengunggah foto dan video baru melalui antarmuka web."
 
 #: src/component/share/dialog.vue:134
 msgid "Alternatively, you can upload files directly to WebDAV servers like Nextcloud."
@@ -1343,11 +1339,11 @@ msgstr "Aktifkan mode debug untuk menampilkan log tambahan dan membantu pemecaha
 
 #: src/page/settings/general.vue:179
 msgid "Enable downloading of original and sidecar files from the web interface."
-msgstr ""
+msgstr "Aktifkan pengunduhan file asli dan file sespan dari antarmuka web."
 
 #: src/page/settings/general.vue:88
 msgid "Enable face recognition and the People view to easily find people you know."
-msgstr ""
+msgstr "Aktifkan pengenalan wajah dan tampilan Orang untuk menemukan orang yang Anda kenal dengan mudah."
 
 #: src/page/settings/advanced.vue:53
 msgid "Enable new features that may be incomplete or unstable."
@@ -1355,7 +1351,11 @@ msgstr "Mengaktifkan fitur baru yang mungkin tidak lengkap atau tidak stabil."
 
 #: src/page/settings/general.vue:315
 msgid "Enable the file browser to navigate the Originals folder structure."
-msgstr ""
+msgstr "Aktifkan browser file untuk menavigasi struktur folder Asli."
+
+#: src/page/settings/general.vue:194
+msgid "Enable the Import tool to copy or move files from the Import folder to Originals."
+msgstr "Aktifkan alat Impor untuk menyalin atau memindahkan file dari folder Impor ke dokumen asli."
 
 #: src/page/settings/advanced.vue:395
 msgid "Enables RAW converter presets. May reduce performance."
@@ -1689,8 +1689,8 @@ msgid "Hide"
 msgstr "Sembunyikan"
 
 #: src/page/settings/general.vue:148
-msgid "Hide private content from global views while keeping it accessible in the Private section."
-msgstr ""
+msgid "Hide private items from global views while keeping them accessible in the Private section."
+msgstr "Menyembunyikan item pribadi dari tampilan global namun tetap dapat diakses di bagian Pribadi."
 
 #: src/options/options.js:381
 msgid "High"
@@ -3220,31 +3220,31 @@ msgstr "Tampilkan Hanya Penting"
 
 #: src/page/settings/general.vue:330
 msgid "Show logs in the web interface to monitor activity and troubleshoot problems."
-msgstr ""
+msgstr "Menampilkan log di antarmuka web untuk memantau aktivitas dan memecahkan masalah."
 
 #: src/page/settings/general.vue:118
 msgid "Show smart albums that group pictures by occasion, trip, or location."
-msgstr ""
+msgstr "Menampilkan album pintar yang mengelompokkan foto berdasarkan acara, perjalanan, atau lokasi."
 
 #: src/page/settings/general.vue:345
 msgid "Show the Account page so users can manage their profile and security settings."
-msgstr ""
+msgstr "Tampilkan halaman Akun agar pengguna dapat mengelola pengaturan profil dan keamanan mereka."
 
 #: src/page/settings/general.vue:103
 msgid "Show the Calendar view to browse the library by year and month."
-msgstr ""
+msgstr "Tampilkan tampilan Kalender untuk menelusuri perpustakaan berdasarkan tahun dan bulan."
 
 #: src/page/settings/general.vue:133
 msgid "Show the Labels section to view and manage AI-generated labels."
-msgstr ""
+msgstr "Tampilkan bagian Label untuk melihat dan mengelola label yang dibuat oleh AI."
 
 #: src/page/settings/general.vue:300
 msgid "Show the Library section to index, manage, and monitor the media library."
-msgstr ""
+msgstr "Tampilkan bagian Perpustakaan untuk mengindeks, mengelola, dan memantau perpustakaan media."
 
 #: src/page/settings/general.vue:360
 msgid "Show the Places view with interactive maps so you can browse photos by location."
-msgstr ""
+msgstr "Menampilkan tampilan Places dengan peta interaktif sehingga Anda dapat menelusuri foto berdasarkan lokasi."
 
 #: src/page/settings/content.vue:155
 msgid "Show Titles"
