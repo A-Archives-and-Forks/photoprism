@@ -91,40 +91,13 @@ func (c *ConfigValues) Load(fileName string) error {
 		return err
 	}
 
-	// 1. Ensure that there is at least one configuration for each model type,
-	//    so that adding a copy of the default configuration to the vision.yml file
-	//    is not required. We could alternatively require a model to included in
-	//    the "vision.yml" file, but set the defaults if the "Default" flag is set
-	//    while preserving explicit Run / Disabled overrides.
-	// 2. Use the default "Thresholds" if no custom thresholds are configured.
+	// Replace default placeholders with canonical defaults while respecting
+	// explicit Run / Disabled overrides.
+	c.applyDefaultModels()
 
-	for i, model := range c.Models {
-		if !model.Default {
-			continue
-		}
-
-		runType := model.Run
-		disabled := model.Disabled
-
-		switch model.Type {
-		case ModelTypeLabels:
-			c.Models[i] = NasnetModel.Clone()
-		case ModelTypeNsfw:
-			c.Models[i] = NsfwModel.Clone()
-		case ModelTypeFace:
-			c.Models[i] = FacenetModel.Clone()
-		case ModelTypeCaption:
-			c.Models[i] = CaptionModel.Clone()
-		}
-
-		if runType != RunAuto {
-			c.Models[i].Run = runType
-		}
-
-		if disabled {
-			c.Models[i].Disabled = disabled
-		}
-	}
+	// Add missing default models so users are not required to list them in
+	// vision.yml. Custom models continue to override defaults when present.
+	c.ensureDefaultModels()
 
 	for _, model := range c.Models {
 		model.ApplyEngineDefaults()
@@ -143,6 +116,74 @@ func (c *ConfigValues) Load(fileName string) error {
 	}
 
 	return nil
+}
+
+// applyDefaultModels swaps entries marked as Default with the built-in
+// models while keeping user-specified Run / Disabled overrides intact.
+func (c *ConfigValues) applyDefaultModels() {
+	for i, model := range c.Models {
+		if !model.Default {
+			continue
+		}
+
+		runType := model.Run
+		disabled := model.Disabled
+
+		switch model.Type {
+		case ModelTypeLabels:
+			c.Models[i] = NasnetModel.Clone()
+		case ModelTypeNsfw:
+			c.Models[i] = NsfwModel.Clone()
+		case ModelTypeFace:
+			c.Models[i] = FacenetModel.Clone()
+		case ModelTypeCaption:
+			c.Models[i] = CaptionModel.Clone()
+		default:
+			continue
+		}
+
+		if runType != RunAuto {
+			c.Models[i].Run = runType
+		}
+
+		if disabled {
+			c.Models[i].Disabled = disabled
+		}
+	}
+}
+
+// ensureDefaultModels appends built-in default models for any types
+// that are completely missing from the configuration. Custom models (enabled
+// or disabled) block the addition for their respective types so user intent is
+// preserved.
+func (c *ConfigValues) ensureDefaultModels() {
+	for _, defaultModel := range DefaultModels {
+		if defaultModel == nil {
+			continue
+		}
+
+		if c.hasModelType(defaultModel.Type) {
+			continue
+		}
+
+		c.Models = append(c.Models, defaultModel.Clone())
+	}
+}
+
+// hasModelType reports whether any configured model (enabled or disabled)
+// matches the provided type.
+func (c *ConfigValues) hasModelType(t ModelType) bool {
+	for _, model := range c.Models {
+		if model == nil {
+			continue
+		}
+
+		if model.Type == t {
+			return true
+		}
+	}
+
+	return false
 }
 
 // Save user settings to a file.
