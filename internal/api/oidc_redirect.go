@@ -109,10 +109,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		groups, groupOverage := oidc.GroupsFromClaims(idTokenClaims, groupClaim)
 		moreGroups, moreOverage := oidc.GroupsFromClaims(userInfo.Claims, groupClaim)
 
-		if len(groups) == 0 && len(moreGroups) > 0 {
-			groups = moreGroups
+		// Merge groups, since some IDPs split memberships across ID tokens and user info.
+		// Appending is safe because downstream helpers normalize and deduplicate.
+		if len(moreGroups) > 0 {
+			groups = append(groups, moreGroups...)
 		}
 
+		// "Overage" means the IdP omitted some or all groups because the user has too many; tokens carry a marker (`_claim_names.groups`).
 		if moreOverage {
 			groupOverage = true
 		}
@@ -122,7 +125,7 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		if len(requiredGroups) > 0 {
 			switch {
 			case groupOverage && len(groups) == 0:
-				message := "group claim overage; cannot validate required groups"
+				message := "IdP omitted some or all groups; cannot validate required groups"
 				event.AuditErr([]string{clientIp, "create session", "oidc", message})
 				event.LoginError(clientIp, "oidc", userName, userAgent, message)
 				c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(i18n.ErrForbidden)))
