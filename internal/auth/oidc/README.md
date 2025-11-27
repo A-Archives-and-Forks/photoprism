@@ -71,7 +71,7 @@ The following features are supported by the current implementation:
 #### Integration Guide for Entra ID
 
 1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the tenant ID and the application (client) ID.
-2. Redirect URI: add `https://app.localssl.dev/api/v1/oidc/redirect` (for Traefik) or `http://localhost:2342/api/v1/oidc/redirect` for local dev.
+2. Redirect URI: add `https://{hostname}/api/v1/oidc/redirect`, see [https://docs.photoprism.app/getting-started/advanced/openid-connect/](https://docs.photoprism.app/getting-started/advanced/openid-connect/#redirect-url).
 3. Token configuration → **Add optional claim** → **Token type** = ID (and Access if you prefer) → **Groups** → choose **Security groups**.
 4. Under “Emit groups as”, pick **Group name** (cloud-only) or **sAMAccountName** / **DNSDomainName\sAMAccountName** for synced AD; this makes tokens carry human-friendly names instead of GUIDs.
 5. If you keep **Group ID**, leave PhotoPrism config in GUID mode; if you emit names, set `PHOTOPRISM_OIDC_GROUP` / `PHOTOPRISM_OIDC_GROUP_ROLE` to those names (lowercase in config for consistency). When Microsoft signals group **overage** (too many groups to fit in the token), it sets `_claim_names.groups` and may omit groups entirely; PhotoPrism will currently block login if required groups are configured and no groups are present.
