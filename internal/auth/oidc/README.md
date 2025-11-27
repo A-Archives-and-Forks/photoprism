@@ -68,7 +68,7 @@ The following features are supported by the current implementation:
 - `--oidc-group-role` / `PHOTOPRISM_OIDC_GROUP_ROLE`: mapping `GROUP=ROLE` (roles: `admin|manager|user|contributor|viewer|guest|none`). First match wins.
 - `--oidc-role` / `PHOTOPRISM_OIDC_ROLE`: fallback role if no group mapping matches (defaults to `guest`).
 
-#### Integration Guide
+#### Integration Guide for Entra ID
 
 1. Register an app in Microsoft Entra ID (v2) or reuse your existing PhotoPrism registration. Note the tenant ID and the application (client) ID.
 2. Redirect URI: add `https://app.localssl.dev/api/v1/oidc/redirect` (for Traefik) or `http://localhost:2342/api/v1/oidc/redirect` for local dev.
