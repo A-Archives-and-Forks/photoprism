@@ -17,11 +17,11 @@
     <div v-else class="p-page__content">
       <p-scroll :load-more="loadMore" :load-disabled="scrollDisabled" :load-distance="scrollDistance" :loading="loading"> </p-scroll>
 
-      <p-photo-clipboard :refresh="refresh" :album="model" context="album"></p-photo-clipboard>
+      <p-photo-clipboard :refresh="refresh" :album="model" :context="contexts.Album"></p-photo-clipboard>
 
       <p-photo-view-mosaic
         v-if="settings.view === 'mosaic'"
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -32,7 +32,7 @@
       ></p-photo-view-mosaic>
       <p-photo-view-list
         v-else-if="settings.view === 'list'"
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -45,7 +45,7 @@
       ></p-photo-view-list>
       <p-photo-view-cards
         v-else
-        context="album"
+        :context="contexts.Album"
         :photos="results"
         :select-mode="selectMode"
         :filter="filter"
@@ -64,6 +64,7 @@
 import { Photo } from "model/photo";
 import Album from "model/album";
 import Thumb from "model/thumb";
+import * as contexts from "options/contexts";
 import PAlbumToolbar from "component/album/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
 import PPhotoViewCards from "component/photo/view/cards.vue";
@@ -108,6 +109,7 @@ export default {
       hasPlaces: this.$config.allow("places", "view") && this.$config.feature("places"),
       canSearchPlaces: this.$config.allow("places", "search") && this.$config.feature("places"),
       canAccessLibrary: this.$config.allow("photos", "access_library"),
+      contexts,
       subscriptions: [],
       listen: false,
       dirty: false,
