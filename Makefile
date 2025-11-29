@@ -99,7 +99,7 @@ show-rev:
 show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
-fmt: fmt-js fmt-go swag-fmt
+fmt: fmt-js fmt-go fmt-swag
 clean-local: clean-local-config clean-local-cache
 upgrade: dep-upgrade-js dep-upgrade
 devtools: install-go dep-npm
@@ -949,6 +949,7 @@ fmt-go:
 	go fmt ./pkg/... ./internal/... ./cmd/... ./.../internal/...
 	gofmt -w -s pkg internal cmd
 	goimports -w -local "github.com/photoprism" pkg internal cmd
+fmt-swag: swag-fmt
 tidy:
 	go mod tidy
 users:
