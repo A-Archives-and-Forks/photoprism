@@ -42,6 +42,41 @@ func TestConfig_Usage(t *testing.T) {
 	assert.Equal(t, c.Usage().FilesUsed, uint64(0))
 }
 
+func TestUsage_Ratios(t *testing.T) {
+	t.Run("FilesUsedRatio", func(t *testing.T) {
+		t.Run("ZeroUsage", func(t *testing.T) {
+			assert.Zero(t, (&Usage{}).FilesUsedRatio())
+		})
+		t.Run("WithTotals", func(t *testing.T) {
+			assert.InEpsilon(t, 0.5, (&Usage{FilesUsed: 50, FilesTotal: 100}).FilesUsedRatio(), 0.001)
+		})
+		t.Run("MissingTotals", func(t *testing.T) {
+			assert.InEpsilon(t, 0.01, (&Usage{FilesUsed: 1, FilesTotal: 0}).FilesUsedRatio(), 0.001)
+		})
+	})
+	t.Run("UsersUsedRatio", func(t *testing.T) {
+		t.Run("NoQuota", func(t *testing.T) {
+			assert.Zero(t, (&Usage{UsersActive: 5, UsersQuota: 0}).UsersUsedRatio())
+		})
+		t.Run("NoActive", func(t *testing.T) {
+			assert.Zero(t, (&Usage{UsersActive: 0, UsersQuota: 10}).UsersUsedRatio())
+		})
+		t.Run("WithQuota", func(t *testing.T) {
+			assert.InEpsilon(t, 0.5, (&Usage{UsersActive: 3, UsersQuota: 6}).UsersUsedRatio(), 0.001)
+		})
+	})
+	t.Run("ActiveCountsNonNegative", func(t *testing.T) {
+		c := TestConfig()
+		FlushUsageCache()
+		c.options.UsersQuota = 0
+
+		usage := c.Usage()
+
+		assert.GreaterOrEqual(t, usage.UsersActive, 0)
+		assert.GreaterOrEqual(t, usage.GuestsActive, 0)
+	})
+}
+
 func TestConfig_Quota(t *testing.T) {
 	c := TestConfig()
 
