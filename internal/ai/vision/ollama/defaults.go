@@ -4,7 +4,7 @@ const (
 	// CaptionPrompt instructs Ollama caption models to emit a single, active-voice sentence.
 	CaptionPrompt = "Create a caption with exactly one sentence in the active voice that describes the main visual content. Begin with the main subject and clear action. Avoid text formatting, meta-language, and filler words."
 	// CaptionModel names the default caption model bundled with our adapter defaults.
-	CaptionModel = "gemma3"
+	CaptionModel = "gemma3:latest"
 	// LabelConfidenceDefault is used when the model omits the confidence field.
 	LabelConfidenceDefault = 0.5
 	// LabelSystem defines the system prompt shared by Ollama label models. It aims to ensure that single-word nouns are returned.

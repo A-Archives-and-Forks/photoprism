@@ -65,7 +65,7 @@ Models:
       Name: embeddings
       Outputs: 512
 - Type: caption
-  Name: gemma3
+  Model: gemma3:latest
   Version: latest
   Engine: ollama
   Resolution: 720

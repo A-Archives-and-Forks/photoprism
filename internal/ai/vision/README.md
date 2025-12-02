@@ -1,6 +1,6 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** November 25, 2025
+**Last Updated:** December 2, 2025
 
 ### Overview
 
@@ -51,20 +51,29 @@ The `vision.yml` file is usually kept in the `storage/config` directory (overrid
 
 #### Model Options
 
-| Option            | Default                                                                                 | Description                                                                        |
-|-------------------|-----------------------------------------------------------------------------------------|------------------------------------------------------------------------------------|
-| `Temperature`     | engine default (`0.1` for Ollama; unset for OpenAI)                                     | Controls randomness; clamped to `[0,2]`. `gpt-5*` OpenAI models are forced to `0`. |
-| `TopP`            | engine default (`0.9` for some Ollama label defaults; unset for OpenAI)                 | Nucleus sampling parameter.                                                        |
-| `MaxOutputTokens` | engine default (OpenAI caption 512, labels 1024; Ollama label default 256)              | Upper bound on generated tokens; adapters raise low values to defaults.            |
-| `ForceJson`       | engine-specific (`true` for OpenAI labels; `false` for Ollama labels; captions `false`) | Forces structured output when enabled.                                             |
-| `SchemaVersion`   | derived from schema name                                                                | Override when coordinating schema migrations.                                      |
-| `Stop`            | engine default                                                                          | Array of stop sequences (e.g., `["\\n\\n"]`).                                      |
-| `NumThread`       | runtime auto                                                                            | Caps CPU threads for local engines.                                                |
-| `NumCtx`          | engine default                                                                          | Context window length (tokens).                                                    |
+The model `Options` adjust model parameters such as temperature, top-p, and schema constraints when using [Ollama](ollama/README.md) or [OpenAI](openai/README.md):
+
+| Option            | Default                                                                                 | Description                                                                             |
+|-------------------|-----------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------|
+| `Temperature`     | engine default (`0.1` for Ollama)                                                       | Controls randomness with a value between `0.01` and `2.0`; not used for OpenAI's GPT-5. |
+| `TopK`            | engine default (model-specific)                                                         | Limits sampling to the top K tokens to reduce rare or noisy outputs.                    |
+| `TopP`            | engine default (`0.9` for some Ollama label defaults; unset for OpenAI)                 | Nucleus sampling; keeps the smallest token set whose cumulative probability ≥ `p`.      |
+| `MinP`            | engine default (unset unless provided)                                                  | Drops tokens whose probability mass is below `p`, trimming the long tail.               |
+| `TypicalP`        | engine default (unset unless provided)                                                  | Keeps tokens with typicality under the threshold; combine with TopP/MinP for flow.      |
+| `Seed`            | random per run (unless set)                                                             | Fix for reproducible outputs; unset for more variety between runs.                      |
+| `RepeatLastN`     | engine default (model-specific)                                                         | Number of recent tokens considered for repetition penalties.                            |
+| `RepeatPenalty`   | engine default (model-specific)                                                         | Multiplier >1 discourages repeating the same tokens or phrases.                         |
+| `NumPredict`      | engine default (Ollama only)                                                            | Ollama-specific max output tokens; synonymous intent with `MaxOutputTokens`.            |
+| `MaxOutputTokens` | engine default (OpenAI caption 512, labels 1024)                                        | Upper bound on generated tokens; adapters raise low values to defaults.                 |
+| `ForceJson`       | engine-specific (`true` for OpenAI labels; `false` for Ollama labels; captions `false`) | Forces structured output when enabled.                                                  |
+| `SchemaVersion`   | derived from schema name                                                                | Override when coordinating schema migrations.                                           |
+| `Stop`            | engine default                                                                          | Array of stop sequences (e.g., `["\\n\\n"]`).                                           |
+| `NumThread`       | runtime auto                                                                            | Caps CPU threads for local engines.                                                     |
+| `NumCtx`          | engine default                                                                          | Context window length (tokens).                                                         |
 
 #### Model Service
 
-Used for Ollama/OpenAI (and any future HTTP engines). All credentials and identifiers support `${ENV_VAR}` expansion.
+Configures the endpoint URL, method, format, and authentication for [Ollama](ollama/README.md), [OpenAI](openai/README.md), and other engines that perform remote HTTP requests:
 
 | Field                              | Default                                  | Notes                                                |
 |------------------------------------|------------------------------------------|------------------------------------------------------|
@@ -78,6 +87,8 @@ Used for Ollama/OpenAI (and any future HTTP engines). All credentials and identi
 | `FileScheme`                       | set by engine alias (`data` or `base64`) | Controls image transport.                            |
 | `Disabled`                         | `false`                                  | Disable the endpoint without removing the model.     |
 
+> **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present.
+ 
 ### Field Behavior & Precedence
 
 - Model identifier resolution order: `Service.Model` → `Model` → `Name`. `Model.GetModel()` returns `(id, name, version)` where Ollama receives `name:version` and other engines receive `name` plus a separate `Version`.

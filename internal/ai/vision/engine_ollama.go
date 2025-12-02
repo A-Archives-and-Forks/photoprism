@@ -78,20 +78,20 @@ func (ollamaDefaults) SchemaTemplate(model *Model) string {
 }
 
 // Options returns the Ollama service request options.
-func (ollamaDefaults) Options(model *Model) *ApiRequestOptions {
+func (ollamaDefaults) Options(model *Model) *ModelOptions {
 	if model == nil {
 		return nil
 	}
 
 	switch model.Type {
 	case ModelTypeLabels:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Temperature: DefaultTemperature,
 			TopP:        0.9,
 			Stop:        []string{"\n\n"},
 		}
 	case ModelTypeCaption:
-		return &ApiRequestOptions{
+		return &ModelOptions{
 			Temperature: DefaultTemperature,
 		}
 	default:

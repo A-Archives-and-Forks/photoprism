@@ -158,7 +158,7 @@ func TestModelGetOptionsRespectsCustomValues(t *testing.T) {
 	model := &Model{
 		Type:   ModelTypeLabels,
 		Engine: ollama.EngineName,
-		Options: &ApiRequestOptions{
+		Options: &ModelOptions{
 			Temperature: 5,
 			TopP:        0.95,
 			Stop:        []string{"CUSTOM"},
@@ -183,7 +183,7 @@ func TestModelGetOptionsFillsMissingFields(t *testing.T) {
 	model := &Model{
 		Type:    ModelTypeLabels,
 		Engine:  ollama.EngineName,
-		Options: &ApiRequestOptions{},
+		Options: &ModelOptions{},
 	}
 
 	model.ApplyEngineDefaults()

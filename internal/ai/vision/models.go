@@ -89,7 +89,7 @@ var (
 	}
 	CaptionModel = &Model{
 		Type:       ModelTypeCaption,
-		Name:       ollama.CaptionModel,
+		Model:      ollama.CaptionModel,
 		Version:    VersionLatest,
 		Engine:     ollama.EngineName,
 		Resolution: 720, // Original aspect ratio, with a max size of 720 x 720 pixels.

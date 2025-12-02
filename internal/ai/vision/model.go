@@ -46,7 +46,7 @@ type Model struct {
 	SchemaFile    string                `yaml:"SchemaFile,omitempty" json:"schemaFile,omitempty"`
 	Resolution    int                   `yaml:"Resolution,omitempty" json:"resolution,omitempty"`
 	TensorFlow    *tensorflow.ModelInfo `yaml:"TensorFlow,omitempty" json:"tensorflow,omitempty"`
-	Options       *ApiRequestOptions    `yaml:"Options,omitempty" json:"options,omitempty"`
+	Options       *ModelOptions         `yaml:"Options,omitempty" json:"options,omitempty"`
 	Service       Service               `yaml:"Service,omitempty" json:"service,omitempty"`
 	Path          string                `yaml:"Path,omitempty" json:"-"`
 	Disabled      bool                  `yaml:"Disabled,omitempty" json:"disabled,omitempty"`
@@ -334,12 +334,12 @@ func (m *Model) GetSource() string {
 
 // GetOptions returns the API request options, applying engine defaults on
 // demand. Nil receivers return nil.
-func (m *Model) GetOptions() *ApiRequestOptions {
+func (m *Model) GetOptions() *ModelOptions {
 	if m == nil {
 		return nil
 	}
 
-	var engineDefaults *ApiRequestOptions
+	var engineDefaults *ModelOptions
 	if defaults := m.engineDefaults(); defaults != nil {
 		engineDefaults = cloneOptions(defaults.Options(m))
 	}
@@ -348,7 +348,7 @@ func (m *Model) GetOptions() *ApiRequestOptions {
 		switch m.Type {
 		case ModelTypeLabels, ModelTypeCaption, ModelTypeGenerate:
 			if engineDefaults == nil {
-				engineDefaults = &ApiRequestOptions{}
+				engineDefaults = &ModelOptions{}
 			}
 			normalizeOptions(engineDefaults)
 			m.Options = engineDefaults
@@ -364,7 +364,7 @@ func (m *Model) GetOptions() *ApiRequestOptions {
 	return m.Options
 }
 
-func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
+func mergeOptionDefaults(target, defaults *ModelOptions) {
 	if target == nil || defaults == nil {
 		return
 	}
@@ -402,7 +402,7 @@ func mergeOptionDefaults(target, defaults *ApiRequestOptions) {
 	}
 }
 
-func normalizeOptions(opts *ApiRequestOptions) {
+func normalizeOptions(opts *ModelOptions) {
 	if opts == nil {
 		return
 	}
@@ -412,7 +412,7 @@ func normalizeOptions(opts *ApiRequestOptions) {
 	}
 }
 
-func cloneOptions(opts *ApiRequestOptions) *ApiRequestOptions {
+func cloneOptions(opts *ModelOptions) *ModelOptions {
 	if opts == nil {
 		return nil
 	}
