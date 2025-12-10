@@ -28,25 +28,25 @@ func init() {
 }
 
 // registerOllamaEngineDefaults selects the default Ollama endpoint based on the
-// available credentials and registers the engine alias accordingly. When an
-// API key is configured, we default to the hosted Cloud endpoint; otherwise we
-// assume a self-hosted instance reachable via the docker-compose default.
-// This keeps the zero-config path fast for local dev while automatically using
-// the cloud service when credentials are present.
+// configured base URL and registers the engine alias accordingly. When
+// OLLAMA_BASE_URL points at the cloud host we only switch the default model to
+// the cloud preset; the actual base URL continues to come from
+// OLLAMA_BASE_URL (or falls back to the local compose default) so we don't
+// accidentally talk to the hosted service without an explicit endpoint.
 func registerOllamaEngineDefaults() {
-	defaultModel := ollama.DefaultModel
-	defaultUri := ollama.DefaultUri
+	ensureEnv()
 
-	// Detect Ollama cloud API key.
-	if key := os.Getenv(ollama.APIKeyEnv); len(key) > 50 && strings.Contains(key, ".") {
+	defaultModel := ollama.DefaultModel
+
+	// Use different default model for the Ollama cloud service.
+	if baseUrl := os.Getenv(ollama.BaseUrlEnv); baseUrl == ollama.CloudBaseUrl {
 		defaultModel = ollama.CloudModel
-		defaultUri = ollama.CloudUri
 	}
 
 	// Register the human-friendly engine name so configuration can simply use
 	// `Engine: "ollama"` and inherit adapter defaults.
 	RegisterEngineAlias(ollama.EngineName, EngineInfo{
-		Uri:               defaultUri,
+		Uri:               ollama.DefaultUri,
 		RequestFormat:     ApiFormatOllama,
 		ResponseFormat:    ApiFormatOllama,
 		FileScheme:        scheme.Base64,

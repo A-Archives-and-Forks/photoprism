@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"os"
+	"sync"
 	"testing"
 
 	"github.com/photoprism/photoprism/internal/ai/vision/ollama"
@@ -29,6 +30,7 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 	})
 
 	t.Run("SelfHosted", func(t *testing.T) {
+		ensureEnvOnce = sync.Once{}
 		CaptionModel = testCaptionModel.Clone()
 		_ = os.Unsetenv(ollama.APIKeyEnv)
 
@@ -56,8 +58,9 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 		}
 	})
 	t.Run("Cloud", func(t *testing.T) {
+		ensureEnvOnce = sync.Once{}
 		CaptionModel = testCaptionModel.Clone()
-		t.Setenv(ollama.APIKeyEnv, cloudToken)
+		t.Setenv(ollama.BaseUrlEnv, ollama.CloudBaseUrl+"/")
 
 		registerOllamaEngineDefaults()
 
@@ -66,8 +69,8 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 			t.Fatalf("expected engine info for %s", ollama.EngineName)
 		}
 
-		if info.Uri != ollama.CloudUri {
-			t.Fatalf("expected cloud uri %s, got %s", ollama.CloudUri, info.Uri)
+		if info.Uri != ollama.DefaultUri {
+			t.Fatalf("expected default uri %s, got %s", ollama.DefaultUri, info.Uri)
 		}
 
 		if info.DefaultModel != ollama.CloudModel {
@@ -78,14 +81,31 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 			t.Fatalf("expected caption model %s, got %s", ollama.CloudModel, CaptionModel.Model)
 		}
 
-		if CaptionModel.Service.Uri != ollama.CloudUri {
-			t.Fatalf("expected caption model uri %s, got %s", ollama.CloudUri, CaptionModel.Service.Uri)
+		if CaptionModel.Service.Uri != ollama.DefaultUri {
+			t.Fatalf("expected caption model uri %s, got %s", ollama.DefaultUri, CaptionModel.Service.Uri)
+		}
+	})
+	t.Run("ApiKeyAloneKeepsLocalDefaults", func(t *testing.T) {
+		ensureEnvOnce = sync.Once{}
+		CaptionModel = testCaptionModel.Clone()
+		t.Setenv(ollama.APIKeyEnv, cloudToken)
+
+		registerOllamaEngineDefaults()
+
+		info, ok := EngineInfoFor(ollama.EngineName)
+		if !ok {
+			t.Fatalf("expected engine info for %s", ollama.EngineName)
+		}
+
+		if info.DefaultModel != ollama.DefaultModel {
+			t.Fatalf("expected default model %s, got %s", ollama.DefaultModel, info.DefaultModel)
 		}
 	})
 	t.Run("NewModels", func(t *testing.T) {
+		ensureEnvOnce = sync.Once{}
 		CaptionModel = testCaptionModel.Clone()
 
-		t.Setenv(ollama.APIKeyEnv, cloudToken)
+		t.Setenv(ollama.BaseUrlEnv, ollama.CloudBaseUrl)
 		registerOllamaEngineDefaults()
 
 		model := &Model{Type: ModelTypeCaption, Engine: ollama.EngineName}
@@ -95,8 +115,8 @@ func TestRegisterOllamaEngineDefaults(t *testing.T) {
 			t.Fatalf("expected model %s, got %s", ollama.CloudModel, model.Model)
 		}
 
-		if model.Service.Uri != ollama.CloudUri {
-			t.Fatalf("expected service uri %s, got %s", ollama.CloudUri, model.Service.Uri)
+		if model.Service.Uri != ollama.DefaultUri {
+			t.Fatalf("expected service uri %s, got %s", ollama.DefaultUri, model.Service.Uri)
 		}
 
 		if model.Service.RequestFormat != ApiFormatOllama || model.Service.ResponseFormat != ApiFormatOllama {

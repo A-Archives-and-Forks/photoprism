@@ -1,13 +1,13 @@
 ## PhotoPrism — Vision Package
 
-**Last Updated:** December 2, 2025
+**Last Updated:** December 10, 2025
 
 ### Overview
 
 `internal/ai/vision` provides the shared model registry, request builders, and parsers that power PhotoPrism’s caption, label, face, NSFW, and future generate workflows. It reads `vision.yml`, normalizes models, and dispatches calls to one of three engines:
 
 - **TensorFlow (built‑in)** — default Nasnet / NSFW / Facenet models, no remote service required.
-- **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details.
+- **Ollama** — local or proxied multimodal LLMs. See [`ollama/README.md`](ollama/README.md) for tuning and schema details. The engine defaults to `${OLLAMA_BASE_URL:-http://ollama:11434}/api/generate`, trimming any trailing slash on the base URL; set `OLLAMA_BASE_URL=https://ollama.com` to opt into cloud defaults.
 - **OpenAI** — cloud Responses API. See [`openai/README.md`](openai/README.md) for prompts, schema variants, and header requirements.
 
 ### Configuration
@@ -93,17 +93,17 @@ The model `Options` adjust model parameters such as temperature, top-p, and sche
 
 Configures the endpoint URL, method, format, and authentication for [Ollama](ollama/README.md), [OpenAI](openai/README.md), and other engines that perform remote HTTP requests:
 
-| Field                              | Default                                  | Notes                                                                                    |
-|------------------------------------|------------------------------------------|------------------------------------------------------------------------------------------|
-| `Uri`                              | required for remote                      | Endpoint base. Empty keeps model local (TensorFlow).                                     |
-| `Method`                           | `POST`                                   | Override verb if provider needs it.                                                      |
-| `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`). |
-| `Username` / `Password`            | `""`                                     | Injected as basic auth when URI lacks userinfo.                                          |
-| `Model`                            | `""`                                     | Endpoint-specific override; wins over model/name.                                        |
-| `Org` / `Project`                  | `""`                                     | OpenAI headers (org/proj IDs)                                                            |
-| `RequestFormat` / `ResponseFormat` | set by engine alias                      | Explicit values win over alias defaults.                                                 |
-| `FileScheme`                       | set by engine alias (`data` or `base64`) | Controls image transport.                                                                |
-| `Disabled`                         | `false`                                  | Disable the endpoint without removing the model.                                         |
+| Field                              | Default                                  | Notes                                                                                                                                           |
+|------------------------------------|------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------|
+| `Uri`                              | required for remote                      | Endpoint base. Empty keeps model local (TensorFlow). Ollama alias fills `${OLLAMA_BASE_URL}/api/generate`, defaulting to `http://ollama:11434`. |
+| `Method`                           | `POST`                                   | Override verb if provider needs it.                                                                                                             |
+| `Key`                              | `""`                                     | Bearer token; prefer env expansion (OpenAI: `OPENAI_API_KEY`, Ollama: `OLLAMA_API_KEY`).                                                        |
+| `Username` / `Password`            | `""`                                     | Injected as basic auth when URI lacks userinfo.                                                                                                 |
+| `Model`                            | `""`                                     | Endpoint-specific override; wins over model/name.                                                                                               |
+| `Org` / `Project`                  | `""`                                     | OpenAI headers (org/proj IDs)                                                                                                                   |
+| `RequestFormat` / `ResponseFormat` | set by engine alias                      | Explicit values win over alias defaults.                                                                                                        |
+| `FileScheme`                       | set by engine alias (`data` or `base64`) | Controls image transport.                                                                                                                       |
+| `Disabled`                         | `false`                                  | Disable the endpoint without removing the model.                                                                                                |
 
 > **Authentication:** All credentials and identifiers support `${ENV_VAR}` expansion. `Service.Key` sets `Authorization: Bearer <token>`; `Username`/`Password` injects HTTP basic authentication into the service URI when it is not already present. When `Service.Key` is empty, PhotoPrism defaults to `OPENAI_API_KEY` (OpenAI engine) or `OLLAMA_API_KEY` (Ollama engine), also honoring their `_FILE` counterparts.
  
@@ -142,7 +142,7 @@ Models:
     Engine: ollama
     Run: newly-indexed
     Service:
-      Uri: http://ollama:11434/api/generate
+      Uri: ${OLLAMA_BASE_URL}/api/generate
 ```
 
 More Ollama guidance: [`internal/ai/vision/ollama/README.md`](ollama/README.md).

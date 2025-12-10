@@ -32,7 +32,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL=4 \
     TF_ENABLE_ONEDNN_OPTS=1 \
     MALLOC_ARENA_MAX=2 \
-    PROG="photoprism"
+    PROG="photoprism" \
+    OLLAMA_BASE_URL="http://ollama:11434"
 
 # copy scripts and debian backports sources list
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/

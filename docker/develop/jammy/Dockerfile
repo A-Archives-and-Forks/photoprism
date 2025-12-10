@@ -38,6 +38,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
     PROG="photoprism" \
+    OLLAMA_BASE_URL="http://ollama:11434" \
     S6_KEEP_ENV=1 \
     S6_VERBOSITY=0 \
     S6_LOGGING=0

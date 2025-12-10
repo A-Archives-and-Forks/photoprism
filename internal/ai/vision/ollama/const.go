@@ -11,10 +11,16 @@ const (
 	APIKeyFileEnv = "OLLAMA_API_KEY_FILE" //nolint:gosec // environment variable name, not a secret
 	// APIKeyPlaceholder is the `${VAR}` form injected when no explicit key is provided.
 	APIKeyPlaceholder = "${" + APIKeyEnv + "}"
+	// BaseUrlEnv defines the environment variable used for the Ollama base URL e.g. "https://ollama.com" or "http://ollama:11434".
+	BaseUrlEnv = "OLLAMA_BASE_URL" //nolint:gosec // environment variable name, not a secret
+	// BaseUrlPlaceholder is the `${VAR}` form injected when no explicit URL is provided.
+	BaseUrlPlaceholder = "${" + BaseUrlEnv + "}"
+	// DefaultBaseUrl is the local Ollama endpoint used when the environment variable is unset.
+	DefaultBaseUrl = "http://ollama:11434"
+	// CloudBaseUrl is the base URL for the Ollama Cloud service.
+	CloudBaseUrl = "https://ollama.com"
 	// DefaultUri is the default service URI for self-hosted Ollama instances.
-	DefaultUri = "http://ollama:11434/api/generate"
-	// CloudUri is the Ollama cloud service URI
-	CloudUri = "https://ollama.com/api/generate"
+	DefaultUri = BaseUrlPlaceholder + "/api/generate"
 	// DefaultModel names the default caption model bundled with our adapter defaults.
 	DefaultModel = "gemma3:latest"
 	// CloudModel names the default caption for the Ollama cloud service, see https://ollama.com/cloud.

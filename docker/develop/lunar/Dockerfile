@@ -37,7 +37,8 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     GOBIN="/usr/local/bin" \
     GO111MODULE="on" \
     CGO_CFLAGS="-g -O2 -Wno-return-local-addr" \
-    PROG="photoprism"
+    PROG="photoprism" \
+    OLLAMA_BASE_URL="http://ollama:11434"
 
 # Copy scripts and package sources config.
 COPY --chown=root:root --chmod=755 /scripts/dist/ /scripts/

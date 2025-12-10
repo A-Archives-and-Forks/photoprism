@@ -6,6 +6,31 @@ import (
 	"testing"
 )
 
+func TestInitEnvUrl(t *testing.T) {
+	const envName = "TEST_OLLAMA_BASE_URL"
+
+	// Case: trims trailing slash.
+	t.Setenv(envName, "http://example.com/")
+	initEnvUrl(envName, "")
+	if got := os.Getenv(envName); got != "http://example.com" {
+		t.Fatalf("trim: expected http://example.com, got %s", got)
+	}
+
+	// Case: sets default when unset.
+	t.Setenv(envName, "")
+	initEnvUrl(envName, "http://default.local")
+	if got := os.Getenv(envName); got != "http://default.local" {
+		t.Fatalf("default: expected http://default.local, got %s", got)
+	}
+
+	// Case: leaves already-normalized value untouched.
+	t.Setenv(envName, "http://kept.local")
+	initEnvUrl(envName, "http://ignored.local")
+	if got := os.Getenv(envName); got != "http://kept.local" {
+		t.Fatalf("preserve: expected http://kept.local, got %s", got)
+	}
+}
+
 // TestLoadEnvKeyFromFile verifies that loadEnvKeyFromFile reads API keys from
 // *_FILE variables when the primary env var is empty.
 func TestLoadEnvKeyFromFile(t *testing.T) {

@@ -50,6 +50,7 @@ ENV PHOTOPRISM_ARCH=$TARGETARCH \
     TF_CPP_MIN_LOG_LEVEL=4 \
     MALLOC_ARENA_MAX=2 \
     PROG="photoprism" \
+    OLLAMA_BASE_URL="http://ollama:11434"
     PHOTOPRISM_ASSETS_PATH="/opt/photoprism/assets" \
     PHOTOPRISM_IMPORT_PATH="/photoprism/import" \
     PHOTOPRISM_ORIGINALS_PATH="/photoprism/originals" \
