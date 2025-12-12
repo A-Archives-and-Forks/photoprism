@@ -12,7 +12,7 @@ require (
 	github.com/dsoprea/go-tiff-image-structure/v2 v2.0.0-20221003165014-8ecc4f52edca
 	github.com/dustin/go-humanize v1.0.1
 	github.com/esimov/pigo v1.4.6
-	github.com/gin-contrib/gzip v1.2.3
+	github.com/gin-contrib/gzip v1.2.5
 	github.com/gin-gonic/gin v1.11.0
 	github.com/golang/geo v0.0.0-20251209161508-25c597310d4b
 	github.com/google/open-location-code/go v0.0.0-20250620134813-83986da0156b
@@ -173,7 +173,6 @@ require (
 	go.opentelemetry.io/otel v1.38.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect
-	go.uber.org/mock v0.6.0 // indirect
 	go.yaml.in/yaml/v2 v2.4.3 // indirect
 	golang.org/x/oauth2 v0.33.0 // indirect
 	golang.org/x/tools v0.39.0 // indirect

@@ -1150,8 +1150,8 @@ SOFTWARE.
 --------------------------------------------------------------------------------
 
 Package: github.com/gin-contrib/gzip
-Version: v1.2.3
-License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.3/LICENSE)
+Version: v1.2.5
+License: MIT (https://github.com/gin-contrib/gzip/blob/v1.2.5/LICENSE)
 
 MIT License
 
