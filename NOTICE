@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-02-02
+Date generated: 2026-02-08
 
 ================================================================================
 
@@ -8392,8 +8392,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 --------------------------------------------------------------------------------
 
 Package: golang.org/x/sys
-Version: v0.40.0
-License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.40.0:LICENSE)
+Version: v0.41.0
+License: BSD-3-Clause (https://cs.opensource.google/go/x/sys/+/v0.41.0:LICENSE)
 
 Copyright 2009 The Go Authors.
 
