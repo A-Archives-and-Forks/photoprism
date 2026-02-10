@@ -26,6 +26,9 @@ CREATE USER IF NOT EXISTS portal@'%' IDENTIFIED BY 'portal';
 GRANT ALL PRIVILEGES ON portal.* TO portal@'%';
 
 CREATE DATABASE IF NOT EXISTS preview;
+-- Remove legacy hostname-scoped grants that are ignored with --skip-name-resolve.
+DROP USER IF EXISTS preview@'preview';
+DELETE FROM mysql.db WHERE Host='preview' AND Db='preview' AND User='preview';
 CREATE USER IF NOT EXISTS preview@'%' IDENTIFIED BY 'preview';
 GRANT ALL PRIVILEGES ON preview.* TO preview@'%';
 
