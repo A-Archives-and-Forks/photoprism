@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 13, 2026
+**Last Updated:** February 14, 2026
 
 ## Purpose
 
@@ -177,6 +177,7 @@ Note: Across our public documentation, official images, and in production, the c
 - Frontend unit tests use **Vitest**; see scripts in `frontend/package.json`.
   - Vitest watch/coverage: `make vitest-watch` and `make vitest-coverage`
 - Acceptance tests: use the `acceptance-*` targets in the `Makefile`
+- Portal proxy prefix validation: use the Portal test environment with `NODES=2` and verify both tenant routes when changing `PHOTOPRISM_PORTAL_PROXY_PREFIX` (Portal) and matching node `PHOTOPRISM_SITE_URL` prefixes.
 
 ### Playwright MCP Usage
 
