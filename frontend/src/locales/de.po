@@ -3545,12 +3545,12 @@ msgstr "Blaugrün"
 #: src/model/cluster-node.js:7 src/model/cluster-node.js:8
 #: src/model/cluster-node.js:9
 msgid "Tenant"
-msgstr ""
+msgstr "Instanz"
 
 #: src/component/navigation.vue:168 src/component/navigation.vue:431
 #: src/component/navigation.vue:434 src/page/cluster.vue:44
 msgid "Tenants"
-msgstr ""
+msgstr "Instanzen"
 
 #: src/options/options.js:322
 msgid "Terrain"
