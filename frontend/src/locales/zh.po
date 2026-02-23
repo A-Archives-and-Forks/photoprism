@@ -469,10 +469,6 @@ msgstr "任何私有照片和视频都保持私有，不会被分享。"
 msgid "API Key"
 msgstr "API 密钥"
 
-#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
-msgid "App"
-msgstr ""
-
 #: src/page/admin/sessions.vue:132 src/page/admin/sessions.vue:172
 #: src/page/cluster/nodes.vue:115 src/locales.js:358 src/options/auth.js:26
 msgid "Application"
@@ -817,7 +813,7 @@ msgstr "清理"
 msgid "Clear {0}"
 msgstr "清除 {0}"
 
-#: src/model/cluster-node.js:10 src/options/auth.js:12 src/options/auth.js:24
+#: src/model/cluster-node.js:11 src/options/auth.js:12 src/options/auth.js:24
 #: src/options/auth.js:44
 msgid "Client"
 msgstr "客户"
@@ -852,7 +848,7 @@ msgstr "关闭"
 msgid "Cluster"
 msgstr "群组"
 
-#: src/model/cluster-node.js:79
+#: src/model/cluster-node.js:80
 msgid "Cluster Node"
 msgstr ""
 
@@ -1842,8 +1838,7 @@ msgstr "实例"
 msgid "Instance ID"
 msgstr "实例 ID"
 
-#: src/component/navigation.vue:168 src/component/navigation.vue:431
-#: src/component/navigation.vue:434 src/page/cluster.vue:44 src/locales.js:365
+#: src/locales.js:365
 msgid "Instances"
 msgstr "实例"
 
@@ -3211,7 +3206,7 @@ msgstr "所选项已恢复"
 msgid "Sequential Name"
 msgstr "顺序名称"
 
-#: src/model/cluster-node.js:9 src/locales.js:362
+#: src/model/cluster-node.js:10 src/locales.js:362
 msgid "Service"
 msgstr "服务"
 
@@ -3549,6 +3544,16 @@ msgstr "纳入于"
 msgid "Teal"
 msgstr "蓝绿"
 
+#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
+#: src/model/cluster-node.js:9
+msgid "Tenant"
+msgstr ""
+
+#: src/component/navigation.vue:168 src/component/navigation.vue:431
+#: src/component/navigation.vue:434 src/page/cluster.vue:44
+msgid "Tenants"
+msgstr ""
+
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "地形"
@@ -3709,7 +3714,7 @@ msgstr "撤销"
 msgid "Unique ID"
 msgstr "唯一标识符"
 
-#: src/model/cluster-node.js:42 src/page/settings/account.vue:221
+#: src/model/cluster-node.js:43 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
 #: src/common/util.js:547 src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47

@@ -466,10 +466,6 @@ msgstr "Enige privaat foto's en video's bly privaat en sal nie gedeel word nie."
 msgid "API Key"
 msgstr "API-sleutel"
 
-#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
-msgid "App"
-msgstr ""
-
 #: src/page/admin/sessions.vue:132 src/page/admin/sessions.vue:172
 #: src/page/cluster/nodes.vue:115 src/locales.js:358 src/options/auth.js:26
 msgid "Application"
@@ -814,7 +810,7 @@ msgstr "Maak skoon"
 msgid "Clear {0}"
 msgstr "Vee {0} uit"
 
-#: src/model/cluster-node.js:10 src/options/auth.js:12 src/options/auth.js:24
+#: src/model/cluster-node.js:11 src/options/auth.js:12 src/options/auth.js:24
 #: src/options/auth.js:44
 msgid "Client"
 msgstr "Kliënt"
@@ -849,7 +845,7 @@ msgstr "Naby"
 msgid "Cluster"
 msgstr "Groep"
 
-#: src/model/cluster-node.js:79
+#: src/model/cluster-node.js:80
 msgid "Cluster Node"
 msgstr ""
 
@@ -1839,8 +1835,7 @@ msgstr "Instansie"
 msgid "Instance ID"
 msgstr "Geval ID"
 
-#: src/component/navigation.vue:168 src/component/navigation.vue:431
-#: src/component/navigation.vue:434 src/page/cluster.vue:44 src/locales.js:365
+#: src/locales.js:365
 msgid "Instances"
 msgstr "Instansies"
 
@@ -3206,7 +3201,7 @@ msgstr "Seleksie herstel"
 msgid "Sequential Name"
 msgstr "Opeenvolgende naam"
 
-#: src/model/cluster-node.js:9 src/locales.js:362
+#: src/model/cluster-node.js:10 src/locales.js:362
 msgid "Service"
 msgstr "Diens"
 
@@ -3544,6 +3539,16 @@ msgstr "Geneem"
 msgid "Teal"
 msgstr "Blauwgroen"
 
+#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
+#: src/model/cluster-node.js:9
+msgid "Tenant"
+msgstr ""
+
+#: src/component/navigation.vue:168 src/component/navigation.vue:431
+#: src/component/navigation.vue:434 src/page/cluster.vue:44
+msgid "Tenants"
+msgstr ""
+
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "Terrein"
@@ -3704,7 +3709,7 @@ msgstr "Ontdoen"
 msgid "Unique ID"
 msgstr "Unieke ID"
 
-#: src/model/cluster-node.js:42 src/page/settings/account.vue:221
+#: src/model/cluster-node.js:43 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
 #: src/common/util.js:547 src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47

@@ -469,10 +469,6 @@ msgstr "Özel fotoğraflar ve videolar gizli kalır ve paylaşılmaz."
 msgid "API Key"
 msgstr "API Anahtarı"
 
-#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
-msgid "App"
-msgstr ""
-
 #: src/page/admin/sessions.vue:132 src/page/admin/sessions.vue:172
 #: src/page/cluster/nodes.vue:115 src/locales.js:358 src/options/auth.js:26
 msgid "Application"
@@ -817,7 +813,7 @@ msgstr "Temizleme"
 msgid "Clear {0}"
 msgstr "Temizle {0}"
 
-#: src/model/cluster-node.js:10 src/options/auth.js:12 src/options/auth.js:24
+#: src/model/cluster-node.js:11 src/options/auth.js:12 src/options/auth.js:24
 #: src/options/auth.js:44
 msgid "Client"
 msgstr "Müşteri"
@@ -852,7 +848,7 @@ msgstr "Kapat"
 msgid "Cluster"
 msgstr "Küme"
 
-#: src/model/cluster-node.js:79
+#: src/model/cluster-node.js:80
 msgid "Cluster Node"
 msgstr ""
 
@@ -1842,8 +1838,7 @@ msgstr "Örnek"
 msgid "Instance ID"
 msgstr "Ortam ID"
 
-#: src/component/navigation.vue:168 src/component/navigation.vue:431
-#: src/component/navigation.vue:434 src/page/cluster.vue:44 src/locales.js:365
+#: src/locales.js:365
 msgid "Instances"
 msgstr "Örnekler"
 
@@ -3209,7 +3204,7 @@ msgstr "Seçim geri yüklendi"
 msgid "Sequential Name"
 msgstr "Sıralı İsim"
 
-#: src/model/cluster-node.js:9 src/locales.js:362
+#: src/model/cluster-node.js:10 src/locales.js:362
 msgid "Service"
 msgstr "Hizmet"
 
@@ -3547,6 +3542,16 @@ msgstr "Alınmış"
 msgid "Teal"
 msgstr "Turkuaz"
 
+#: src/model/cluster-node.js:7 src/model/cluster-node.js:8
+#: src/model/cluster-node.js:9
+msgid "Tenant"
+msgstr ""
+
+#: src/component/navigation.vue:168 src/component/navigation.vue:431
+#: src/component/navigation.vue:434 src/page/cluster.vue:44
+msgid "Tenants"
+msgstr ""
+
 #: src/options/options.js:322
 msgid "Terrain"
 msgstr "Arazi"
@@ -3707,7 +3712,7 @@ msgstr "Geri al"
 msgid "Unique ID"
 msgstr "Benzersiz kimlik"
 
-#: src/model/cluster-node.js:42 src/page/settings/account.vue:221
+#: src/model/cluster-node.js:43 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
 #: src/common/util.js:547 src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47
