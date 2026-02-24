@@ -15,10 +15,10 @@ func TestRedirectURL(t *testing.T) {
 		assert.Equal(t, "https://app.localssl.dev/api/v1/oidc/redirect", redirectURL)
 	})
 	t.Run("PortalTenantPath", func(t *testing.T) {
-		redirectURL, err := RedirectURL("https://app.localssl.dev/p/pro-1/")
+		redirectURL, err := RedirectURL("https://app.localssl.dev/i/pro-1/")
 
 		assert.NoError(t, err)
-		assert.Equal(t, "https://app.localssl.dev/p/pro-1/api/v1/oidc/redirect", redirectURL)
+		assert.Equal(t, "https://app.localssl.dev/i/pro-1/api/v1/oidc/redirect", redirectURL)
 	})
 	t.Run("MissingSiteURL", func(t *testing.T) {
 		redirectURL, err := RedirectURL("")

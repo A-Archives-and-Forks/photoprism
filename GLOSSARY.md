@@ -22,7 +22,7 @@
 - **portal** — PhotoPrism runtime with role `portal`, providing cluster control-plane APIs and routing.
 - **service** — PhotoPrism runtime with role `service` (non-instance cluster member focused on service workloads).
 - **SiteUrl** — canonical public URL/origin for an instance.
-- **tenant** — shared-domain routing ownership label used in path-based URLs such as `/p/<tenant>/...`; typically maps to a registered instance name.
+- **tenant** — shared-domain routing ownership label used in path-based URLs such as `/i/<tenant>/...`; typically maps to a registered instance name.
 
 ### Writing Rules
 

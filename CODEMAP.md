@@ -125,7 +125,7 @@ Cluster / Portal
   - Theme sync logs explicitly when refresh/rotation occurs so operators can trace credential churn in standard log levels.
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
-- Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/p/*` proxy router).
+- Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/i/*` proxy router).
 - See specs cheat sheet: `specs/portal/README.md`.
 
 Logging & Events
