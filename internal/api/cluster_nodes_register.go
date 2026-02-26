@@ -2,6 +2,7 @@ package api
 
 import (
 	"crypto/subtle"
+	"net"
 	"net/http"
 	"net/url"
 	"strings"
@@ -35,7 +36,7 @@ var RegisterRequireClientSecret = true
 //	@Tags		Cluster
 //	@Accept		json
 //	@Produce	json
-//	@Param		request				body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)"
+//	@Param		request				body		object	true	"registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; for existing-node UUID changes and credential rotation include matching ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)"
 //	@Success	200,201				{object}	cluster.RegisterResponse
 //	@Failure	400,401,403,409,429	{object}	i18n.Response
 //	@Router		/api/v1/cluster/nodes/register [post]
@@ -68,6 +69,16 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			return
 		}
 
+		// Optional IP-based allowance via ClusterCIDR.
+		if cidr := strings.TrimSpace(conf.ClusterCIDR()); cidr != "" {
+			if !clusterCIDRAllowsClientIP(cidr, clientIp) {
+				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "client ip outside cluster-cidr", status.Denied})
+				r.Success() // Return reserved tokens before aborting.
+				AbortUnauthorized(c)
+				return
+			}
+		}
+
 		// Token check (Bearer).
 		expected := conf.JoinToken()
 		token := header.BearerToken(c)
@@ -91,21 +102,6 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		appName := clean.TypeUnicode(req.AppName)
 		appVersion := clean.TypeUnicode(req.AppVersion)
 		nodeTheme := clean.TypeUnicode(req.Theme)
-
-		// If an existing ClientID is provided, require the corresponding client secret for verification.
-		if RegisterRequireClientSecret && req.ClientID != "" {
-			if !rnd.IsUID(req.ClientID, entity.ClientUID) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client id", status.Failed})
-				AbortBadRequest(c)
-				return
-			}
-			pw := entity.FindPassword(req.ClientID)
-			if pw == nil || req.ClientSecret == "" || !pw.Valid(req.ClientSecret) {
-				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "invalid client secret", status.Denied})
-				AbortUnauthorized(c)
-				return
-			}
-		}
 
 		name := clean.DNSLabel(req.NodeName)
 
@@ -161,11 +157,32 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 
 		// Try to find existing node.
 		if n, _ := regy.FindByName(name); n != nil {
-			// If caller attempts to change UUID by name without proving client secret, block with 409.
-			if RegisterRequireClientSecret {
-				if requestedUUID != "" && n.UUID != "" && requestedUUID != n.UUID && req.ClientID == "" {
+			requireClientAuth := RegisterRequireClientSecret &&
+				(req.RotateSecret || req.RotateDatabase || (requestedUUID != "" && n.UUID != "" && requestedUUID != n.UUID))
+
+			if requireClientAuth {
+				if req.ClientID == "" || req.ClientSecret == "" {
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "missing client credentials", status.Denied}, clean.Log(name))
+					AbortUnauthorized(c)
+					return
+				}
+
+				if !rnd.IsUID(req.ClientID, entity.ClientUID) {
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "invalid client id", status.Failed}, clean.Log(name))
+					AbortBadRequest(c)
+					return
+				}
+
+				if req.ClientID != n.ClientID {
+					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "client id mismatch", status.Denied}, clean.Log(name))
+					AbortUnauthorized(c)
+					return
+				}
+
+				pw := entity.FindPassword(req.ClientID)
+				if pw == nil || !pw.Valid(req.ClientSecret) {
 					event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "node", "%s", "invalid client secret", status.Denied}, clean.Log(name))
-					c.JSON(http.StatusConflict, gin.H{"error": "client secret required to change node uuid"})
+					AbortUnauthorized(c)
 					return
 				}
 			}
@@ -508,4 +525,16 @@ func isClusterServiceHost(host string) bool {
 	}
 
 	return false
+}
+
+// clusterCIDRAllowsClientIP reports whether clientIP is within the configured cidr.
+func clusterCIDRAllowsClientIP(cidr, clientIP string) bool {
+	ip := net.ParseIP(clientIP)
+	_, block, err := net.ParseCIDR(cidr)
+
+	if err != nil || ip == nil || block == nil {
+		return false
+	}
+
+	return block.Contains(ip)
 }

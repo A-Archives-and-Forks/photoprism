@@ -13,12 +13,15 @@ func enablePortalAPIs(t testing.TB, conf *config.Config) {
 
 	prevEdition := conf.Options().Edition
 	prevRole := conf.Options().NodeRole
+	prevClusterCIDR := conf.Options().ClusterCIDR
 
 	t.Cleanup(func() {
 		conf.Options().Edition = prevEdition
 		conf.Options().NodeRole = prevRole
+		conf.Options().ClusterCIDR = prevClusterCIDR
 	})
 
 	conf.Options().Edition = config.Portal
 	conf.Options().NodeRole = cluster.RolePortal
+	conf.Options().ClusterCIDR = ""
 }

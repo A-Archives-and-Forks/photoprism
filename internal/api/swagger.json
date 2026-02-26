@@ -6741,7 +6741,7 @@
                 "operationId": "ClusterNodesRegister",
                 "parameters": [
                     {
-                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; to authorize UUID/name changes include ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
+                        "description": "registration payload (NodeName required; optional: NodeRole, Labels, AdvertiseUrl, SiteUrl, AppName, AppVersion, Theme; for existing-node UUID changes and credential rotation include matching ClientID+ClientSecret; rotation: RotateDatabase, RotateSecret)",
                         "in": "body",
                         "name": "request",
                         "required": true,

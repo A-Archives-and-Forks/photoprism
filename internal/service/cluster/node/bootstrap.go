@@ -712,6 +712,11 @@ func obtainNodeCredentialsViaRegister(c *config.Config, portal *url.URL, joinTok
 	payload := buildRegisterPayload(c)
 	payload.RotateSecret = true
 
+	if id, secret := strings.TrimSpace(c.NodeClientID()), strings.TrimSpace(c.NodeClientSecret()); id != "" && secret != "" {
+		payload.ClientID = id
+		payload.ClientSecret = secret
+	}
+
 	for attempt := 0; attempt < 2; attempt++ {
 		body, _ := json.Marshal(payload)
 		req, _ := http.NewRequest(http.MethodPost, endpoint.String(), bytes.NewReader(body))
