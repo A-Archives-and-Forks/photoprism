@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** February 25, 2026
+**Last Updated:** February 26, 2026
 
 ## Purpose
 
@@ -28,6 +28,11 @@ This file tells automated coding agents (and humans) where to find the single so
 - These files are local workflow aids and may not exist yet in a given workspace.
 
 > Quick Tip: to inspect GitHub issue details without leaving the terminal, run `curl -s https://api.github.com/repos/photoprism/photoprism/issues/<id>`.
+
+### Commit Messages
+
+- Default suggested commit message format is `Topic: Description`.
+- Keep suggested commit messages to a maximum of 75 characters unless a user requests a different format or length.
 
 ### Specifications, Versioning, & Writing Style
 
