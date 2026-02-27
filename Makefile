@@ -295,7 +295,7 @@ dep-npm:
 	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
         fi
 dep-js:
-	(cd frontend && npm ci --ignore-scripts --no-update-notifier --no-audit)
+	npm ci --ignore-scripts --no-update-notifier --no-audit
 codex: dep-codex codex-version
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
