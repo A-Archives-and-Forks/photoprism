@@ -77,7 +77,7 @@ require golang.org/x/text v0.34.0
 
 require (
 	github.com/IGLOU-EU/go-wildcard v1.0.3
-	github.com/davidbyttow/govips/v2 v2.16.0
+	github.com/davidbyttow/govips/v2 v2.17.0
 	github.com/go-co-op/gocron/v2 v2.19.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/golang-jwt/jwt/v5 v5.3.1
