@@ -93,8 +93,8 @@ func TestPhoto_Merge(t *testing.T) {
 		if err != nil {
 			t.Fatal(err)
 		}
-		assert.Equal(t, 1000023, int(original.ID))
-		assert.Equal(t, 1000024, int(merged[0].ID))
+		assert.EqualValues(t, 1000023, original.ID)
+		assert.EqualValues(t, 1000024, merged[0].ID)
 	})
 	t.Run("SyncVideoTypeFromMergedFiles", func(t *testing.T) {
 		takenAt := time.Date(2026, 1, 21, 12, 34, 56, 0, time.UTC)

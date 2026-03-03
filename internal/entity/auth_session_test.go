@@ -255,13 +255,14 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID("sessxkkcxxxx")
 		assert.Equal(t, "charles", m2.UserName)
 	})
 	t.Run("InvalidRefId", func(t *testing.T) {
+		//nolint:gosec // G101: Static auth token fixture is intentional for session tests.
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111"
 		id := rnd.SessionID("69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7111")
 
@@ -282,7 +283,7 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2, _ := FindSession(id)
@@ -305,9 +306,10 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
+		//nolint:gosec // G101: Static auth token fixture is intentional for session tests.
 		authToken := "69be27ac5ca305b394046a83f6fda18167ca3d3f2dbe7ac0"
 
 		s2 := &Session{
@@ -340,7 +342,7 @@ func TestSession_Create(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID(refID)
@@ -386,7 +388,7 @@ func TestSession_Save(t *testing.T) {
 		require.Nil(t, err)
 
 		t.Cleanup(func() {
-			s.Delete()
+			assert.NoError(t, s.Delete())
 		})
 
 		m2 := FindSessionByRefID(refID)
