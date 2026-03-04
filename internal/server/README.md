@@ -32,6 +32,7 @@
 - `logger.go` — request logging middleware (enabled in debug mode).
 - `security.go` — security headers and trusted proxy/platform handling.
 - `webdav_*.go` & tests — WebDAV handlers and regression tests for overwrite, traversal, and metadata flags.
+- `webdav_path.go` — shared helper to classify built-in and path-proxied WebDAV routes.
 - `process/` — light wrappers for server process metadata.
 
 ### Related Packages
@@ -51,6 +52,9 @@
   - `MaxHeaderBytes` is configured via `PHOTOPRISM_HTTP_HEADER_BYTES` / `--http-header-bytes` (default `1 MiB`).
   - `IdleTimeout` is configured via `PHOTOPRISM_HTTP_IDLE_TIMEOUT` / `--http-idle-timeout` (default `180s`).
   - Global `ReadTimeout` / `WriteTimeout` remain disabled to avoid breaking large transfers.
+- WebDAV response behavior:
+  - Built-in security middleware skips browser-document headers (`Content-Security-Policy`, `X-Frame-Options`) on `/originals` and `/import` paths.
+  - PROPFIND `207 Multi-Status` responses normalize XML media type to `application/xml; charset=utf-8`.
 - AutoTLS: uses `autocert` and spins up a redirect listener; ensure ports 80/443 are reachable.
 - Unix sockets: optional `force` query removes stale sockets; permissions can be set via `mode` query.
 - Health endpoints (`/livez`, `/health`, `/healthz`, `/readyz`) return `Cache-Control: no-store` and `Access-Control-Allow-Origin: *`.
@@ -58,7 +62,7 @@
 ### Testing
 
 - Lint & unit tests: `golangci-lint run ./internal/server...` and `go test ./internal/server/...`
-- WebDAV behaviors are covered by `webdav_*_test.go`; they rely on temp directories and in-memory routers.
+- WebDAV behaviors are covered by `webdav_*_test.go`; they rely on temp directories and in-memory routers, including PROPFIND `207` XML/header assertions and path classification checks.
 
 ### Operational Tips
 

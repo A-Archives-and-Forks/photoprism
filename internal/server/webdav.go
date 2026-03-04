@@ -22,7 +22,58 @@ import (
 
 // WebDAVHandler wraps the http request handler so that it can be customized.
 var WebDAVHandler = func(c *gin.Context, router *gin.RouterGroup, srv *webdav.Handler) {
-	srv.ServeHTTP(c.Writer, c.Request)
+	w := &webDAVResponseWriter{
+		ResponseWriter: c.Writer,
+		method:         c.Request.Method,
+	}
+
+	srv.ServeHTTP(w, c.Request)
+}
+
+// webDAVResponseWriter adjusts selected WebDAV response headers.
+type webDAVResponseWriter struct {
+	gin.ResponseWriter
+	method      string
+	wroteHeader bool
+}
+
+// WriteHeader writes the status code after normalizing headers.
+func (w *webDAVResponseWriter) WriteHeader(statusCode int) {
+	w.applyWebDAVHeaders(statusCode)
+	w.wroteHeader = true
+	w.ResponseWriter.WriteHeader(statusCode)
+}
+
+// Write writes response bytes after normalizing headers for implicit 200 responses.
+func (w *webDAVResponseWriter) Write(data []byte) (int, error) {
+	if !w.wroteHeader {
+		w.applyWebDAVHeaders(http.StatusOK)
+		w.wroteHeader = true
+	}
+
+	return w.ResponseWriter.Write(data)
+}
+
+// WriteString writes string data after normalizing headers for implicit 200 responses.
+func (w *webDAVResponseWriter) WriteString(s string) (int, error) {
+	if !w.wroteHeader {
+		w.applyWebDAVHeaders(http.StatusOK)
+		w.wroteHeader = true
+	}
+
+	return w.ResponseWriter.WriteString(s)
+}
+
+// applyWebDAVHeaders adjusts the XML content type for PROPFIND multi-status responses.
+func (w *webDAVResponseWriter) applyWebDAVHeaders(statusCode int) {
+	if w.method != header.MethodPropfind || statusCode != http.StatusMultiStatus {
+		return
+	}
+
+	contentType := strings.ToLower(w.ResponseWriter.Header().Get(header.ContentType))
+	if strings.HasPrefix(contentType, header.ContentTypeXml) {
+		w.ResponseWriter.Header().Set(header.ContentType, "application/xml; charset=utf-8")
+	}
 }
 
 // WebDAVWriteMethod returns true for methods that modify WebDAV state.
