@@ -63,7 +63,7 @@ func TestMediaFile_Colors_Testdata(t *testing.T) {
 		},
 	}
 
-	if err := fastwalk.Walk(conf.ExamplesPath(), func(filename string, info os.FileMode) error {
+	if err := fastwalk.Walk(conf.SamplesPath(), func(filename string, info os.FileMode) error {
 		if info.IsDir() || strings.HasPrefix(filepath.Base(filename), ".") {
 			return nil
 		}
@@ -106,7 +106,7 @@ func TestMediaFile_Colors(t *testing.T) {
 	c := config.TestConfig()
 
 	t.Run("CatBrownJpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/cat_brown.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(c.SamplesPath() + "/cat_brown.jpg"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
 			t.Log(file, fileErr)
@@ -123,7 +123,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("FernRegular", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/fern_green.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(c.SamplesPath() + "/fern_green.jpg"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
 			t.Log(file, fileErr)
@@ -140,7 +140,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("FernLarge", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/fern_green.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(c.SamplesPath() + "/fern_green.jpg"); err == nil {
 			thumbLarge := thumb.SizeColors
 			thumbLarge.Height = 16
 			thumbLarge.Width = 16
@@ -166,7 +166,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("ImgNum4120Jpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/IMG_4120.JPG"); err == nil {
+		if mediaFile, err := NewMediaFile(c.SamplesPath() + "/IMG_4120.JPG"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
 			t.Log(file, fileErr)
@@ -182,7 +182,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("LeavesGoldJpg", func(t *testing.T) {
-		if mediaFile, err := NewMediaFile(c.ExamplesPath() + "/leaves_gold.jpg"); err == nil {
+		if mediaFile, err := NewMediaFile(c.SamplesPath() + "/leaves_gold.jpg"); err == nil {
 			file, fileErr := mediaFile.Colors(c.ThumbCachePath())
 
 			t.Log(file, fileErr)
@@ -199,7 +199,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		}
 	})
 	t.Run("RandomDocx", func(t *testing.T) {
-		file, err := NewMediaFile(c.ExamplesPath() + "/Random.docx")
+		file, err := NewMediaFile(c.SamplesPath() + "/Random.docx")
 		require.NoError(t, err)
 
 		p, colorErr := file.Colors(c.ThumbCachePath())
@@ -207,7 +207,7 @@ func TestMediaFile_Colors(t *testing.T) {
 		t.Log(p)
 	})
 	t.Run("AnimatedEarthThm", func(t *testing.T) {
-		file, err := NewMediaFile(c.ExamplesPath() + "/animated-earth.thm")
+		file, err := NewMediaFile(c.SamplesPath() + "/animated-earth.thm")
 		if err != nil {
 			assert.Error(t, err)
 			return

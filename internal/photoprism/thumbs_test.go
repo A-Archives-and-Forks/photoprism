@@ -152,7 +152,7 @@ func TestThumb_FromFile(t *testing.T) {
 
 	t.Run("ValidParameter", func(t *testing.T) {
 		file := &entity.File{
-			FileName: c.ExamplesPath() + "/elephants.jpg",
+			FileName: c.SamplesPath() + "/elephants.jpg",
 			FileHash: "1234568889",
 		}
 
@@ -162,7 +162,7 @@ func TestThumb_FromFile(t *testing.T) {
 	})
 	t.Run("HashTooShort", func(t *testing.T) {
 		file := &entity.File{
-			FileName: c.ExamplesPath() + "/elephants.jpg",
+			FileName: c.SamplesPath() + "/elephants.jpg",
 			FileHash: "123",
 		}
 
@@ -233,7 +233,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -260,7 +260,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)
@@ -285,7 +285,7 @@ func TestThumb_Create(t *testing.T) {
 			t.Error(err)
 		}
 
-		img, err := imaging.Open(conf.ExamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
+		img, err := imaging.Open(conf.SamplesPath()+"/elephants.jpg", imaging.AutoOrientation(true))
 
 		if err != nil {
 			t.Errorf("cannot open original: %s", err)

@@ -21,11 +21,11 @@ func TestConvert_ToImage(t *testing.T) {
 	initErr := cnf.InitializeTestData()
 	assert.NoError(t, initErr)
 	convert := NewConvert(cnf)
-	examplesPath := cnf.ExamplesPath()
+	samplesPath := cnf.SamplesPath()
 
 	t.Run("Video", func(t *testing.T) {
-		fileName := filepath.Join(cnf.ExamplesPath(), "gopher-video.mp4")
-		outputName := filepath.Join(cnf.SidecarPath(), cnf.ExamplesPath(), "gopher-video.mp4.jpg")
+		fileName := filepath.Join(cnf.SamplesPath(), "gopher-video.mp4")
+		outputName := filepath.Join(cnf.SidecarPath(), cnf.SamplesPath(), "gopher-video.mp4.jpg")
 
 		_ = os.Remove(outputName)
 
@@ -173,7 +173,7 @@ func TestConvert_ToImage(t *testing.T) {
 		_ = imageFile.Remove()
 	})
 	t.Run("Layered16BitTiff", func(t *testing.T) {
-		tiffFile := filepath.Join(examplesPath, "layered-16bit-small.tif")
+		tiffFile := filepath.Join(samplesPath, "layered-16bit-small.tif")
 
 		mediaFile, err := NewMediaFile(tiffFile)
 		if err != nil {
@@ -197,7 +197,7 @@ func TestConvert_ToImage(t *testing.T) {
 			t.Skip("ExifTool must be available for PSD preview fallback")
 		}
 
-		psdFile := filepath.Join(examplesPath, "photoshop-standard-small.psd")
+		psdFile := filepath.Join(samplesPath, "photoshop-standard-small.psd")
 		cnf.Options().DisableImageMagick = true
 		t.Cleanup(func() {
 			cnf.Options().DisableImageMagick = false
@@ -256,8 +256,8 @@ func TestConvert_JpegConvertCmds(t *testing.T) {
 	})
 
 	convert := NewConvert(cnf)
-	psdFile := filepath.Join(cnf.ExamplesPath(), "photoshop-standard-small.psd")
-	jpegFile := filepath.Join(cnf.ExamplesPath(), "photoshop-standard-small.jpg")
+	psdFile := filepath.Join(cnf.SamplesPath(), "photoshop-standard-small.psd")
+	jpegFile := filepath.Join(cnf.SamplesPath(), "photoshop-standard-small.jpg")
 
 	mediaFile, err := NewMediaFile(psdFile)
 	if err != nil {

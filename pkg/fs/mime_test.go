@@ -66,7 +66,7 @@ func TestDetectMimeType(t *testing.T) {
 		assert.Equal(t, "image/dng", mimeType)
 	})
 	t.Run("PSD", func(t *testing.T) {
-		filename := Abs("../../assets/examples/photoshop-standard-small.psd")
+		filename := Abs("../../assets/samples/photoshop-standard-small.psd")
 		mimeType, _ := DetectMimeType(filename)
 		assert.Equal(t, header.ContentTypePsd, mimeType)
 		assert.Equal(t, header.ContentTypePsd, MimeType(filename))

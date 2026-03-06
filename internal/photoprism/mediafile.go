@@ -357,8 +357,8 @@ func (m *MediaFile) PathNameInfo(stripSequence bool) (fileRoot, fileBase, relati
 		rootPath = Config().SidecarPath()
 	case entity.RootImport:
 		rootPath = Config().ImportPath()
-	case entity.RootExamples:
-		rootPath = Config().ExamplesPath()
+	case entity.RootSamples:
+		rootPath = Config().SamplesPath()
 	case entity.RootOriginals:
 		rootPath = Config().OriginalsPath()
 	default:
@@ -446,8 +446,8 @@ func (m *MediaFile) RootPath() string {
 		return Config().SidecarPath()
 	case entity.RootImport:
 		return Config().ImportPath()
-	case entity.RootExamples:
-		return Config().ExamplesPath()
+	case entity.RootSamples:
+		return Config().SamplesPath()
 	default:
 		return Config().OriginalsPath()
 	}
@@ -507,7 +507,7 @@ func (m *MediaFile) EditedName() string {
 }
 
 // Root identifies which configured root the media file resides in (originals,
-// import, sidecar, examples). The result is cached so repeated calls are cheap.
+// import, sidecar, samples). The result is cached so repeated calls are cheap.
 func (m *MediaFile) Root() string {
 	if m.fileRoot != entity.RootUnknown {
 		return m.fileRoot
@@ -532,10 +532,10 @@ func (m *MediaFile) Root() string {
 		return m.fileRoot
 	}
 
-	examplesPath := Config().ExamplesPath()
+	samplesPath := Config().SamplesPath()
 
-	if examplesPath != "" && strings.HasPrefix(m.FileName(), examplesPath) {
-		m.fileRoot = entity.RootExamples
+	if samplesPath != "" && strings.HasPrefix(m.FileName(), samplesPath) {
+		m.fileRoot = entity.RootSamples
 		return m.fileRoot
 	}
 
