@@ -79,12 +79,12 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 		// Parse request.
 		var req cluster.RegisterRequest
 
-		limitRequestBodyBytes(c, maxClusterRegisterBytes)
+		LimitRequestBodyBytes(c, MaxClusterRegisterBytes)
 
 		if err := c.ShouldBindJSON(&req); err != nil {
-			if isRequestBodyTooLarge(err) {
+			if IsRequestBodyTooLarge(err) {
 				event.AuditWarn([]string{clientIp, string(acl.ResourceCluster), "register", "request too large", status.Error(err)})
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 

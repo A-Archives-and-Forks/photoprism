@@ -41,12 +41,12 @@ func CreateSession(router *gin.RouterGroup) {
 		clientIp := ClientIP(c)
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxSessionRequestBytes)
+		LimitRequestBodyBytes(c, MaxSessionRequestBytes)
 
 		if err := c.BindJSON(&frm); err != nil {
-			if isRequestBodyTooLarge(err) {
+			if IsRequestBodyTooLarge(err) {
 				event.AuditWarn([]string{clientIp, "create session", "request too large", status.Error(err)})
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 

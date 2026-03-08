@@ -138,11 +138,11 @@ func CreateAlbum(router *gin.RouterGroup) {
 		var frm form.Album
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxAlbumRequestBytes)
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
 
 		if err := c.BindJSON(&frm); err != nil {
-			if isRequestBodyTooLarge(err) {
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 
@@ -245,11 +245,11 @@ func UpdateAlbum(router *gin.RouterGroup) {
 		}
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxAlbumRequestBytes)
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
 
 		if err = c.BindJSON(frm); err != nil {
-			if isRequestBodyTooLarge(err) {
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 
@@ -501,11 +501,11 @@ func CloneAlbums(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxAlbumRequestBytes)
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
 
 		if err = c.BindJSON(&frm); err != nil {
-			if isRequestBodyTooLarge(err) {
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 
@@ -569,11 +569,11 @@ func AddPhotosToAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxAlbumRequestBytes)
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
 
 		if err := c.BindJSON(&frm); err != nil {
-			if isRequestBodyTooLarge(err) {
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 
@@ -684,11 +684,11 @@ func RemovePhotosFromAlbum(router *gin.RouterGroup) {
 		var frm form.Selection
 
 		// Assign and validate request form values.
-		limitRequestBodyBytes(c, maxAlbumRequestBytes)
+		LimitRequestBodyBytes(c, MaxAlbumRequestBytes)
 
 		if err := c.BindJSON(&frm); err != nil {
-			if isRequestBodyTooLarge(err) {
-				abortRequestTooLarge(c, i18n.ErrBadRequest)
+			if IsRequestBodyTooLarge(err) {
+				AbortRequestTooLarge(c, i18n.ErrBadRequest)
 				return
 			}
 
