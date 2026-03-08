@@ -318,6 +318,45 @@ describe("common/session", () => {
     session.deleteData();
   });
 
+  it("should restore session data from namespaced session storage when preferred", () => {
+    const namespaceKey = "ns-session-pref";
+    const namespaced = buildNamespace(namespaceKey);
+    const token = "999900000000000000000000000000000000000000000000";
+    const sessionID = "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f";
+
+    window.localStorage.clear();
+    window.sessionStorage.clear();
+    window.localStorage.setItem(namespaced + "session", "true");
+    window.sessionStorage.setItem(namespaced + "session.token", token);
+    window.sessionStorage.setItem(namespaced + "session.id", sessionID);
+    window.sessionStorage.setItem(namespaced + "session.provider", "public");
+    window.sessionStorage.setItem(namespaced + "session.user", JSON.stringify({ ID: 5, Name: "foo", DisplayName: "Foo" }));
+
+    const storage = createNamespacedStorage(window.localStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    expect(session.getAuthToken()).toBe(token);
+    expect(session.getId()).toBe(sessionID);
+    expect(session.getProvider()).toBe("public");
+    expect(session.getUser().DisplayName).toBe("Foo");
+  });
+
+  it("should discard malformed stored json values", () => {
+    const rawStorage = new StorageShim();
+    const namespaceKey = "ns-bad-json";
+    const namespaced = buildNamespace(namespaceKey);
+    rawStorage.setItem(namespaced + "session.token", "999900000000000000000000000000000000000000000000");
+    rawStorage.setItem(namespaced + "session.id", "a9b8ff820bf40ab451910f8bbfe401b2432446693aa539538fbd2399560a722f");
+    rawStorage.setItem(namespaced + "session.user", "{bad json");
+
+    const storage = createNamespacedStorage(rawStorage, namespaceKey);
+    const session = new Session(storage, createConfig("/library", namespaceKey));
+
+    expect(session.getAuthToken()).toBe("999900000000000000000000000000000000000000000000");
+    expect(session.getUser().hasId()).toBe(false);
+    expect(rawStorage.getItem(namespaced + "session.user")).toBe(null);
+  });
+
   it("should test redeem token", async () => {
     const storage = new StorageShim();
     const session = new Session(storage, $config);

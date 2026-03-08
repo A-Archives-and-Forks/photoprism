@@ -1,6 +1,6 @@
 # PhotoPrism® — Repository Guidelines
 
-**Last Updated:** March 7, 2026
+**Last Updated:** March 8, 2026
 
 ## Purpose
 
@@ -109,6 +109,7 @@ Additional details MAY be included as needed, such as related issues, references
 ### Web Templates & Shared Assets
 
 - HTML entrypoints live under `assets/templates/`; key files are `index.gohtml`, `app.gohtml`, `app.js.gohtml`, and `splash.gohtml`. The browser check logic resides in `assets/static/js/browser-check.js` and is included via `app.js.gohtml`; it performs capability checks (Promise, fetch, AbortController, `script.noModule`, etc.) before the main bundle executes.
+- OIDC login completion for the web UI is bridged through `assets/templates/auth.gohtml`, which writes the session into namespaced browser storage and must stay aligned with `frontend/src/common/session.js`, `frontend/src/common/storage.js`, and the login form toggle in `frontend/src/page/auth/login.vue` (`Stay signed in on this device`).
 - To preserve the fallback messaging, keep the script order in `app.js.gohtml` so `browser-check.js` loads before the bundle script (`{{ .config.JsUri }}`). Do not add `defer` or `async` to the bundle tag unless you reintroduce a guarded loader.
 - The same loader partial is reused in private packages (`pro/assets/templates/index.gohtml`, `plus/assets/templates/index.gohtml`, `portal/assets/templates/index.gohtml`). Whenever you touch `app.js.gohtml` or change how we load the bundle, mirror the update by running commands such as `cd pro && sed -n '1,160p' assets/templates/index.gohtml` (and similarly for `plus` and `portal`) to confirm they include the shared partial instead of hard-coding the bundle tag.
 - Splash styles are defined in `frontend/src/css/splash.css`. Add new splash elements (for example `.splash-warning`) there so both public and private editions remain visually consistent.

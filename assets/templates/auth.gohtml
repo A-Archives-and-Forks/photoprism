@@ -16,7 +16,8 @@
 
 <script>
   (function () {
-    const storage = window.localStorage;
+    const localStorage = window.localStorage;
+    const sessionStorage = window.sessionStorage;
     const rawNamespace = {{ .config.StorageNamespace }};
     const namespaceKey = rawNamespace && rawNamespace !== "null" && rawNamespace !== "undefined" ? String(rawNamespace) : "root";
     const prefix = `pp:${namespaceKey}:`;
@@ -31,28 +32,37 @@
       "session.scope",
       "session.error",
     ];
-    const clearLegacy = () => {
-      legacyKeys.forEach((key) => storage.removeItem(key));
+    const storages = [localStorage, sessionStorage].filter(Boolean);
+    const preferredStorage =
+      localStorage &&
+      (localStorage.getItem(namespacedKey("session")) === "true" || localStorage.getItem("session") === "true")
+        ? sessionStorage || localStorage
+        : localStorage;
+    const clearSessionData = () => {
+      storages.forEach((storage) => {
+        legacyKeys.forEach((key) => storage.removeItem(key));
+        legacyKeys.forEach((key) => storage.removeItem(namespacedKey(key)));
+      });
     };
     const setItem = (key, value) => {
-      storage.setItem(namespacedKey(key), value);
+      preferredStorage.setItem(namespacedKey(key), value);
     };
     const removeItem = (key) => {
-      storage.removeItem(namespacedKey(key));
+      storages.forEach((storage) => storage.removeItem(namespacedKey(key)));
     };
 
     {{ if eq .status "success" }}
-    clearLegacy();
+    clearSessionData();
     setItem("session.id", {{ .session_id }});
     setItem("session.token", {{ .access_token }});
     setItem("session.provider", {{ .provider }});
     setItem("session.user", JSON.stringify({{ .user }}));
     removeItem("session.error");
     {{ else if eq .status "failed" }}
-    clearLegacy();
+    clearSessionData();
     setItem("session.error", {{ .error }});
     {{ else }}
-    clearLegacy();
+    clearSessionData();
     removeItem("session.id");
     removeItem("session.token");
     removeItem("session.provider");

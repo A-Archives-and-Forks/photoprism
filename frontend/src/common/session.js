@@ -46,13 +46,14 @@ export default class Session {
     this.loginRedirect = false;
     this.config = config;
     this.baseUri = config?.baseUri;
+    this.storageNamespace = config?.storageNamespace;
     this.provider = "";
     this.user = new User(false);
     this.scope = "";
     this.data = null;
     this.localStorage = storage;
     const sessionStorage = typeof window === "undefined" ? undefined : window.sessionStorage;
-    this.sessionStorage = createNamespacedStorage(sessionStorage, this.baseUri);
+    this.sessionStorage = createNamespacedStorage(sessionStorage, this.storageNamespace);
 
     // Set session storage.
     if (storage.getItem(this.storageKey) === "true") {
@@ -95,14 +96,14 @@ export default class Session {
 
     // Restore authentication from session storage.
     if (this.applyAuthToken(this.storage.getItem(this.storageKey + ".token")) && this.applyId(this.storage.getItem(this.storageKey + ".id"))) {
-      const dataJson = this.storage.getItem(this.storageKey + ".data");
-      if (dataJson && dataJson !== "undefined") {
-        this.data = JSON.parse(dataJson);
+      const data = this.getStoredJSON(this.storageKey + ".data");
+      if (data) {
+        this.data = data;
       }
 
-      const userJson = this.storage.getItem(this.storageKey + ".user");
-      if (userJson && userJson !== "undefined") {
-        this.user = new User(JSON.parse(userJson));
+      const user = this.getStoredJSON(this.storageKey + ".user");
+      if (user) {
+        this.user = new User(user);
       }
 
       const provider = this.storage.getItem(this.storageKey + ".provider");
@@ -149,15 +150,39 @@ export default class Session {
     }
   }
 
+  getStoredJSON(key) {
+    const value = this.storage.getItem(key);
+
+    if (!value || value === "undefined") {
+      return null;
+    }
+
+    try {
+      return JSON.parse(value);
+    } catch (_error) {
+      this.storage.removeItem(key);
+      return null;
+    }
+  }
+
+  setStoragePreference(useSessionStorage) {
+    this.localStorage.setItem(this.storageKey, useSessionStorage ? "true" : "false");
+    this.sessionStorage.removeItem(this.storageKey);
+  }
+
   useSessionStorage() {
     this.reset();
-    this.storage.setItem(this.storageKey, "true");
+    this.setStoragePreference(true);
     this.storage = this.sessionStorage;
   }
 
   useLocalStorage() {
-    this.storage.setItem(this.storageKey, "false");
+    this.setStoragePreference(false);
     this.storage = this.localStorage;
+  }
+
+  usesSessionStorage() {
+    return this.storage === this.sessionStorage;
   }
 
   setConfig(values) {
