@@ -634,9 +634,7 @@ msgstr "Brūns"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Pārlūkot"
 
@@ -829,7 +827,7 @@ msgstr "Klienta piekļuves dati"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Aizvērt"
@@ -1262,7 +1260,7 @@ msgstr "Neizmantojiet RawTherapee, lai konvertētu RAW attēlus."
 msgid "Done"
 msgstr "Pabeigts"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Pabeigts."
@@ -1779,7 +1777,7 @@ msgstr "Lejupielādējot kaudzes un arhīvus, iekļaujiet RAW attēlu failus."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Lejupielādējot stekus un arhīvus, iekļaujiet blakusfailus."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Lai turpinātu, palieliniet krātuves lielumu vai izdzēsiet failus."
 
@@ -1814,7 +1812,7 @@ msgstr "Instances ID"
 msgid "Instances"
 msgstr "Instances"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Brīvas vietas vairs nav."
 
@@ -2377,7 +2375,7 @@ msgstr "Mezgli"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Attēli, kas nav fotoattēli un ir zemas kvalitātes, ir jāpārskata, pirms tie parādās meklēšanas rezultātos."
 
@@ -2691,11 +2689,11 @@ msgstr "Lūdzu, apstipriniet savu jauno paroli."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Lūdzu, nokopējiet šo nejauši ģenerēto lietotnes paroli un glabājiet to drošā vietā, jo jūs to vairs nevarēsiet redzēt:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Lūdzu, neaugšupielādējiet privātus, nelikumīgus vai aizskarošus attēlus."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Lūdzu, neaugšupielādējiet fotoattēlus ar aizskarošu saturu."
 
@@ -2738,7 +2736,7 @@ msgstr "Portrets"
 msgid "Preserve filenames"
 msgstr "Saglabāt failu nosaukumus"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Lai izveidotu jaunu albumu, nospiediet taustiņu Enter."
 
@@ -3134,7 +3132,7 @@ msgid "Select dates"
 msgstr "Izvēlieties datumus"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Atlasīt vai izveidot albumus"
 
@@ -3142,7 +3140,7 @@ msgstr "Atlasīt vai izveidot albumus"
 msgid "Select or create labels"
 msgstr "Atlasiet vai izveidojiet etiķetes"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Atlasiet augšupielādējamos failus…"
 
@@ -3624,7 +3622,7 @@ msgstr "Pārslēgt skatu"
 msgid "Token"
 msgstr "Žetons"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "Atlasīts pārāk daudz failu"
 
@@ -3760,18 +3758,20 @@ msgstr "Jaunināt tūlīt"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Augšupielādēt"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Augšupielāde pabeigta. Indeksēšana…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Augšupielāde neizdevās"
 
@@ -3786,12 +3786,12 @@ msgstr "Augšupielādēt lokālos failus"
 msgid "Upload Path"
 msgstr "Augšupielādes ceļš"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "Notiek %{n} no %{t} augšupielāde…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Notiek fotoattēlu augšupielāde…"
 
@@ -3799,7 +3799,7 @@ msgstr "Notiek fotoattēlu augšupielāde…"
 msgid "Uploading…"
 msgstr "Notiek augšupielāde…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Augšupielādes, kas var saturēt šādus attēlus, tiks automātiski noraidītas."
 
@@ -4027,7 +4027,7 @@ msgstr "Varat lejupielādēt tikai vienu etiķeti"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Varat meklēt atrašanās vietu vai pārvietot marķieri kartē, lai mainītu pozīciju:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Testēšanas nolūkos varat augšupielādēt līdz %{n} failiem."
 

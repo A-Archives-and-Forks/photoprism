@@ -638,9 +638,7 @@ msgstr "חום"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "לְדַפדֵף"
 
@@ -833,7 +831,7 @@ msgstr "אישורי לקוח"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "סגור"
@@ -1266,7 +1264,7 @@ msgstr "אל תשתמש ב- RawTherapee להמרת קבצי RAW."
 msgid "Done"
 msgstr "בוצע"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "בוצע."
@@ -1783,7 +1781,7 @@ msgstr "כלול קובצי תמונה RAW בעת הורדת ערימות ואר
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "כלול קבצי Sidecar בעת הורדת ערימות וארכיונים."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "הגדל את נפח האחסון או מחק קבצים כדי להמשיך."
 
@@ -1818,7 +1816,7 @@ msgstr "מזהה מופע"
 msgid "Instances"
 msgstr "מופעים"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "אחסון לא מספיק."
 
@@ -2381,7 +2379,7 @@ msgstr "צמתים"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "תמונות שאינן נראות צילום או באיכות נמוכה דורשות בדיקה לפני שהן מופיעות בתוצאות החיפוש."
 
@@ -2695,11 +2693,11 @@ msgstr "אנא אשר את הסיסמה החדשה שלך."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "אנא העתק את סיסמת האפליקציה הבאה שנוצרה באופן אקראי ושמור אותה במקום בטוח, מכיוון שלא תוכל לראות אותה שוב:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "נא לא להעלות תמונות פרטיות, לא חוקיות או פוגעניות."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "נא לא להעלות תמונות המכילות תוכן פוגעני."
 
@@ -2742,7 +2740,7 @@ msgstr "דיוקן"
 msgid "Preserve filenames"
 msgstr "שמור שמות קבצים"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "לחץ על Enter בכדי ליצור אלבום חדש."
 
@@ -3138,7 +3136,7 @@ msgid "Select dates"
 msgstr "בחר תאריכים"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "בחירה או יצירה של אלבומים"
 
@@ -3146,7 +3144,7 @@ msgstr "בחירה או יצירה של אלבומים"
 msgid "Select or create labels"
 msgstr "בחר או צור תוויות"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "בחר את הקבצים להעלאה…"
 
@@ -3628,7 +3626,7 @@ msgstr "החלף תצוגה"
 msgid "Token"
 msgstr "טוקן"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "נבחרו יותר מדי קבצים"
 
@@ -3764,18 +3762,20 @@ msgstr "שדרג עכשיו"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "העלה"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "העלאה הושלמה, מאנדקס…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "העלאה נכשלה"
 
@@ -3790,12 +3790,12 @@ msgstr "העלה קבצים מקומיים"
 msgid "Upload Path"
 msgstr "נתיב העלאה"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "מעלה %{n} מתוך %{t}…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "מעלה תמונות…"
 
@@ -3803,7 +3803,7 @@ msgstr "מעלה תמונות…"
 msgid "Uploading…"
 msgstr "מעלה..."
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "העלאות שעשויות להכיל תמונות כאלה יידחו אוטומטית."
 
@@ -4031,7 +4031,7 @@ msgstr "ניתן להוריד רק תווית אחת"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "ניתן לחפש מיקום או להזיז את הסמן על המפה כדי לשנות את המיקום:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "אתה יכול להעלות עד %{n} קבצים למטרות בדיקה."
 

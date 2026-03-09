@@ -635,9 +635,7 @@ msgstr "Bruin"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Snuffel"
 
@@ -830,7 +828,7 @@ msgstr "Kliënt geloofsbriewe"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Naby"
@@ -1263,7 +1261,7 @@ msgstr "Moenie RawTherapee gebruik om RAW-beelde om te skakel nie."
 msgid "Done"
 msgstr "Klaar"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Klaar."
@@ -1780,7 +1778,7 @@ msgstr "Sluit RAW-beeldlêers in wanneer stapels en argiewe afgelaai word."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Sluit syspanlêers in wanneer stapels en argiewe afgelaai word."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Vergroot stoorgrootte of vee lêers uit om voort te gaan."
 
@@ -1815,7 +1813,7 @@ msgstr "Geval ID"
 msgid "Instances"
 msgstr "Instansies"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Onvoldoende berging."
 
@@ -2378,7 +2376,7 @@ msgstr "Knooppunte"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Nie-fotografiese en lae kwaliteit prente vereis 'n hersiening voordat dit in soekresultate verskyn."
 
@@ -2692,11 +2690,11 @@ msgstr "Bevestig asseblief jou nuwe wagwoord."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Kopieer asseblief die volgende lukraak gegenereerde programwagwoord en hou dit op 'n veilige plek, aangesien jy dit nie weer sal kan sien nie:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Moet asseblief geen privaat, onwettige of aanstootlike foto's oplaai nie."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Moet asseblief nie foto's oplaai wat aanstootlike inhoud bevat nie."
 
@@ -2739,7 +2737,7 @@ msgstr "Portret"
 msgid "Preserve filenames"
 msgstr "Bewaar lêername"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Druk enter om 'n nuwe album te skep."
 
@@ -3135,7 +3133,7 @@ msgid "Select dates"
 msgstr "Kies datums"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Kies of skep albums"
 
@@ -3143,7 +3141,7 @@ msgstr "Kies of skep albums"
 msgid "Select or create labels"
 msgstr "Kies of skep etikette"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Kies die lêers om op te laai…"
 
@@ -3625,7 +3623,7 @@ msgstr "Wissel aansig"
 msgid "Token"
 msgstr "Teken"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "Te veel lêers gekies"
 
@@ -3761,18 +3759,20 @@ msgstr "Gradeer nou op"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Laai op"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Oplaai voltooi. Indekseer tans …"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Oplegging misluk"
 
@@ -3787,12 +3787,12 @@ msgstr "Laai plaaslike lêers op"
 msgid "Upload Path"
 msgstr "Oplaai pad"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "Laai tans %{n} van %{t} op…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Laai tans foto's op …"
 
@@ -3800,7 +3800,7 @@ msgstr "Laai tans foto's op …"
 msgid "Uploading…"
 msgstr "Laai tans op …"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Oplaaie wat sulke beelde kan bevat, sal outomaties verwerp word."
 
@@ -4028,7 +4028,7 @@ msgstr "Jy kan net een etiket aflaai"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Jy kan na 'n ligging soek of die merker op die kaart skuif om die posisie te verander:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Jy kan tot %{n} lêers oplaai vir toetsdoeleindes."
 

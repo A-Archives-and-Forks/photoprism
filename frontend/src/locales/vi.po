@@ -635,9 +635,7 @@ msgstr "Màu nâu"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Duyệt qua"
 
@@ -830,7 +828,7 @@ msgstr "Thông tin xác thực của khách hàng"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Đóng"
@@ -1263,7 +1261,7 @@ msgstr "Không sử dụng RawTherapee để chuyển đổi ảnh RAW."
 msgid "Done"
 msgstr "Xong"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Xong."
@@ -1780,7 +1778,7 @@ msgstr "Bao gồm các tệp hình ảnh RAW khi tải xuống các ngăn xếp 
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Bao gồm các tệp sidecar khi tải xuống ngăn xếp và kho lưu trữ."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Tăng dung lượng lưu trữ hoặc xóa tệp để tiếp tục."
 
@@ -1815,7 +1813,7 @@ msgstr "ID phiên bản"
 msgid "Instances"
 msgstr "Các trường hợp"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Không đủ dung lượng lưu trữ."
 
@@ -2378,7 +2376,7 @@ msgstr "Các nút"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Hình ảnh không phải ảnh và chất lượng thấp cần được xem xét trước khi chúng xuất hiện trong kết quả tìm kiếm."
 
@@ -2692,11 +2690,11 @@ msgstr "Vui lòng xác nhận mật khẩu mới của bạn."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Vui lòng sao chép mật khẩu ứng dụng được tạo ngẫu nhiên sau đây và giữ nó ở nơi an toàn vì bạn sẽ không thể nhìn thấy nó nữa:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Vui lòng không tải lên bất kỳ hình ảnh riêng tư, bất hợp pháp hoặc xúc phạm nào."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Vui lòng không tải lên ảnh có nội dung phản cảm."
 
@@ -2739,7 +2737,7 @@ msgstr "Chân dung"
 msgid "Preserve filenames"
 msgstr "Giữ nguyên tên tập tin"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Nhấn enter để tạo album mới."
 
@@ -3135,7 +3133,7 @@ msgid "Select dates"
 msgstr "Chọn ngày"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Chọn hoặc tạo album"
 
@@ -3143,7 +3141,7 @@ msgstr "Chọn hoặc tạo album"
 msgid "Select or create labels"
 msgstr "Chọn hoặc tạo nhãn"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Chọn các tập tin để tải lên…"
 
@@ -3625,7 +3623,7 @@ msgstr "Chuyển đổi chế độ xem"
 msgid "Token"
 msgstr "Mã thông báo"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "Đã chọn quá nhiều tệp"
 
@@ -3761,18 +3759,20 @@ msgstr "Nâng cấp ngay bây giờ"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Tải lên"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Tải lên hoàn tất. Lập chỉ mục…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Tải lên không thành công"
 
@@ -3787,12 +3787,12 @@ msgstr "Tải lên các tập tin cục bộ"
 msgid "Upload Path"
 msgstr "Đường dẫn tải lên"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "Đang tải lên %{n} trong số %{t}…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Đang tải ảnh lên…"
 
@@ -3800,7 +3800,7 @@ msgstr "Đang tải ảnh lên…"
 msgid "Uploading…"
 msgstr "Đang tải lên…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Những tải lên có thể chứa những hình ảnh như vậy sẽ tự động bị từ chối."
 
@@ -4030,7 +4030,7 @@ msgstr "Bạn chỉ có thể tải xuống một nhãn"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Bạn có thể tìm kiếm vị trí hoặc di chuyển điểm đánh dấu trên bản đồ để thay đổi vị trí:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Bạn có thể tải lên tối đa %{n} tệp cho mục đích thử nghiệm."
 

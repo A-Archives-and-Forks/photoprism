@@ -635,9 +635,7 @@ msgstr "Marroia"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Arakatu"
 
@@ -830,7 +828,7 @@ msgstr "Bezeroaren kredentzialak"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Itxi"
@@ -1263,7 +1261,7 @@ msgstr "Ez erabili RawTherapee RAW irudiak bihurtzeko."
 msgid "Done"
 msgstr "Eginda"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Eginda."
@@ -1780,7 +1778,7 @@ msgstr "Sartu RAW irudi-fitxategiak pila eta artxiboak deskargatzean."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Sartu sidecar fitxategiak pilak eta artxiboak deskargatzean."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Aurrera egiteko, handitu biltegiratze-tamaina edo ezabatu fitxategiak."
 
@@ -1815,7 +1813,7 @@ msgstr "Instantziaren IDa"
 msgid "Instances"
 msgstr "Instantziak"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Biltegiratze nahikoa ez."
 
@@ -2378,7 +2376,7 @@ msgstr "Nodoak"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Argazkiak ez diren eta kalitate baxuko irudiak berrikusi behar dira bilaketa-emaitzetan agertu aurretik."
 
@@ -2692,11 +2690,11 @@ msgstr "Mesedez, berretsi pasahitz berria."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Mesedez, kopiatu ausaz sortutako aplikazioaren pasahitza eta gorde leku seguru batean, ezingo baituzu berriro ikusi:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Mesedez, ez igo argazki pribatu, legez kanpoko edo iraingarririk."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Mesedez, ez kargatu eduki iraingarria duten argazkirik."
 
@@ -2739,7 +2737,7 @@ msgstr "Erretratua"
 msgid "Preserve filenames"
 msgstr "Gorde fitxategi-izenak"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Sakatu Sartu album berri bat sortzeko."
 
@@ -3135,7 +3133,7 @@ msgid "Select dates"
 msgstr "Aukeratu datak"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Hautatu edo sortu albumak"
 
@@ -3143,7 +3141,7 @@ msgstr "Hautatu edo sortu albumak"
 msgid "Select or create labels"
 msgstr "Hautatu edo sortu etiketak"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Hautatu kargatu beharreko fitxategiak…"
 
@@ -3625,7 +3623,7 @@ msgstr "Aldatu ikuspegia"
 msgid "Token"
 msgstr "Tokena"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "Fitxategi gehiegi hautatu dira"
 
@@ -3761,18 +3759,20 @@ msgstr "Berritu orain"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Kargatu"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Kargatzea osatuta. Indexatzen…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Ezin izan da kargatu"
 
@@ -3787,12 +3787,12 @@ msgstr "Kargatu tokiko fitxategiak"
 msgid "Upload Path"
 msgstr "Kargatu bidea"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{t}-tik %{n} kargatzen…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Argazkiak kargatzen…"
 
@@ -3800,7 +3800,7 @@ msgstr "Argazkiak kargatzen…"
 msgid "Uploading…"
 msgstr "Kargatzen…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Horrelako irudiak izan ditzaketen kargak automatikoki baztertuko dira."
 
@@ -4028,7 +4028,7 @@ msgstr "Etiketa bakarra deskarga dezakezu"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Kokapen bat bilatu edo markatzailea mapan mugitu dezakezu posizioa aldatzeko:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "%{n} fitxategi karga ditzakezu proba helburuetarako."
 

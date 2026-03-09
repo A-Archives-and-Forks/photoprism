@@ -635,9 +635,7 @@ msgstr "Donn"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Brabhsáil"
 
@@ -830,7 +828,7 @@ msgstr "Dintiúir Cliant"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Dún"
@@ -1263,7 +1261,7 @@ msgstr "Ná húsáid RawTherapee chun íomhánna RAW a thiontú."
 msgid "Done"
 msgstr "Déanta"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Déanta."
@@ -1780,7 +1778,7 @@ msgstr "Cuir comhaid íomhá RAW san áireamh agus stoic agus cartlanna á n-ío
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Cuir comhaid taobhcharr san áireamh agus stoic agus cartlanna á n-íoslódáil."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Méadaigh méid na stórála nó scrios comhaid chun leanúint ar aghaidh."
 
@@ -1815,7 +1813,7 @@ msgstr "Aitheantas an Cháis"
 msgid "Instances"
 msgstr "Cásanna"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Stóráil neamhleor."
 
@@ -2378,7 +2376,7 @@ msgstr "Nóid"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Teastaíonn athbhreithniú ar íomhánna nach bhfuil grianghrafadóireachta agus ar cháilíocht íseal sula bhfeictear iad i dtorthaí cuardaigh."
 
@@ -2692,11 +2690,11 @@ msgstr "Deimhnigh do phasfhocal nua le do thoil."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Cóipeáil an pasfhocal aipe a gineadh go randamach agus coinnigh in áit shábháilte é, mar ní bheidh tú in ann é a fheiceáil arís:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Ná huaslódáil aon pictiúir phríobháideacha, neamhdhleathacha nó maslacha."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Ná huaslódáil grianghraif a bhfuil ábhar maslach iontu."
 
@@ -2739,7 +2737,7 @@ msgstr "Portráid"
 msgid "Preserve filenames"
 msgstr "Caomhnaigh ainmneacha comhaid"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Brúigh Enter chun albam nua a chruthú."
 
@@ -3135,7 +3133,7 @@ msgid "Select dates"
 msgstr "Roghnaigh dátaí"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Roghnaigh nó cruthaigh albaim"
 
@@ -3143,7 +3141,7 @@ msgstr "Roghnaigh nó cruthaigh albaim"
 msgid "Select or create labels"
 msgstr "Roghnaigh nó cruthaigh lipéid"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Roghnaigh na comhaid le huaslódáil…"
 
@@ -3625,7 +3623,7 @@ msgstr "Scoránaigh Amharc"
 msgid "Token"
 msgstr "Comhartha"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "An iomarca comhad roghnaithe"
 
@@ -3761,18 +3759,20 @@ msgstr "Uasghrádaigh Anois"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Uaslódáil"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Uaslódáil iomlán. Innéacsú…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Theip ar an uaslódáil"
 
@@ -3787,12 +3787,12 @@ msgstr "Íoslódáil comhaid áitiúla"
 msgid "Upload Path"
 msgstr "Bealach Uaslódáil"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{n} de %{t} á uaslódáil…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Grianghraif á n-uaslódáil…"
 
@@ -3800,7 +3800,7 @@ msgstr "Grianghraif á n-uaslódáil…"
 msgid "Uploading…"
 msgstr "Á uaslódáil…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Diúltófar go huathoibríoch d’uaslódálacha a bhféadfadh íomhánna den sórt sin a bheith iontu."
 
@@ -4028,7 +4028,7 @@ msgstr "Ní féidir leat ach lipéad amháin a íoslódáil"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Is féidir leat suíomh a chuardach nó an marcóir a bhogadh ar an léarscáil chun an suíomh a athrú:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Is féidir leat suas le %{n} comhad a uaslódáil chun críocha tástála."
 

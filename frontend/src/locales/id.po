@@ -638,9 +638,7 @@ msgstr "Coklat"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:112
-#: src/component/upload/dialog.vue:70 src/component/upload/dialog.vue:71
-#: src/component/upload/dialog.vue:82
+#: src/component/photo/toolbar.vue:83
 msgid "Browse"
 msgstr "Jelajahi"
 
@@ -833,7 +831,7 @@ msgstr "Kredensial Klien"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:109 src/locales.js:210
+#: src/component/upload/dialog.vue:117 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Tutup"
@@ -1266,7 +1264,7 @@ msgstr "Jangan gunakan RawTherapee untuk mengonversi file RAW."
 msgid "Done"
 msgstr "Selesai"
 
-#: src/component/upload/dialog.vue:37 src/page/library/import.vue:7
+#: src/component/upload/dialog.vue:36 src/page/library/import.vue:7
 #: src/page/library/index.vue:8
 msgid "Done."
 msgstr "Selesai."
@@ -1783,7 +1781,7 @@ msgstr "Sertakan file gambar RAW apabila mengunduh tumpukan dan arsip."
 msgid "Include sidecar files when downloading stacks and archives."
 msgstr "Sertakan file sespan saat mengunduh tumpukan dan arsip."
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Increase storage size or delete files to continue."
 msgstr "Menambah ukuran penyimpanan atau menghapus file untuk melanjutkan."
 
@@ -1818,7 +1816,7 @@ msgstr "ID Instance"
 msgid "Instances"
 msgstr "Contoh"
 
-#: src/component/upload/dialog.vue:38 src/page/library/import.vue:8
+#: src/component/upload/dialog.vue:37 src/page/library/import.vue:8
 msgid "Insufficient storage."
 msgstr "Penyimpanan yang tidak memadai."
 
@@ -2381,7 +2379,7 @@ msgstr "Node"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:109
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Gambar non-fotografis dan berkualitas rendah memerlukan peninjauan sebelum muncul di hasil pencarian."
 
@@ -2695,11 +2693,11 @@ msgstr "Harap konfirmasi kata sandi baru Anda."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Silakan salin kata sandi aplikasi yang dibuat secara acak berikut dan simpan di tempat yang aman, karena Anda tidak akan dapat melihatnya lagi:"
 
-#: src/component/upload/dialog.vue:94
+#: src/component/upload/dialog.vue:102
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Mohon untuk tidak mengunggah gambar yang bersifat pribadi, melanggar hukum, atau menyinggung."
 
-#: src/component/upload/dialog.vue:97
+#: src/component/upload/dialog.vue:105
 msgid "Please don't upload photos containing offensive content."
 msgstr "Jangan mengunggah foto yang mengandung konten SARA."
 
@@ -2742,7 +2740,7 @@ msgstr "Potret"
 msgid "Preserve filenames"
 msgstr "Pertahankan nama file"
 
-#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:65
+#: src/component/photo/album/dialog.vue:41 src/component/upload/dialog.vue:64
 msgid "Press enter to create a new album."
 msgstr "Tekan enter untuk membuat album baru."
 
@@ -3138,7 +3136,7 @@ msgid "Select dates"
 msgstr "Pilih tanggal"
 
 #: src/component/photo/album/dialog.vue:34
-#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:58
+#: src/component/photo/batch-edit.vue:437 src/component/upload/dialog.vue:57
 msgid "Select or create albums"
 msgstr "Memilih atau membuat album"
 
@@ -3146,7 +3144,7 @@ msgstr "Memilih atau membuat album"
 msgid "Select or create labels"
 msgstr "Memilih atau membuat label"
 
-#: src/component/upload/dialog.vue:41
+#: src/component/upload/dialog.vue:40
 msgid "Select the files to upload…"
 msgstr "Pilih file yang akan diunggah…"
 
@@ -3628,7 +3626,7 @@ msgstr "Beralih Tampilan"
 msgid "Token"
 msgstr "Token"
 
-#: src/component/upload/dialog.vue:342
+#: src/component/upload/dialog.vue:354
 msgid "Too many files selected"
 msgstr "Terlalu banyak file yang dipilih"
 
@@ -3764,18 +3762,20 @@ msgstr "Tingkatkan Sekarang"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:173
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
+#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
 #: src/page/settings/services.vue:146
 msgid "Upload"
 msgstr "Unggah"
 
-#: src/component/upload/dialog.vue:36
+#: src/component/upload/dialog.vue:35
 msgid "Upload complete. Indexing…"
 msgstr "Unggahan selesai. Melakukan pengindeksan…"
 
-#: src/component/upload/dialog.vue:32 src/component/upload/dialog.vue:426
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
 msgid "Upload failed"
 msgstr "Unggahan gagal"
 
@@ -3790,12 +3790,12 @@ msgstr "Unggah berkas lokal"
 msgid "Upload Path"
 msgstr "Jalur Unggah"
 
-#: src/component/upload/dialog.vue:34
+#: src/component/upload/dialog.vue:33
 msgid "Uploading %{n} of %{t}…"
 msgstr "Mengunggah %{n} dari %{t}…"
 
-#: src/component/upload/dialog.vue:254 src/component/upload/dialog.vue:262
-#: src/component/upload/dialog.vue:378
+#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
+#: src/component/upload/dialog.vue:386
 msgid "Uploading photos…"
 msgstr "Mengunggah foto…"
 
@@ -3803,7 +3803,7 @@ msgstr "Mengunggah foto…"
 msgid "Uploading…"
 msgstr "Memuat ulang…"
 
-#: src/component/upload/dialog.vue:98
+#: src/component/upload/dialog.vue:106
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Unggahan yang mungkin berisi gambar seperti itu akan ditolak secara otomatis."
 
@@ -4031,7 +4031,7 @@ msgstr "Anda hanya dapat mengunduh satu label"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Anda dapat mencari lokasi atau memindahkan penanda pada peta untuk mengubah posisi:"
 
-#: src/component/upload/dialog.vue:93
+#: src/component/upload/dialog.vue:101
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Anda dapat mengunggah hingga %{n} file untuk tujuan pengujian."
 
