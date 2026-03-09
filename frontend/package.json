@@ -108,7 +108,7 @@
     "sockette": "^2.0.6",
     "style-loader": "^4.0.0",
     "svg-url-loader": "^8.0.0",
-    "tar": "^7.5.10",
+    "tar": "^7.5.11",
     "url-loader": "^4.1.1",
     "util": "^0.12.5",
     "vite-tsconfig-paths": "^5.1.4",
