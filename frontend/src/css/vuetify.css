@@ -149,7 +149,11 @@ body > .v-overlay-container .v-overlay__scrim {
 }
 
 .v-dialog--upload .v-file-upload .v-file-upload-icon {
-    margin-bottom: 4px;
+    margin-bottom: 6px;
+}
+
+.v-dialog--upload .v-file-upload  .v-file-upload-icon .v-icon--size-default {
+    font-size: 1em;
 }
 
 .v-dialog--upload .v-file-upload.v-file-upload--density-compact .v-file-upload-divider,
