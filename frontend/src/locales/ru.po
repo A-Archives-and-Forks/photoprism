@@ -638,7 +638,7 @@ msgstr "Коричневый"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83
+#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:94
 msgid "Browse"
 msgstr "Просмотреть"
 
@@ -831,7 +831,7 @@ msgstr "Учетные данные клиента"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:117 src/locales.js:210
+#: src/component/upload/dialog.vue:121 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "Закрыть"
@@ -1305,6 +1305,10 @@ msgstr "Перетаскивай файлы сюда"
 #: src/page/cluster/nodes.vue:177 src/locales.js:348
 msgid "Driver"
 msgstr "Драйвер"
+
+#: src/component/upload/dialog.vue:94
+msgid "Drop files here"
+msgstr ""
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -2379,7 +2383,7 @@ msgstr "Узлы"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:113
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "Файлы, не являющиеся фотографиями, или изображения низкого качества нужно одобрить, чтобы они появились в результатах поиска."
 
@@ -2693,11 +2697,11 @@ msgstr "Пожалуйста, подтвердите ваш новый паро�
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "Скопируйте следующий случайно сгенерированный пароль приложения и сохраните его в надежном месте, так как вы больше не сможете его увидеть:"
 
-#: src/component/upload/dialog.vue:102
+#: src/component/upload/dialog.vue:106
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "Пожалуйста, не загружайте частные, незаконные или оскорбительные фотографии."
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:109
 msgid "Please don't upload photos containing offensive content."
 msgstr "Пожалуйста, не загружайте фотографии, содержащие недопустимый контент."
 
@@ -3626,7 +3630,7 @@ msgstr "Переключить вид"
 msgid "Token"
 msgstr "Токен"
 
-#: src/component/upload/dialog.vue:354
+#: src/component/upload/dialog.vue:386
 msgid "Too many files selected"
 msgstr "Выбрано слишком много файлов"
 
@@ -3762,8 +3766,8 @@ msgstr "Обновить сейчас"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
-#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:124
+#: src/component/upload/dialog.vue:191 src/component/upload/dialog.vue:70
 #: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -3775,7 +3779,7 @@ msgstr "Загрузка"
 msgid "Upload complete. Indexing…"
 msgstr "Загрузка завершена. Индексирование…"
 
-#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:466
 msgid "Upload failed"
 msgstr "Загрузка не удалась"
 
@@ -3794,8 +3798,8 @@ msgstr "Путь загрузки"
 msgid "Uploading %{n} of %{t}…"
 msgstr "Загрузка %{n} из %{t}…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:386
+#: src/component/upload/dialog.vue:275 src/component/upload/dialog.vue:283
+#: src/component/upload/dialog.vue:418
 msgid "Uploading photos…"
 msgstr "Загрузка фотографий…"
 
@@ -3803,7 +3807,7 @@ msgstr "Загрузка фотографий…"
 msgid "Uploading…"
 msgstr "Загрузка…"
 
-#: src/component/upload/dialog.vue:106
+#: src/component/upload/dialog.vue:110
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "Загрузки, которые могут содержать такие изображение будут автоматически отменены."
 
@@ -4031,7 +4035,7 @@ msgstr "Вы можете загрузить только одну метку"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Ты можешь искать местоположение или перемещать маркер на карте, чтобы изменить положение:"
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:105
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "Для тестирования можно загрузить до %{n} файлов."
 

@@ -638,7 +638,7 @@ msgstr "갈색"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83
+#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:94
 msgid "Browse"
 msgstr "찾아보기"
 
@@ -831,7 +831,7 @@ msgstr "클라이언트 자격 증명"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:117 src/locales.js:210
+#: src/component/upload/dialog.vue:121 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "닫기"
@@ -1305,6 +1305,10 @@ msgstr "파일을 여기로 끌어다 놓기"
 #: src/page/cluster/nodes.vue:177 src/locales.js:348
 msgid "Driver"
 msgstr "드라이버"
+
+#: src/component/upload/dialog.vue:94
+msgid "Drop files here"
+msgstr ""
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -2379,7 +2383,7 @@ msgstr "노드"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:113
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "사진이 아닌 저품질 이미지는 검색 결과에 표시되기 전에 검토가 필요합니다."
 
@@ -2693,11 +2697,11 @@ msgstr "새 비밀번호를 확인하세요."
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "무작위로 생성된 다음 앱 비밀번호는 다시 볼 수 없으므로 복사하여 안전한 곳에 보관하시기 바랍니다."
 
-#: src/component/upload/dialog.vue:102
+#: src/component/upload/dialog.vue:106
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "사적이거나 불법적이거나 불쾌감을 주는 사진은 업로드하지 마세요."
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:109
 msgid "Please don't upload photos containing offensive content."
 msgstr "불쾌감한 콘텐츠 포함된 사진을 업로드하지 마십시오."
 
@@ -3626,7 +3630,7 @@ msgstr "보기형식 변경"
 msgid "Token"
 msgstr "토큰"
 
-#: src/component/upload/dialog.vue:354
+#: src/component/upload/dialog.vue:386
 msgid "Too many files selected"
 msgstr "선택한 파일이 너무 많습니다."
 
@@ -3762,8 +3766,8 @@ msgstr "지금 업그레이드"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
-#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:124
+#: src/component/upload/dialog.vue:191 src/component/upload/dialog.vue:70
 #: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -3775,7 +3779,7 @@ msgstr "업로드"
 msgid "Upload complete. Indexing…"
 msgstr "업로드 완료. 색인중…"
 
-#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:466
 msgid "Upload failed"
 msgstr "업로드 실패"
 
@@ -3794,8 +3798,8 @@ msgstr "업로드 경로"
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{t} 중 %{n} 업로드 중…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:386
+#: src/component/upload/dialog.vue:275 src/component/upload/dialog.vue:283
+#: src/component/upload/dialog.vue:418
 msgid "Uploading photos…"
 msgstr "사진 업로드중…"
 
@@ -3803,7 +3807,7 @@ msgstr "사진 업로드중…"
 msgid "Uploading…"
 msgstr "업로드 중…"
 
-#: src/component/upload/dialog.vue:106
+#: src/component/upload/dialog.vue:110
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "이러한 이미지가 포함될 수 있는 업로드는 자동으로 거부됩니다."
 
@@ -4031,7 +4035,7 @@ msgstr "하나의 라벨 만 다운로드할 수 있습니다"
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "위치를 검색하거나 지도에서 마커를 이동하여 위치를 변경할 수 있습니다:"
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:105
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "테스트 목적으로 최대 %{n}개의 파일을 업로드할 수 있습니다."
 

@@ -765,6 +765,7 @@ msgstr ""
 #: src/component/photo/edit/files.vue:68
 #: src/component/photo/edit/files.vue:76
 #: src/component/photo/toolbar.vue:83
+#: src/component/upload/dialog.vue:94
 msgid "Browse"
 msgstr ""
 
@@ -1037,7 +1038,7 @@ msgstr ""
 #: src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4
 #: src/component/update.vue:25
-#: src/component/upload/dialog.vue:117
+#: src/component/upload/dialog.vue:121
 #: src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
@@ -1627,6 +1628,10 @@ msgstr ""
 #: src/page/cluster/nodes.vue:177
 #: src/locales.js:348
 msgid "Driver"
+msgstr ""
+
+#: src/component/upload/dialog.vue:94
+msgid "Drop files here"
 msgstr ""
 
 #: src/page/library/browse.vue:34
@@ -2934,7 +2939,7 @@ msgstr ""
 #: src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193
 #: src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:113
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr ""
 
@@ -3314,11 +3319,11 @@ msgstr ""
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr ""
 
-#: src/component/upload/dialog.vue:102
+#: src/component/upload/dialog.vue:106
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr ""
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:109
 msgid "Please don't upload photos containing offensive content."
 msgstr ""
 
@@ -4426,7 +4431,7 @@ msgstr ""
 msgid "Token"
 msgstr ""
 
-#: src/component/upload/dialog.vue:354
+#: src/component/upload/dialog.vue:386
 msgid "Too many files selected"
 msgstr ""
 
@@ -4616,8 +4621,8 @@ msgstr ""
 #: src/component/service/upload.vue:29
 #: src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63
-#: src/component/upload/dialog.vue:120
-#: src/component/upload/dialog.vue:187
+#: src/component/upload/dialog.vue:124
+#: src/component/upload/dialog.vue:191
 #: src/component/upload/dialog.vue:70
 #: src/component/upload/dialog.vue:71
 #: src/component/upload/dialog.vue:82
@@ -4634,7 +4639,7 @@ msgid "Upload complete. Indexing…"
 msgstr ""
 
 #: src/component/upload/dialog.vue:31
-#: src/component/upload/dialog.vue:434
+#: src/component/upload/dialog.vue:466
 msgid "Upload failed"
 msgstr ""
 
@@ -4655,9 +4660,9 @@ msgstr ""
 msgid "Uploading %{n} of %{t}…"
 msgstr ""
 
-#: src/component/upload/dialog.vue:271
-#: src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:386
+#: src/component/upload/dialog.vue:275
+#: src/component/upload/dialog.vue:283
+#: src/component/upload/dialog.vue:418
 msgid "Uploading photos…"
 msgstr ""
 
@@ -4667,7 +4672,7 @@ msgstr ""
 msgid "Uploading…"
 msgstr ""
 
-#: src/component/upload/dialog.vue:106
+#: src/component/upload/dialog.vue:110
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr ""
 
@@ -4968,7 +4973,7 @@ msgstr ""
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr ""
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:105
 msgid "You can upload up to %{n} files for test purposes."
 msgstr ""
 

@@ -638,7 +638,7 @@ msgstr "भूरा"
 
 #: src/component/photo/edit/files.vue:108 src/component/photo/edit/files.vue:60
 #: src/component/photo/edit/files.vue:68 src/component/photo/edit/files.vue:76
-#: src/component/photo/toolbar.vue:83
+#: src/component/photo/toolbar.vue:83 src/component/upload/dialog.vue:94
 msgid "Browse"
 msgstr "ब्राउज़"
 
@@ -831,7 +831,7 @@ msgstr "ग्राहक क्रेडेंशियल"
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
-#: src/component/upload/dialog.vue:117 src/locales.js:210
+#: src/component/upload/dialog.vue:121 src/locales.js:210
 #: src/page/library/errors.vue:105
 msgid "Close"
 msgstr "बंद करे"
@@ -1305,6 +1305,10 @@ msgstr "फ़ाइलों को यहां खींचें और छ�
 #: src/page/cluster/nodes.vue:177 src/locales.js:348
 msgid "Driver"
 msgstr "ड्राइवर"
+
+#: src/component/upload/dialog.vue:94
+msgid "Drop files here"
+msgstr ""
 
 #: src/page/library/browse.vue:34
 msgid "Duplicates will be skipped and only appear once."
@@ -2379,7 +2383,7 @@ msgstr "नोड्स"
 
 #: src/component/photo/view/cards.vue:16 src/component/photo/view/list.vue:16
 #: src/component/photo/view/list.vue:193 src/component/photo/view/mosaic.vue:16
-#: src/component/upload/dialog.vue:109
+#: src/component/upload/dialog.vue:113
 msgid "Non-photographic and low-quality images require a review before they appear in search results."
 msgstr "गैर-फोटोग्राफिक और निम्न-गुणवत्ता वाली छवियों को खोज परिणामों में प्रदर्शित होने से पहले समीक्षा की आवश्यकता होती है।"
 
@@ -2693,11 +2697,11 @@ msgstr "कृपया अपने नए पासवर्ड की पु�
 msgid "Please copy the following randomly generated app password and keep it in a safe place, as you will not be able to see it again:"
 msgstr "कृपया निम्नलिखित यादृच्छिक रूप से उत्पन्न ऐप पासवर्ड को कॉपी करें और इसे सुरक्षित स्थान पर रखें, क्योंकि आप इसे दोबारा नहीं देख पाएंगे:"
 
-#: src/component/upload/dialog.vue:102
+#: src/component/upload/dialog.vue:106
 msgid "Please do not upload any private, unlawful or offensive pictures."
 msgstr "कृपया कोई भी निजी, गैरकानूनी या आपत्तिजनक चित्र अपलोड न करें।"
 
-#: src/component/upload/dialog.vue:105
+#: src/component/upload/dialog.vue:109
 msgid "Please don't upload photos containing offensive content."
 msgstr "कृपया आक्रामक सामग्री वाले फ़ोटो अपलोड न करें।"
 
@@ -3626,7 +3630,7 @@ msgstr "टॉगल दृश्य"
 msgid "Token"
 msgstr "टोकन"
 
-#: src/component/upload/dialog.vue:354
+#: src/component/upload/dialog.vue:386
 msgid "Too many files selected"
 msgstr "बहुत सारी फ़ाइलें चयनित"
 
@@ -3762,8 +3766,8 @@ msgstr "अभी अपग्रेड करें"
 #: src/component/album/toolbar.vue:176 src/component/navigation.vue:692
 #: src/component/photo/toolbar.vue:466 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
-#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:120
-#: src/component/upload/dialog.vue:187 src/component/upload/dialog.vue:70
+#: src/component/service/upload.vue:63 src/component/upload/dialog.vue:124
+#: src/component/upload/dialog.vue:191 src/component/upload/dialog.vue:70
 #: src/component/upload/dialog.vue:71 src/component/upload/dialog.vue:82
 #: src/page/albums.vue:485 src/page/labels.vue:321
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -3775,7 +3779,7 @@ msgstr "डालना"
 msgid "Upload complete. Indexing…"
 msgstr "अपलोड पूरा हुआ। अनुक्रमण …"
 
-#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:434
+#: src/component/upload/dialog.vue:31 src/component/upload/dialog.vue:466
 msgid "Upload failed"
 msgstr "अपलोड विफल"
 
@@ -3794,8 +3798,8 @@ msgstr "अपलोड पथ"
 msgid "Uploading %{n} of %{t}…"
 msgstr "%{t} का %{n} अपलोड हो रहा है…"
 
-#: src/component/upload/dialog.vue:271 src/component/upload/dialog.vue:279
-#: src/component/upload/dialog.vue:386
+#: src/component/upload/dialog.vue:275 src/component/upload/dialog.vue:283
+#: src/component/upload/dialog.vue:418
 msgid "Uploading photos…"
 msgstr "फ़ोटो अपलोड हो रही हैं…"
 
@@ -3803,7 +3807,7 @@ msgstr "फ़ोटो अपलोड हो रही हैं…"
 msgid "Uploading…"
 msgstr "अपलोड हो रहा है…"
 
-#: src/component/upload/dialog.vue:106
+#: src/component/upload/dialog.vue:110
 msgid "Uploads that may contain such images will be rejected automatically."
 msgstr "ऐसे चित्र शामिल होने वाले अपलोड स्वचालित रूप से अस्वीकार कर दिए जाएंगे।"
 
@@ -4031,7 +4035,7 @@ msgstr "आप केवल एक लेबल डाउनलोड कर स
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "आप किसी स्थान को खोज सकते हैं या स्थिति बदलने के लिए मानचित्र पर मार्कर को स्थानांतरित कर सकते हैं:"
 
-#: src/component/upload/dialog.vue:101
+#: src/component/upload/dialog.vue:105
 msgid "You can upload up to %{n} files for test purposes."
 msgstr "आप परीक्षण उद्देश्यों के लिए %{n} तक फ़ाइलें अपलोड कर सकते हैं।"
 
