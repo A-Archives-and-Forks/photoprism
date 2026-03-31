@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-03-28
+Date generated: 2026-03-31
 
 ================================================================================
 
@@ -2471,8 +2471,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 --------------------------------------------------------------------------------
 
 Package: github.com/golang/geo
-Version: v0.0.0-20260302211937-87f5a40ea07a
-License: Apache-2.0 (https://github.com/golang/geo/blob/87f5a40ea07a/LICENSE)
+Version: v0.0.0-20260330121607-8c42da6f7855
+License: Apache-2.0 (https://github.com/golang/geo/blob/8c42da6f7855/LICENSE)
 
 
                                  Apache License
@@ -4199,8 +4199,8 @@ License:
 --------------------------------------------------------------------------------
 
 Package: github.com/lucasb-eyer/go-colorful
-Version: v1.3.0
-License: MIT (https://github.com/lucasb-eyer/go-colorful/blob/v1.3.0/LICENSE)
+Version: v1.4.0
+License: MIT (https://github.com/lucasb-eyer/go-colorful/blob/v1.4.0/LICENSE)
 
 Copyright (c) 2013 Lucas Beyer
 
