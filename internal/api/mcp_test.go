@@ -40,8 +40,8 @@ func mcpPost(app http.Handler, body, authToken, sessionID string) *httptest.Resp
 		header.SetAuthorization(req, authToken)
 	}
 
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Accept", "application/json, text/event-stream")
+	req.Header.Set(header.ContentType, header.ContentTypeJson)
+	req.Header.Set(header.Accept, header.ContentTypeJson+", "+header.ContentTypeEventStream)
 
 	if sessionID != "" {
 		req.Header.Set("Mcp-Session-Id", sessionID)

@@ -5,11 +5,9 @@ import (
 	"encoding/json"
 
 	sdkmcp "github.com/modelcontextprotocol/go-sdk/mcp"
-)
 
-// jsonMIMEType is the MIME type advertised for every MCP resource this
-// package registers. All resources serialize to JSON.
-const jsonMIMEType = "application/json"
+	"github.com/photoprism/photoprism/pkg/http/header"
+)
 
 // registerResources registers every read-only resource exposed by the
 // server against the shared *Dataset. The order matches ResourceURIs so
@@ -20,7 +18,7 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 		Name:        "config-options",
 		Title:       "PhotoPrism Config Options",
 		Description: "Read-only config options derived from the existing config report.",
-		MIMEType:    jsonMIMEType,
+		MIMEType:    header.ContentTypeJson,
 	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
 		return newResourceResult(req.Params.URI, ConfigOptionsResource{
 			Edition: data.CurrentEdition,
@@ -33,7 +31,7 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 		Name:        "search-filters",
 		Title:       "PhotoPrism Search Filters",
 		Description: "Read-only search filter reference derived from the existing search report.",
-		MIMEType:    jsonMIMEType,
+		MIMEType:    header.ContentTypeJson,
 	}, func(_ context.Context, req *sdkmcp.ReadResourceRequest) (*sdkmcp.ReadResourceResult, error) {
 		return newResourceResult(req.Params.URI, SearchFiltersResource{
 			Edition: data.CurrentEdition,
@@ -43,8 +41,8 @@ func registerResources(server *sdkmcp.Server, data *Dataset) {
 }
 
 // newResourceResult marshals payload to indented JSON and wraps it in an
-// MCP ReadResourceResult with the given URI and the shared jsonMIMEType.
-// Returns an error if JSON marshalling fails.
+// MCP ReadResourceResult with the given URI and header.ContentTypeJson as
+// the advertised MIME type. Returns an error if JSON marshalling fails.
 func newResourceResult(uri string, payload any) (*sdkmcp.ReadResourceResult, error) {
 	body, err := json.MarshalIndent(payload, "", "  ")
 	if err != nil {
@@ -54,7 +52,7 @@ func newResourceResult(uri string, payload any) (*sdkmcp.ReadResourceResult, err
 	return &sdkmcp.ReadResourceResult{
 		Contents: []*sdkmcp.ResourceContents{{
 			URI:      uri,
-			MIMEType: jsonMIMEType,
+			MIMEType: header.ContentTypeJson,
 			Text:     string(body),
 		}},
 	}, nil
