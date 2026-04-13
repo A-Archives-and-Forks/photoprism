@@ -1,6 +1,6 @@
 ## PhotoPrism MCP Prototype
 
-**Last Updated:** April 10, 2026
+**Last Updated:** April 13, 2026
 
 > See `specs/platform/mcp.md` for the canonical specification, including the rationale for the user-access policy and the role/grant matrix per edition.
 
@@ -20,12 +20,12 @@
 
 ### Package layout
 
-| Package | Purpose |
-|---------|---------|
-| `internal/mcp/` | Core MCP logic: server factory, data pipeline, resources, tools |
-| `internal/api/mcp.go` | Gin HTTP handler with auth middleware, route registration |
-| `internal/commands/mcp.go` | CLI command (`photoprism mcp serve`) using stdio transport |
-| `internal/auth/acl/` | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for manager in Pro/Portal and for the API client roles: client, instance, service, portal) |
+| Package                    | Purpose                                                                                                                                                                              |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `internal/mcp/`            | Core MCP logic: server factory, data pipeline, resources, tools                                                                                                                      |
+| `internal/api/mcp.go`      | Gin HTTP handler with auth middleware, route registration                                                                                                                            |
+| `internal/commands/mcp.go` | CLI command (`photoprism mcp serve`) using stdio transport                                                                                                                           |
+| `internal/auth/acl/`       | `ResourceMCP` constant and ACL grant rules (`GrantFullAccess` for admin; `GrantSearchAll` for manager in Pro/Portal and for the API client roles: client, instance, service, portal) |
 
 ### Goals and non-goals
 
@@ -177,20 +177,20 @@ The HTTP endpoint uses PhotoPrism's existing ACL system:
   - All other roles (`user`, `viewer`, `guest`, `visitor`, `contributor`, default) are denied.
 - **Why `GrantSearchAll` for non-admins?** It includes `AccessAll`, `ActionView`, and `ActionSearch` — exactly what the read-only tools need — but excludes `ActionManage`/`ActionUpdate`/`ActionDelete`/`ActionCreate`. Any future write-capable MCP tool gated on those permissions will automatically be admin-only without needing per-tool checks.
 - **Client tokens:** API client sessions must also include the `mcp` resource (or a wildcard) in their session scope; the ACL grant alone is not sufficient.
-- **Auth model:** request-level. The handler short-circuits with 403 in public mode, then runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`. `Abort` writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
-- **Public mode:** Blocked (returns 403).
-- **Experimental gate:** the route only registers when `--experimental` is enabled; otherwise `/api/v1/mcp` returns 404.
+- **Auth model:** request-level. The handler runs `Auth(c, acl.ResourceMCP, acl.ActionView)` followed by `s.Abort(c)`, which writes the matching status code (`401` unauthenticated, `403` ACL deny, `429` rate-limited) and returns `true` so the handler can `return` early.
+- **Public mode:** anonymous access is permitted. In public mode, `api.Session()` returns the default public session (effectively admin), so `Auth(...)` passes and the currently registered read-only tools are reachable without a token. This is an intentional, narrow allowance for demo deployments (`demo.photoprism.app`); it is safe only because every registered tool today returns static reference metadata derived from `config.Flags` and `form.Report(&form.SearchPhotos{})` — no database access, no per-user state, no secrets, no mutations. **Any future tool that touches per-user state, the database, or mutates anything MUST NOT be registered on this server without an additional per-tool check**. See *Extending the Tool Surface* below.
+- **Experimental gate:** the route only registers when `--experimental` is enabled; otherwise `/api/v1/mcp` returns 404. Public-mode anonymous access therefore also requires the operator to explicitly opt into experimental features.
 
 ### Rate Limiting
 
 The MCP handler does not install a custom rate limiter — there is no per-endpoint bucket. Coverage depends on the edition:
 
-| Build  | Generic per-IP HTTP limiter? | Notes                                                                                                                                  |
-|--------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------|
-| CE     | no                           | Only the experimental gate, public-mode short-circuit, and admin/client auth check protect the endpoint.                               |
-| Plus   | no                           | Same as CE. The IPS middleware exists but only consumes tokens on known scanner/exploit paths, so it does not throttle MCP traffic.    |
+| Build  | Generic per-IP HTTP limiter? | Notes                                                                                                                                                                                                                                                        |
+|--------|------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| CE     | no                           | Only the experimental gate and the admin/client auth check protect the endpoint. In public mode all callers are anonymous, so CE deployments that run with `--public --experimental` have no per-request throttle in front of MCP.                           |
+| Plus   | no                           | Same as CE. The IPS middleware exists but only consumes tokens on known scanner/exploit paths, so it does not throttle MCP traffic.                                                                                                                          |
 | Pro    | yes                          | `pro/internal/server/register.go` calls `router.Use(limiter.Middleware(limiter.NewLimit(rate.Every(secOpt.RequestInterval), secOpt.RequestLimit)))` when both options are set. The limiter is per client IP and applies to every API endpoint, MCP included. |
-| Portal | yes                          | Same wiring as Pro in `portal/internal/server/register.go`.                                                                            |
+| Portal | yes                          | Same wiring as Pro in `portal/internal/server/register.go`.                                                                                                                                                                                                  |
 
 A per-endpoint limiter (via `limiter.Auth` / `limiter.Login` / `limiter.AbortJSON`) is only worth adding when MCP grows write-capable tools or endpoints that warrant stricter throttling than the generic IP limiter — for example, anything that mutates state or that triggers expensive backend work.
 
@@ -201,6 +201,23 @@ A per-endpoint limiter (via `limiter.Auth` / `limiter.Login` / `limiter.AbortJSO
 - **Sanitization:** `pkg/clean.Scope` lowercases the input and parses it through `pkg/list.ParseAttr`. There is no allowlist of valid scope tokens, so `--scope mcp`, `--scope "mcp metrics"`, and `--scope "*"` are all accepted by `clients add` and `auth add` without any registry update.
 - **Authorization:** `internal/auth/acl.ScopePermits` checks the parsed attribute list against the resource string. Because `acl.ResourceMCP.String() == "mcp"`, the existing `attr.Contains(...)` path matches a session that holds the `mcp` token. See `TestScopePermits/MCPScope` in `internal/auth/acl/scope_test.go` for the canonical assertions (admin token, mixed scopes, case-insensitivity, deny on unrelated scopes).
 - **Cluster JWTs:** instance-side validation runs through `Config.JWTAllowedScopes()` (`internal/api/api_auth_jwt.go`). The default allowlist is `DefaultJWTAllowedScopes = "config cluster vision metrics mcp"` in `internal/config/config_cluster.go`, so portal-issued JWTs with `scope=mcp` are accepted out of the box. Operators that override the list via `--jwt-scope` / `PHOTOPRISM_JWT_SCOPE` need to include `mcp` themselves.
+
+### Extending the Tool Surface
+
+Anonymous access in public mode is only safe as long as every registered tool returns static reference metadata. Before adding a new tool, confirm it fits the existing contract:
+
+- No database reads or writes.
+- No per-user state (albums, photos, sessions, settings).
+- No filesystem, network, or subprocess side effects.
+- No access to secrets or runtime config values (only flag schema/defaults are allowed).
+
+If a proposed tool does **not** fit that contract, do not register it on the default `*sdkmcp.Server`. Instead, take one of these paths (ordered by how much work they are):
+
+1. **Two servers, one factory.** `internal/api/mcp.go` already passes a factory to `sdkmcp.NewStreamableHTTPHandler`. Build a second server with the full tool set and return it from the factory only when the request is non-public and authenticated; keep the default server restricted to the public-safe tools. Policy becomes declarative at construction time, and a missing tool in the public server surfaces as a standard "tool not found" from the SDK rather than leaking its existence.
+2. **Per-tool context checks.** `sdkmcp.AddTool` closures receive a `*sdkmcp.CallToolRequest`; stash caller context on the MCP session at `initialize` and reject inside the tool closure when public mode is active or the ACL deny list applies. Use this when the same tool has different output per caller (e.g. admin sees raw values, client sees redacted).
+3. **SDK middleware.** For cross-cutting concerns such as per-tool rate limits or structured audit entries, wire an `sdkmcp.Middleware` that inspects the JSON-RPC method and tool name before dispatch.
+
+Whichever path you pick, **add a test in `internal/mcp/server_test.go` that fails if the restricted tool shows up in `tools/list` or is callable over the public path**, and update the *Available Tools* table below.
 
 ### How Users Get Access
 

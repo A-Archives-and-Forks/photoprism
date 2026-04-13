@@ -54,14 +54,36 @@ func mcpPost(app http.Handler, body, authToken, sessionID string) *httptest.Resp
 }
 
 func TestServeMCP(t *testing.T) {
-	t.Run("ForbiddenPublicMode", func(t *testing.T) {
+	t.Run("AllowedPublicMode", func(t *testing.T) {
+		// In public mode, Session() returns the default public session and
+		// the currently registered MCP tools only surface static reference
+		// data. Anonymous callers must therefore be able to initialize an
+		// MCP session and call both tools without a token — this is what
+		// lets the prototype run on demo.photoprism.app. Guard the policy
+		// here so it regresses loudly if a future change tightens it.
 		app, router, _ := NewApiTest()
 		conf := prepareMCPTest(t)
 		conf.Options().Public = true
 		ServeMCP(router)
 
-		r := PerformRequest(app, http.MethodPost, "/api/v1/mcp")
-		assert.Equal(t, http.StatusForbidden, r.Code)
+		initBody := `{"jsonrpc":"2.0","id":1,"method":"initialize","params":{"protocolVersion":"2025-03-26","capabilities":{},"clientInfo":{"name":"test-client","version":"1.0"}}}`
+		w := mcpPost(app, initBody, "", "")
+
+		assert.Equal(t, http.StatusOK, w.Code)
+		sessionID := w.Header().Get("Mcp-Session-Id")
+		assert.NotEmpty(t, sessionID)
+		assert.Contains(t, w.Body.String(), "photoprism-mcp")
+
+		w2 := mcpPost(app, `{"jsonrpc":"2.0","method":"notifications/initialized"}`, "", sessionID)
+		assert.Less(t, w2.Code, 300, "notification should succeed, got %d: %s", w2.Code, w2.Body.String())
+
+		w3 := mcpPost(app, `{"jsonrpc":"2.0","id":2,"method":"tools/call","params":{"name":"list_config_keys","arguments":{"query":"database","limit":5}}}`, "", sessionID)
+		assert.Equal(t, http.StatusOK, w3.Code)
+		assert.Contains(t, w3.Body.String(), "matches")
+
+		w4 := mcpPost(app, `{"jsonrpc":"2.0","id":3,"method":"tools/call","params":{"name":"find_search_filters","arguments":{"query":"color","limit":5}}}`, "", sessionID)
+		assert.Equal(t, http.StatusOK, w4.Code)
+		assert.Contains(t, w4.Body.String(), "matches")
 	})
 	t.Run("UnauthorizedAnonymous", func(t *testing.T) {
 		app, router, _ := NewApiTest()

@@ -49,14 +49,15 @@ func ServeMCP(router *gin.RouterGroup) {
 	)
 
 	mcpHandler := func(c *gin.Context) {
-		// Reject MCP requests in public mode regardless of role.
-		if conf.Public() {
-			AbortForbidden(c)
-			return
-		}
-
 		// Authenticate and authorize the request; Abort writes the matching
-		// 401/403/429 response if the session is invalid.
+		// 401/403/429 response if the session is invalid. In public mode,
+		// Session() returns the default public session so the currently
+		// registered read-only tools are reachable without a token — this
+		// is intentional so the prototype can be showcased on
+		// demo.photoprism.app. Any future tool that touches per-user state,
+		// the database, or mutates anything MUST NOT be registered on this
+		// server without an additional per-tool check (see internal/mcp
+		// README for the recommended patterns).
 		s := Auth(c, acl.ResourceMCP, acl.ActionView)
 
 		if s.Abort(c) {
