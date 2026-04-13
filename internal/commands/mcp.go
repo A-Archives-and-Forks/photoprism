@@ -29,17 +29,24 @@ var MCPServeCommand = &cli.Command{
 
 // mcpServeAction starts the MCP server using the stdio transport.
 func mcpServeAction(ctx *cli.Context) error {
-	implementation := &sdkmcp.Implementation{
-		Name:    "photoprism-mcp",
-		Version: mcpAppMetadata(ctx, "Version", "development"),
-	}
 	logger := slog.New(slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo}))
-
 	logger.Info("starting mcp server", "transport", "stdio", "tools", 2, "resources", 2)
 
-	edition := mcpAppMetadata(ctx, "Edition", "unknown")
+	return runMCPServer(context.Background(), ctx, &sdkmcp.StdioTransport{})
+}
 
-	return mcp.NewServer(implementation, edition).Run(context.Background(), &sdkmcp.StdioTransport{})
+// runMCPServer builds an MCP server from the CLI metadata and runs it over the
+// given transport until the context is cancelled or the transport closes. The
+// transport is a parameter so tests can substitute an in-memory transport for
+// the stdio one the CLI Action uses in production.
+func runMCPServer(ctx context.Context, appCtx *cli.Context, transport sdkmcp.Transport) error {
+	implementation := &sdkmcp.Implementation{
+		Name:    "photoprism-mcp",
+		Version: mcpAppMetadata(appCtx, "Version", "development"),
+	}
+	edition := mcpAppMetadata(appCtx, "Edition", "unknown")
+
+	return mcp.NewServer(implementation, edition).Run(ctx, transport)
 }
 
 // mcpAppMetadata returns the named string entry from the CLI app metadata,
