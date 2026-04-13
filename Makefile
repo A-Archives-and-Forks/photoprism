@@ -296,7 +296,7 @@ dep-npm:
         fi
 dep-js:
 	npm ci --ignore-scripts --no-update-notifier --no-audit
-codex: dep-codex codex-version
+codex: dep-codex codex-version codex-skills
 codex-version:
 	@echo "🤖 Installed $$(codex --version)."
 dep-codex:
@@ -306,6 +306,24 @@ dep-codex:
 	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
 	else \
 	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	fi
+codex-skills:
+	@if [ -d "specs/.agents/skills" ]; then \
+	  echo "Linking Codex skills from specs/.agents/skills..."; \
+	  install -d -m 755 -- ".agents/skills"; \
+	  for src in specs/.agents/skills/*/; do \
+	    [ -d "$$src" ] || continue; \
+	    name=$$(basename "$$src"); \
+	    link=".agents/skills/$$name"; \
+	    target="../../specs/.agents/skills/$$name"; \
+	    if [ -L "$$link" ] || [ ! -e "$$link" ]; then \
+	      ln -sfn "$$target" "$$link"; \
+	    else \
+	      echo "WARNING: $$link exists and is not a symlink, skipping"; \
+	    fi; \
+	  done; \
+	else \
+	  echo "No specs/.agents/skills directory found, skipping."; \
 	fi
 gh: dep-gh gh-version
 gh-version:
