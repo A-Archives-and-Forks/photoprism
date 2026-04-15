@@ -52,7 +52,7 @@ func searchPhotosForm(c *gin.Context) (frm form.SearchPhotos, s *entity.Session,
 // SearchPhotos finds pictures and returns them as JSON.
 //
 //	@Summary		finds pictures and returns them as JSON
-//	@Description	Fore more information see:
+//	@Description	For more information see:
 //	@Description	- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos
 //	@Id				SearchPhotos
 //	@Tags			Photos
@@ -110,7 +110,7 @@ func SearchPhotos(router *gin.RouterGroup) {
 //	@Id				SearchPhotosView
 //	@Tags			Photos
 //	@Produce		json
-//	@Success		200				{object}	search.PhotoResults
+//	@Success		200				{object}	viewer.Results
 //	@Failure		400,401,403,404	{object}	i18n.Response
 //	@Param			count			query		int		true	"maximum number of files"	minimum(1)	maximum(100000)
 //	@Param			offset			query		int		false	"file offset"				minimum(0)	maximum(100000)

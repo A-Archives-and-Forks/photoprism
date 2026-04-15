@@ -3786,6 +3786,29 @@
             },
             "type": "object"
         },
+        "query.Moment": {
+            "properties": {
+                "Country": {
+                    "type": "string"
+                },
+                "Label": {
+                    "type": "string"
+                },
+                "Month": {
+                    "type": "integer"
+                },
+                "PhotoCount": {
+                    "type": "integer"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Year": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
         "search.Album": {
             "properties": {
                 "Caption": {
@@ -4456,6 +4479,46 @@
                 "ShapeBatch"
             ]
         },
+        "thumb.Thumb": {
+            "properties": {
+                "h": {
+                    "type": "integer"
+                },
+                "src": {
+                    "type": "string"
+                },
+                "w": {
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "thumb.Viewer": {
+            "properties": {
+                "fit_1280": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_1920": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_2560": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_4096": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_5120": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_720": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                },
+                "fit_7680": {
+                    "$ref": "#/definitions/thumb.Thumb"
+                }
+            },
+            "type": "object"
+        },
         "time.Duration": {
             "format": "int64",
             "type": "integer"
@@ -4468,6 +4531,65 @@
                 },
                 "seconds": {
                     "description": "Represents seconds of UTC time since Unix epoch 1970-01-01T00:00:00Z. Must\nbe between -315576000000 and 315576000000 inclusive (which corresponds to\n0001-01-01T00:00:00Z to 9999-12-31T23:59:59Z).",
+                    "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "viewer.Result": {
+            "properties": {
+                "Caption": {
+                    "type": "string"
+                },
+                "Codec": {
+                    "type": "string"
+                },
+                "DownloadUrl": {
+                    "type": "string"
+                },
+                "Duration": {
+                    "$ref": "#/definitions/time.Duration"
+                },
+                "Favorite": {
+                    "type": "boolean"
+                },
+                "Hash": {
+                    "type": "string"
+                },
+                "Height": {
+                    "type": "integer"
+                },
+                "Lat": {
+                    "type": "number"
+                },
+                "Lng": {
+                    "type": "number"
+                },
+                "Mime": {
+                    "type": "string"
+                },
+                "Playable": {
+                    "type": "boolean"
+                },
+                "TakenAtLocal": {
+                    "type": "string"
+                },
+                "Thumbs": {
+                    "$ref": "#/definitions/thumb.Viewer"
+                },
+                "TimeZone": {
+                    "type": "string"
+                },
+                "Title": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UID": {
+                    "type": "string"
+                },
+                "Width": {
                     "type": "integer"
                 }
             },
@@ -5535,7 +5657,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Link"
+                            "items": {
+                                "$ref": "#/definitions/entity.Link"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -8115,7 +8240,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/search.Label"
+                            "items": {
+                                "$ref": "#/definitions/search.Label"
+                            },
+                            "type": "array"
                         }
                     },
                     "400": {
@@ -8621,7 +8749,10 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/entity.Album"
+                            "items": {
+                                "$ref": "#/definitions/query.Moment"
+                            },
+                            "type": "array"
                         }
                     },
                     "401": {
@@ -8905,7 +9036,7 @@
         },
         "/api/v1/photos": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/search/#get-apiv1photos",
                 "operationId": "SearchPhotos",
                 "parameters": [
                     {
@@ -9141,7 +9272,7 @@
                         "description": "OK",
                         "schema": {
                             "items": {
-                                "$ref": "#/definitions/search.Photo"
+                                "$ref": "#/definitions/viewer.Result"
                             },
                             "type": "array"
                         }
@@ -11579,7 +11710,7 @@
         },
         "/api/v1/t/{thumb}/{token}/{size}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#image-endpoint-uri",
                 "operationId": "GetThumb",
                 "parameters": [
                     {
@@ -12361,7 +12492,7 @@
         },
         "/api/v1/videos/{hash}/{token}/{format}": {
             "get": {
-                "description": "Fore more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
+                "description": "For more information see:\n- https://docs.photoprism.app/developer-guide/api/thumbnails/#video-endpoint-uri",
                 "operationId": "GetVideo",
                 "parameters": [
                     {
