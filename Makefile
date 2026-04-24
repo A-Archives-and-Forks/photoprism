@@ -6,6 +6,11 @@
 export GO111MODULE=on
 export NPM_CONFIG_IGNORE_SCRIPTS ?= true
 
+ifneq (,$(wildcard .telemetry))
+include .telemetry
+export $(shell sed -n 's/^[[:space:]]*\([A-Z_][A-Z0-9_]*\)=.*/\1/p' .telemetry)
+endif
+
 -include .semver
 -include .env
 
@@ -290,9 +295,9 @@ npm-version:
 dep-npm:
 	@echo "Installing NPM package manager..."
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
         else \
-	  npm install -g --location=global --no-fund --no-audit "npm@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "npm@latest"; \
         fi
 dep-js:
 	npm ci --ignore-scripts --no-update-notifier --no-audit
@@ -303,10 +308,11 @@ dep-codex:
 	@echo "Installing Codex CLI..."
 	@[ -n "$(CODEX_HOME)" ] && [ "$(CODEX_HOME)" != "/" ] && install -d -m 700 -- "$(CODEX_HOME)" || true
 	@if command -v sudo >/dev/null 2>&1; then \
-	  sudo npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  sudo npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
 	else \
-	  npm install -g --location=global --no-fund --no-audit "@openai/codex@latest"; \
+	  npm install -g --location=global --ignore-scripts --no-fund --no-audit --no-update-notifier "@openai/codex@latest"; \
 	fi
+	@codex features disable general_analytics || true
 codex-skills:
 	@if [ -d "specs/.agents/skills" ]; then \
 	  echo "Linking Codex skills from specs/.agents/skills..."; \
