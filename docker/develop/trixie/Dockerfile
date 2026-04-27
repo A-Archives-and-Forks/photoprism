@@ -78,7 +78,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         va-driver-all libva2 iputils-ping dnsutils binutils binutils-gold \
     && \
     apt-get -qq install \
-        apt-utils pkg-config software-properties-common \
+        apt-utils pkg-config \
         build-essential gcc g++ git gettext davfs2 chrpath ripgrep shellcheck apache2-utils \
         chromium chromium-driver chromium-sandbox firefox-esr \
         libx264-dev libx265-dev libvpx-dev libwebm-dev libpng-dev libxft-dev libyuv-dev libavcodec-dev \
