@@ -76,6 +76,7 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
         ffmpeg imagemagick libvips-dev rawtherapee libjxl-dev libjxl-tools libffmpeg-nvenc-dev librav1e-dev \
         libswscale-dev libavfilter-extra libavformat-extra libavcodec-extra x264 x265 libde265-dev libaom-dev \
         libvpx-dev libwebm-dev libjpeg-dev libmatroska-dev libdvdread-dev libdav1d-dev libsharpyuv0 \
+        libheif-examples libheif-plugin-libde265 libheif-plugin-x265 libheif-plugin-aomdec libheif-plugin-aomenc libheif-plugin-dav1d \
         va-driver-all libva2 iputils-ping dnsutils libmagic-mgc binutils binutils-gold \
     && \
     apt-get -qq install \
@@ -101,7 +102,6 @@ RUN echo 'APT::Acquire::Retries "3";' > /etc/apt/apt.conf.d/80retries && \
     /scripts/install-onnx.sh && \
     /scripts/install-darktable.sh && \
     /scripts/install-yt-dlp.sh && \
-    /scripts/install-libheif.sh && \
     /scripts/install-chrome.sh && \
     echo "ALL ALL=(ALL) NOPASSWD:SETENV: ALL" >> /etc/sudoers.d/all && \
     mkdir -p /etc/skel/.config/go/telemetry && \

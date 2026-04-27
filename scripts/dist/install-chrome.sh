@@ -50,6 +50,7 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 install_chromium_from_debian_bookworm() {
   local keyring=/etc/apt/keyrings/debian-archive-bookworm.gpg
   local src=/etc/apt/sources.list.d/debian-bookworm-chromium.sources
+  local pin=/etc/apt/preferences.d/debian-bookworm-chromium.pref
 
   install -m 0755 -d /etc/apt/keyrings
   curl -fsSL https://ftp-master.debian.org/keys/archive-key-12.asc \
@@ -61,6 +62,25 @@ URIs: http://deb.debian.org/debian
 Suites: bookworm
 Components: main
 Signed-By: ${keyring}
+EOF
+
+  # Pin Debian bookworm to a low priority so apt only pulls Bookworm packages
+  # that have no Ubuntu equivalent. Without this, apt's solver "upgrades"
+  # unrelated Ubuntu packages such as libjpeg-dev to Bookworm's higher epoch
+  # version (1:2.1.5-2 vs Ubuntu's 8c-*ubuntu*), which then pulls
+  # libjpeg62-turbo-dev and collides with Ubuntu's already-installed
+  # libjpeg-turbo8-dev (both ship /usr/include/<triplet>/jconfig.h).
+  # The chromium-* packages are elevated to priority 990 so they still install
+  # from Bookworm; their runtime dep on libjpeg62-turbo (no Ubuntu equivalent)
+  # is resolved as the only available candidate, which is harmless.
+  cat > "$pin" <<EOF
+Package: *
+Pin: release o=Debian,n=bookworm
+Pin-Priority: 100
+
+Package: chromium chromium-common chromium-driver chromium-sandbox
+Pin: release o=Debian,n=bookworm
+Pin-Priority: 990
 EOF
 
   apt-get update
