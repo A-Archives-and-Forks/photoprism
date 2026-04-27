@@ -2000,6 +2000,80 @@ describe("model/photo", () => {
       });
     });
 
+    describe("post-logout race", () => {
+      // Concrete repro of the spec Open Question #1 race: a fetch
+      // that started under the previous role must NOT repopulate
+      // the cache after Photo.clearCache() (called from
+      // Session.reset()) has already wiped it. Without the epoch
+      // gate on ModelCache, the resolved Promise's .then chain
+      // would call set() under the original key and seed data
+      // fetched for role A into role B's session.
+      it("findCached resolving after clearCache() rejects so callers discard the stale value", async () => {
+        let resolveFind;
+        const findSpy = vi.spyOn(Photo.prototype, "find").mockImplementation(
+          () =>
+            new Promise((res) => {
+              resolveFind = res;
+            })
+        );
+
+        // Issue the fetch — equivalent to a sidebar open under role A.
+        const inFlight = Photo.findCached("uid-race");
+
+        // flush microtasks so the loader is actually invoked.
+        await Promise.resolve();
+
+        // Logout / role change happens while the request is in flight.
+        Photo.clearCache();
+        expect(Photo._cache.size()).toBe(0);
+
+        // The previous session's response finally lands.
+        resolveFind(new Photo({ UID: "uid-race", Title: "Leaked" }));
+
+        // The promise REJECTS so a caller chain like
+        //   Photo.findCached(uid).then(p => this.photo = p)
+        // never fires its .then with stale role-A data — and the
+        // cache stays empty so the next read under the new role
+        // reissues the request.
+        await expect(inFlight).rejects.toThrow(/stale fetch/i);
+        expect(Photo._cache.has("uid-race")).toBe(false);
+        expect(Photo._cache.size()).toBe(0);
+
+        findSpy.mockRestore();
+      });
+
+      it("findCached re-seeds the cache normally after clearCache() advanced the epoch", async () => {
+        let resolveStale;
+        const findSpy = vi.spyOn(Photo.prototype, "find").mockImplementationOnce(
+          () =>
+            new Promise((res) => {
+              resolveStale = res;
+            })
+        );
+
+        const stale = Photo.findCached("uid-after-clear");
+        await Promise.resolve();
+        Photo.clearCache();
+
+        // A fresh fetch under the new epoch should populate the cache
+        // even if the stale loader resolves later.
+        findSpy.mockResolvedValueOnce(new Photo({ UID: "uid-after-clear", Title: "Fresh" }));
+        const fresh = Photo.findCached("uid-after-clear");
+
+        // The stale fetch rejects (epoch mismatch); the fresh one
+        // runs under the new epoch and resolves cleanly.
+        resolveStale(new Photo({ UID: "uid-after-clear", Title: "Stale" }));
+        await expect(stale).rejects.toThrow(/stale fetch/i);
+        const result = await fresh;
+
+        expect(result.Title).toBe("Fresh");
+        expect(Photo._cache.has("uid-after-clear")).toBe(true);
+        expect(Photo._cache.size()).toBe(1);
+
+        findSpy.mockRestore();
+      });
+    });
+
     describe("mutators no longer pre-evict the cache", () => {
       // Verifies the websocket-driven design: the cached entry survives the
       // local mutation request itself; the next photos.updated event is what

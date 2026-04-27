@@ -207,4 +207,159 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(spy).toHaveBeenCalledWith(models, 0, { before: 0, after: 1 });
     spy.mockRestore();
   });
+
+  // The race guard inside fetchPhoto is the last line of defense against
+  // a slow /photos/:uid response landing after the user has already
+  // swiped to the next slide. Without the `this.model.UID === uid` check,
+  // an out-of-order resolution would overwrite `this.photo` with the
+  // previous slide's metadata and the sidebar would silently flip to
+  // editing the wrong photo. Pin the contract with a deterministic test.
+  describe("fetchPhoto race guard", () => {
+    it("does NOT overwrite this.photo when the user has navigated away before the fetch resolves", async () => {
+      let resolveSlideN;
+      const findSpy = vi.spyOn(Photo, "findCached").mockImplementation(
+        (uid) =>
+          new Promise((res) => {
+            // Only the slide-N fetch is pending; slide-N+1 isn't issued in this test.
+            if (uid === "uid-slide-n") {
+              resolveSlideN = () => res(new Photo({ UID: "uid-slide-n", Title: "Slide N" }));
+            }
+          })
+      );
+
+      const wrapper = mountLightbox();
+      const placeholder = new Photo();
+      const ctx = {
+        ...wrapper.vm,
+        photo: placeholder,
+        // Start with the user viewing slide N.
+        model: { UID: "uid-slide-n" },
+        $session: { isSidebarRestricted: () => false },
+      };
+
+      // Sidebar fetch issued for slide N.
+      wrapper.vm.$options.methods.fetchPhoto.call(ctx, "uid-slide-n");
+
+      // User swipes to slide N+1 BEFORE slide N's response arrives.
+      ctx.model = { UID: "uid-slide-n-plus-1" };
+
+      // Slide N's response finally lands.
+      resolveSlideN();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // The race guard MUST keep ctx.photo on the placeholder — slide N's
+      // payload is dropped because this.model.UID has already moved on.
+      expect(ctx.photo).toBe(placeholder);
+      findSpy.mockRestore();
+    });
+
+    it("applies the response when this.model.UID still matches the fetched uid", async () => {
+      const slideNPhoto = new Photo({ UID: "uid-slide-n", Title: "Slide N" });
+      const findSpy = vi.spyOn(Photo, "findCached").mockResolvedValue(slideNPhoto);
+
+      const wrapper = mountLightbox();
+      const ctx = {
+        ...wrapper.vm,
+        photo: new Photo(),
+        model: { UID: "uid-slide-n" },
+        $session: { isSidebarRestricted: () => false },
+      };
+
+      wrapper.vm.$options.methods.fetchPhoto.call(ctx, "uid-slide-n");
+      // Drain the resolved Promise + race-guard .then.
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(ctx.photo).toBe(slideNPhoto);
+      findSpy.mockRestore();
+    });
+
+    it("absorbs a rejected findCached without throwing or mutating this.photo", async () => {
+      const findSpy = vi.spyOn(Photo, "findCached").mockRejectedValue(new Error("offline"));
+
+      const wrapper = mountLightbox();
+      const placeholder = new Photo();
+      const ctx = {
+        ...wrapper.vm,
+        photo: placeholder,
+        model: { UID: "uid-slide-n" },
+        $session: { isSidebarRestricted: () => false },
+      };
+
+      // Calling fetchPhoto must not throw even when findCached rejects.
+      expect(() => wrapper.vm.$options.methods.fetchPhoto.call(ctx, "uid-slide-n")).not.toThrow();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      // The placeholder stays in place — the sidebar continues to read
+      // from this.view.photo.X without nullable chains.
+      expect(ctx.photo).toBe(placeholder);
+      findSpy.mockRestore();
+    });
+
+    // Companion to the ModelCache epoch-rejection test: when the cache
+    // rejects an in-flight fetch after Photo.clearCache() (logout race),
+    // the lightbox's existing .catch handler must absorb it cleanly
+    // and leave this.photo untouched — even when this.model.UID still
+    // matches the requested uid (i.e. the race-guard isn't what's
+    // saving us; the rejection is). Without this, a logout-then-relogin
+    // window could route role-A data into role-B UI before unmount.
+    it("absorbs a ModelCacheStaleFetchError from findCached without mutating this.photo", async () => {
+      const findSpy = vi.spyOn(Photo, "findCached").mockImplementation(() => {
+        const err = new Error("ModelCache: discarded stale fetch after clear()");
+        err.name = "ModelCacheStaleFetchError";
+        return Promise.reject(err);
+      });
+
+      const wrapper = mountLightbox();
+      const placeholder = new Photo();
+      const ctx = {
+        ...wrapper.vm,
+        photo: placeholder,
+        // model.UID intentionally STILL matches — to prove the rejection
+        // (not the race-guard) is what protects this.photo here.
+        model: { UID: "uid-slide-n" },
+        $session: { isSidebarRestricted: () => false },
+      };
+
+      expect(() => wrapper.vm.$options.methods.fetchPhoto.call(ctx, "uid-slide-n")).not.toThrow();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(ctx.photo).toBe(placeholder);
+      findSpy.mockRestore();
+    });
+  });
+
+  // preloadNextPhoto is fire-and-forget. The realistic contract under
+  // test is that a slow prefetch that resolves AFTER the user has
+  // moved on doesn't block or interfere — the actual Photo.prefetchAround
+  // wraps tasks in Promise.allSettled, so it can't reject in practice.
+  describe("preloadNextPhoto async resilience", () => {
+    it("forwards the call when the prefetch resolves late", async () => {
+      let resolvePrefetch;
+      const spy = vi.spyOn(Photo, "prefetchAround").mockImplementation(() => new Promise((res) => (resolvePrefetch = res)));
+
+      const wrapper = mountLightbox();
+      const models = [{ UID: "uid-curr" }, { UID: "uid-next" }];
+      const ctx = {
+        ...wrapper.vm,
+        info: true,
+        models,
+        index: 0,
+        $session: { isSidebarRestricted: () => false },
+      };
+
+      wrapper.vm.$options.methods.preloadNextPhoto.call(ctx);
+
+      // Even after a later resolve, the call site must still have been
+      // invoked exactly once with the documented args.
+      expect(spy).toHaveBeenCalledTimes(1);
+      expect(spy).toHaveBeenCalledWith(models, 0, { before: 0, after: 1 });
+      resolvePrefetch([]);
+      await Promise.resolve();
+      spy.mockRestore();
+    });
+  });
 });

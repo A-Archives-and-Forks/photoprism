@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import { $config } from "app/session";
 import Session from "common/session";
@@ -524,6 +524,49 @@ describe("common/session", () => {
       await flushMicrotasks();
 
       expect(Photo._cache.has("uid-pre-reset")).toBe(false);
+    });
+
+    // End-to-end repro of the post-logout race spec Open Question #1
+    // describes: an in-flight Photo.findCached() under role A must
+    // neither re-seed Photo._cache after Session.reset() has wiped it
+    // NOR resolve to role-A data that a caller's .then handler could
+    // route into role-B UI. The ModelCache epoch counter rejects the
+    // stale fetch so both guarantees hold.
+    it("rejects in-flight findCached() after reset() so neither cache nor UI sees role-A data", async () => {
+      const storage = new StorageShim();
+      const session = new Session(storage, $config);
+
+      Photo._cache.clear();
+
+      let resolveFind;
+      const findSpy = vi.spyOn(Photo.prototype, "find").mockImplementation(
+        () =>
+          new Promise((res) => {
+            resolveFind = res;
+          })
+      );
+
+      // Open the sidebar under role A — issues Photo.findCached().
+      const inFlight = Photo.findCached("uid-leak");
+      // Let the loader actually run.
+      await Promise.resolve();
+
+      // Logout while the request is still pending.
+      session.reset();
+      await flushMicrotasks();
+      expect(Photo._cache.size()).toBe(0);
+
+      // Backend response from role A finally arrives.
+      resolveFind(new Photo({ UID: "uid-leak", Title: "Role A" }));
+
+      // The promise rejects — both guarantees hold:
+      //   1. cache stays empty (next read reissues under role B)
+      //   2. waiter's .then never fires (no role-A data into UI)
+      await expect(inFlight).rejects.toThrow(/stale fetch/i);
+      expect(Photo._cache.has("uid-leak")).toBe(false);
+      expect(Photo._cache.size()).toBe(0);
+
+      findSpy.mockRestore();
     });
   });
 
