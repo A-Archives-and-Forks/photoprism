@@ -2,6 +2,11 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import "../fixtures";
 import * as media from "common/media";
 import { Photo, BatchSize } from "model/photo";
+import $event from "common/event";
+
+// Drains the pubsub-js async queue so subscribers configured as `async: true`
+// have run by the time the test asserts.
+const flushEvents = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 describe("model/photo", () => {
   it("should get photo entity name", () => {
@@ -1885,6 +1890,103 @@ describe("model/photo", () => {
       expect(Photo._pending.has("uid-fail")).toBe(false);
 
       Photo.prototype.find.mockRestore();
+    });
+
+    describe("websocket-driven refresh", () => {
+      it("refreshes a cached entry when photos.updated arrives", async () => {
+        Photo._cache.set("uid-ws-1", new Photo({ UID: "uid-ws-1", Title: "Old" }).getValues(false));
+
+        $event.publish("photos.updated", {
+          entities: [{ UID: "uid-ws-1", Title: "New" }],
+        });
+        await flushEvents();
+
+        expect(Photo._cache.get("uid-ws-1").Title).toBe("New");
+      });
+
+      it("ignores photos.updated for entries not currently cached", async () => {
+        $event.publish("photos.updated", {
+          entities: [{ UID: "uid-ws-uncached", Title: "Should not seed" }],
+        });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-ws-uncached")).toBe(false);
+      });
+
+      it("evicts cached entries when photos.deleted arrives", async () => {
+        Photo._cache.set("uid-ws-del", new Photo({ UID: "uid-ws-del" }).getValues(false));
+
+        $event.publish("photos.deleted", {
+          entities: [{ UID: "uid-ws-del" }],
+        });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-ws-del")).toBe(false);
+      });
+
+      it("isolates cached values from the websocket payload reference", async () => {
+        Photo._cache.set("uid-ws-iso", new Photo({ UID: "uid-ws-iso", Title: "Old" }).getValues(false));
+
+        const payload = { UID: "uid-ws-iso", Title: "Fresh" };
+        $event.publish("photos.updated", { entities: [payload] });
+        await flushEvents();
+
+        // Mutating the payload after publish must not bleed into the cache.
+        payload.Title = "Tampered";
+        expect(Photo._cache.get("uid-ws-iso").Title).toBe("Fresh");
+      });
+
+      it("moves a refreshed entry to the most-recent LRU slot", async () => {
+        Photo._cache.set("uid-a", new Photo({ UID: "uid-a" }).getValues(false));
+        Photo._cache.set("uid-b", new Photo({ UID: "uid-b" }).getValues(false));
+        Photo._cache.set("uid-c", new Photo({ UID: "uid-c" }).getValues(false));
+
+        $event.publish("photos.updated", {
+          entities: [{ UID: "uid-a", Title: "Refreshed" }],
+        });
+        await flushEvents();
+
+        const keys = [...Photo._cache.keys()];
+        expect(keys[keys.length - 1]).toBe("uid-a");
+      });
+
+      it("tolerates malformed payloads", async () => {
+        Photo._cache.set("uid-keep", new Photo({ UID: "uid-keep" }).getValues(false));
+
+        $event.publish("photos.updated", null);
+        $event.publish("photos.updated", {});
+        $event.publish("photos.updated", { entities: "not-an-array" });
+        $event.publish("photos.updated", { entities: [null, { Title: "no uid" }] });
+        $event.publish("photos.deleted", null);
+        $event.publish("photos.deleted", { entities: [null] });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-keep")).toBe(true);
+      });
+    });
+
+    describe("mutators no longer pre-evict the cache", () => {
+      // Verifies the websocket-driven design: the cached entry survives the
+      // local mutation request itself; the next photos.updated event is what
+      // refreshes it. The HTTP requests are fire-and-forget here — only some
+      // are mocked in fixtures.js, but the cache invariant holds regardless
+      // of whether the request resolves or rejects.
+      it.each([
+        ["toggleLike", (p) => p.toggleLike()],
+        ["togglePrivate", (p) => p.togglePrivate()],
+        ["like", (p) => p.like()],
+        ["unlike", (p) => p.unlike()],
+        ["update", (p) => p.update()],
+      ])("%s leaves the cached entry in place", (_name, run) => {
+        const photo = new Photo({ UID: "pqbemz8276mhtobh", Title: "Cached" });
+        Photo._cache.set("pqbemz8276mhtobh", photo.getValues(false));
+
+        // Swallow rejections from unmocked endpoints; the cache state is what
+        // we care about, not the API result.
+        Promise.resolve(run(photo)).catch(() => {});
+
+        expect(Photo._cache.has("pqbemz8276mhtobh")).toBe(true);
+      });
     });
   });
 });

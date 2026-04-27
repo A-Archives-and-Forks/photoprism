@@ -5,6 +5,7 @@ import Marker from "model/marker";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import $api from "common/api";
+import $event from "common/event";
 import $util from "common/util";
 import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
@@ -1097,7 +1098,6 @@ export class Photo extends RestModel {
   }
 
   toggleLike() {
-    Photo.evictCache(this.UID);
     const favorite = !this.Favorite;
     const elements = document.querySelectorAll(`.uid-${this.UID}`);
 
@@ -1111,24 +1111,20 @@ export class Photo extends RestModel {
   }
 
   togglePrivate() {
-    Photo.evictCache(this.UID);
     this.Private = !this.Private;
 
     return $api.put(this.getEntityResource(), { Private: this.Private });
   }
 
   setPrimaryFile(fileUID) {
-    Photo.evictCache(this.UID);
     return $api.post(`${this.getEntityResource()}/files/${fileUID}/primary`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   unstackFile(fileUID) {
-    Photo.evictCache(this.UID);
     return $api.post(`${this.getEntityResource()}/files/${fileUID}/unstack`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   deleteFile(fileUID) {
-    Photo.evictCache(this.UID);
     return $api.delete(`${this.getEntityResource()}/files/${fileUID}`).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
@@ -1147,39 +1143,32 @@ export class Photo extends RestModel {
     }
 
     // Change file orientation.
-    Photo.evictCache(this.UID);
     return $api.put(`${this.getEntityResource()}/files/${file.UID}/orientation`, values).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   like() {
-    Photo.evictCache(this.UID);
     this.Favorite = true;
     return $api.post(this.getEntityResource() + "/like");
   }
 
   unlike() {
-    Photo.evictCache(this.UID);
     this.Favorite = false;
     return $api.delete(this.getEntityResource() + "/like");
   }
 
   addLabel(name) {
-    Photo.evictCache(this.UID);
     return $api.post(this.getEntityResource() + "/label", { Name: name, Priority: 10 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   activateLabel(id) {
-    Photo.evictCache(this.UID);
     return $api.put(this.getEntityResource() + "/label/" + id, { Uncertainty: 0 }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   renameLabel(id, name) {
-    Photo.evictCache(this.UID);
     return $api.put(this.getEntityResource() + "/label/" + id, { Label: { Name: name } }).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
   removeLabel(id) {
-    Photo.evictCache(this.UID);
     return $api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
@@ -1204,7 +1193,6 @@ export class Photo extends RestModel {
   }
 
   update() {
-    Photo.evictCache(this.UID);
     const values = this.getValues(true);
 
     if (typeof values.Title === "string") {
@@ -1290,6 +1278,22 @@ export class Photo extends RestModel {
   static _pending = new Map();
   static LRU_MAX = 50;
 
+  // Stores or refreshes a cache entry, enforcing LRU ordering and the size
+  // cap. A deep copy of `values` is kept so later cache hits stay isolated
+  // from the caller that produced them.
+  static _storeCache(uid, values) {
+    if (!uid || !values) {
+      return;
+    }
+    if (Photo._cache.has(uid)) {
+      Photo._cache.delete(uid);
+    } else if (Photo._cache.size >= Photo.LRU_MAX) {
+      const oldest = Photo._cache.keys().next().value;
+      Photo._cache.delete(oldest);
+    }
+    Photo._cache.set(uid, JSON.parse(JSON.stringify(values)));
+  }
+
   // Returns an isolated Photo clone built from the cached values, fetching
   // from the API on cache miss. Each caller receives its own instance so that
   // local edits (e.g. inline v-model bindings) cannot pollute the cache.
@@ -1314,16 +1318,12 @@ export class Photo extends RestModel {
     const request = new Photo()
       .find(uid)
       .then((photo) => {
-        if (Photo._cache.size >= Photo.LRU_MAX) {
-          const oldest = Photo._cache.keys().next().value;
-          Photo._cache.delete(oldest);
-        }
         // `freshValues` is a new top-level object from getValues(); its nested
         // refs are owned by `photo`, which goes out of scope after this .then,
-        // so handing them to the originating caller is safe. The cache gets a
-        // deep copy so later hits remain isolated from that first caller.
+        // so handing them to the originating caller is safe. _storeCache keeps
+        // its own deep copy so later hits remain isolated from that first caller.
         const freshValues = photo.getValues(false);
-        Photo._cache.set(uid, JSON.parse(JSON.stringify(freshValues)));
+        Photo._storeCache(uid, freshValues);
         return new Photo(freshValues);
       })
       .finally(() => {
@@ -1334,7 +1334,11 @@ export class Photo extends RestModel {
     return request;
   }
 
-  // Removes a photo from the LRU cache, e.g. after it has been modified.
+  // Removes a photo from the LRU cache. Mutating methods on this model no
+  // longer call this directly: the backend publishes "photos.updated" and
+  // "photos.deleted" via websocket and the cache is refreshed/evicted from
+  // there (see the module-level subscriptions below). This stays public as
+  // an escape hatch for code that mutates a photo outside of this model.
   static evictCache(uid) {
     if (uid) {
       Photo._cache.delete(uid);
@@ -1365,5 +1369,33 @@ export class Photo extends RestModel {
     return results.concat(response.models);
   }
 }
+
+// Refresh cached entries when the backend reports a photo change. The
+// websocket payload (see internal/api/api_event.go) carries the full updated
+// entity, so we can write it straight back into the LRU. Background events
+// for photos the user has not browsed are ignored — the cache only follows
+// what is already in it, never grows from server traffic alone.
+$event.subscribe("photos.updated", (_ev, data) => {
+  if (!data || !Array.isArray(data.entities)) {
+    return;
+  }
+  data.entities.forEach((entity) => {
+    if (entity && entity.UID && Photo._cache.has(entity.UID)) {
+      Photo._storeCache(entity.UID, entity);
+    }
+  });
+});
+
+// Drop cached entries for photos the backend reports as removed.
+$event.subscribe("photos.deleted", (_ev, data) => {
+  if (!data || !Array.isArray(data.entities)) {
+    return;
+  }
+  data.entities.forEach((entity) => {
+    if (entity && entity.UID) {
+      Photo._cache.delete(entity.UID);
+    }
+  });
+});
 
 export default Photo;
