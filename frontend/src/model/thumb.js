@@ -110,7 +110,10 @@ export class Thumb extends Model {
   // automatic eviction. Mirrors the batch-photos endpoint that
   // view/cards.vue already targets via Photo.prototype.archive —
   // kept on Thumb for the lightbox flow which holds a Thumb (not a
-  // Photo) for the current slide.
+  // Photo) for the current slide. Rapid-fire prevention is the
+  // caller's responsibility; if a UI flow needs it, it can add
+  // `blockUI("busy")` / `unblockUI()` or a similar guard at the
+  // handler layer without making the model stateful.
   archive() {
     const prev = this.Archived;
     this.Archived = true;
@@ -139,7 +142,7 @@ export class Thumb extends Model {
   // on rejection. Backend publishes only albums.updated (not a
   // photos event), so callers that mutate the sidebar's cached
   // Photo.Albums list MUST also call evictPhoto() — see
-  // lightbox.vue onAlbumRemove for the pattern.
+  // lightbox.vue onRemoveFromAlbum for the pattern.
   removeFromAlbum(albumUID) {
     const prev = this.Removed;
     this.Removed = true;

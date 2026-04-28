@@ -1090,6 +1090,15 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
+  // Moves this photo to the archive (soft delete). Intentionally
+  // does NOT flip a local Archived flag the way Thumb.archive()
+  // does — no Photo consumer reads `photo.Archived` (the lightbox's
+  // `this.model?.Archived` checks all run against a Thumb), so an
+  // optimistic flip on Photo would just add dead state. The actual
+  // UI update for the photo-grid caller (view/cards.vue) is driven
+  // by the `photos.archived` WS event handler in page/photos.vue
+  // around line 802, which calls removeResult() to drop the row
+  // from the search results outside the Archive context.
   archive() {
     return $api.post("batch/photos/archive", { photos: [this.getId()] });
   }
