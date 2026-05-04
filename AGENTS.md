@@ -107,10 +107,6 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
   - New Vue components should have component-test coverage, and existing component tests should be updated as needed when behavior changes.
 - When adding a metadata source such as `SrcOllama` or `SrcOpenAI`, update both `internal/entity/src.go` and `frontend/src/common/util.js` so backend and UI stay aligned.
 
-## Container Image Builds
-
-- **Never mix Debian and Ubuntu apt repositories in the same image.** Don't add a Debian source to an Ubuntu base (or vice versa) to install a single missing package — the transitive deps drift, apt's solver pulls newer libraries from the foreign distro, and other build steps in the same `RUN` (e.g. `install-libheif.sh` running `apt-get install libavcodec-dev`) silently link against the wrong soname. Symptoms surface much later as `dlopen: libfoo.so.N: cannot open shared object file` at image runtime, with the binary referencing a soname that exists only in the foreign distro. If a package isn't available in the host distro's repos, prefer (a) a same-distro PPA / backports source, (b) a vendor-supplied .deb (e.g. Google Chrome from `dl.google.com`), or (c) a from-source build pinned to a known version. Concrete prior incident: 2026-04-27 to 2026-05-04, Bookworm chromium pinned into Ubuntu Jammy ARM64 left libavcodec59 in the build environment, and Jammy's `libheif-ffmpegdec.so` archive shipped linked against `libavcodec.so.59` even though Jammy itself only ships `.so.58` (#5553).
-
 ## Agent Runtime
 
 - Detect container mode by checking for `/.dockerenv`.
@@ -152,3 +148,10 @@ Formatting and test entry points:
 - Prefer focused test runs such as `go test ./path/to/pkg -run Name -count=1` while iterating.
 - Use `mariadb -D photoprism` inside the dev shell when you need to inspect MariaDB state directly.
 - Run `shellcheck <file>` on edited shell scripts, or use the corresponding `make` target.
+
+### Container Image Builds
+
+- **Never mix Debian and Ubuntu `apt` repositories in the same image:**
+  - Don't add a Debian source to an Ubuntu base (or vice versa) to install a single missing package — the transitive deps drift, apt's solver pulls newer libraries from the foreign distro, and other build steps in the same `RUN` (e.g. `install-libheif.sh` running `apt-get install libavcodec-dev`) silently link against the wrong soname.
+  - Symptoms surface much later as `dlopen: libfoo.so.N: cannot open shared object file` at image runtime, with the binary referencing a soname that exists only in the foreign distro.
+  - If a package isn't available in the host distro's repos, prefer (a) a same-distro PPA / backports source, (b) a vendor-supplied .deb (e.g. Google Chrome from `dl.google.com`), or (c) a from-source build pinned to a known version.
