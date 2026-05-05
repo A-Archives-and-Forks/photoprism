@@ -4,12 +4,19 @@
 #   - AMD64: Google Chrome stable (apt repo at dl.google.com).
 #   - ARM64: Chromium (native apt package; no snap).
 #       - Debian hosts: native apt chromium.
-#       - Ubuntu hosts: chromium from the XtraDeb PPA. Ubuntu's own
-#         chromium-browser is a snap-shim transitional package and unusable
-#         in Docker; the XtraDeb PPA ships native .deb chromium for the
-#         current Ubuntu LTS releases (jammy, noble, questing, resolute,
-#         ...) so apt resolves cleanly without cross-distro pinning. PPA:
-#         https://launchpad.net/~xtradeb/+archive/ubuntu/apps
+#       - Ubuntu hosts: chromium from PhotoPrism's internal mirror at
+#         https://dl.photoprism.app/dist/chromium/. The mirror is a small
+#         reprepro tree of the XtraDeb PPA's chromium / chromium-driver /
+#         chromium-sandbox .debs (BSD-1-Clause); we mirror them so CI builds
+#         survive Launchpad outages. Ubuntu's own chromium-browser is a
+#         snap-shim transitional package and unusable in Docker.
+#         Upstream PPA: https://launchpad.net/~xtradeb/+archive/ubuntu/apps
+#
+# Override the ARM64 Ubuntu chromium source via env var:
+#   CHROMIUM_SOURCE=internal  (default) — https://dl.photoprism.app/dist/chromium/
+#   CHROMIUM_SOURCE=xtradeb             — https://ppa.launchpadcontent.net/xtradeb/apps/ubuntu
+# Use 'xtradeb' only when our mirror has fallen behind a chromium update
+# (e.g. CVE patch landed at XtraDeb but cron hasn't refreshed yet).
 #
 # This script must run as root. Use one of these invocations:
 #
@@ -46,7 +53,33 @@ DESTARCH=${BUILD_ARCH:-$SYSTEM_ARCH}
 # shellcheck source=/dev/null
 . /etc/os-release
 
-# Adds the XtraDeb PPA apt source and installs chromium from it.
+# Adds PhotoPrism's internal chromium mirror as an apt source and installs
+# chromium from it. Mirror is rebuilt from XtraDeb upstream weekly via
+# `make -C services/downloads chromium` on web2 (services/downloads/scripts/).
+install_chromium_from_internal_mirror() {
+  local keyring=/etc/apt/keyrings/photoprism-apt.gpg
+  local src=/etc/apt/sources.list.d/photoprism-chromium.sources
+
+  install -m 0755 -d /etc/apt/keyrings
+  # PhotoPrism APT signing key (master): 99F2 9643 6E34 A5DD 1782  A5C9 7FE2 4EBF 235B EBF9
+  curl -fsSL "https://dl.photoprism.app/dist/chromium/photoprism-apt.gpg.asc" \
+    | gpg --no-tty --batch --yes --dearmor -o "$keyring"
+
+  cat > "$src" <<EOF
+Types: deb
+URIs: https://dl.photoprism.app/dist/chromium
+Suites: ${VERSION_CODENAME}
+Components: main
+Signed-By: ${keyring}
+EOF
+
+  apt-get update
+  apt-get -qq install -y --no-install-recommends \
+    chromium chromium-driver chromium-sandbox
+}
+
+# Adds the XtraDeb PPA apt source and installs chromium from it. Fallback
+# path used only when CHROMIUM_SOURCE=xtradeb.
 install_chromium_from_xtradeb_ppa() {
   local keyring=/etc/apt/keyrings/xtradeb-apps.gpg
   local src=/etc/apt/sources.list.d/xtradeb-apps.sources
@@ -89,9 +122,21 @@ case $DESTARCH in
         ;;
 
       ubuntu)
-        echo "Installing Chromium (via XtraDeb PPA) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
         apt-get -qq install -y --no-install-recommends ca-certificates curl gnupg
-        install_chromium_from_xtradeb_ppa
+        case "${CHROMIUM_SOURCE:-internal}" in
+          internal)
+            echo "Installing Chromium (via PhotoPrism internal mirror) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
+            install_chromium_from_internal_mirror
+            ;;
+          xtradeb)
+            echo "Installing Chromium (via XtraDeb PPA — fallback) on ${ID} ${VERSION_CODENAME:-} for ${DESTARCH^^}..."
+            install_chromium_from_xtradeb_ppa
+            ;;
+          *)
+            echo "Unknown CHROMIUM_SOURCE='${CHROMIUM_SOURCE}' (expected 'internal' or 'xtradeb')" 1>&2
+            exit 1
+            ;;
+        esac
         ;;
 
       *)
