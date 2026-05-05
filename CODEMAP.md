@@ -136,7 +136,6 @@ Cluster / Portal
 - Registry/provisioner: `internal/service/cluster/registry/*`, `internal/service/cluster/provisioner/*`.
 - Theme endpoint (server): GET `/api/v1/cluster/theme`; client/CLI installs theme only if missing or no `app.js`.
 - Portal-only extensions: `portal/internal/portal` (Portal defaults, flags, provisioning options, `/i/*` proxy router).
-- See specs cheat sheet: `specs/portal/README.md`.
 
 Logging & Events
 - Logger and event hub: `internal/event/*`; `event.Log` is the shared logger.
@@ -289,7 +288,6 @@ Useful Make Targets (selection)
 See Also
 - AGENTS.md (repository rules and tips for agents)
 - Developer Guide (Setup/Tests/API) — links in AGENTS.md → Sources of Truth
-- Specs: `specs/dev/backend-testing.md`, `specs/dev/api-docs-swagger.md`, `specs/portal/README.md`
 
 Go Internal Import Rule
 - Keep temporary Go helpers inside `internal/...`; the Go toolchain blocks importing `internal/` packages from directories such as `/tmp`, so use a disposable path like `internal/tmp/` when you need scratch space.
