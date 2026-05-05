@@ -25,12 +25,6 @@ Other frontend documentation lives next to this file:
 
 > Always invoke Vitest through `make test-js` or `npm run test`. Bare `npx vitest run` skips the `cross-env` wrapper that sets `TZ=UTC BUILD_ENV=development NODE_ENV=development BABEL_ENV=test`. Without those, ~50 component and TZ-sensitive tests fail spuriously.
 
-For Pro/Plus/Portal overlays, rebuild the Pro UI separately when files under `pro/frontend/` change:
-
-```sh
-make -C pro build-js   # or watch-js
-```
-
 ## Dependency Pinning Policy
 
 **Pins are intentional.** When a version is locked without a caret (e.g., `"axios": "1.16.0"`), it is intentional. Before adjusting any pin, check the table below, the inline `//` comments at the top of `package.json`, and the git log (`git log -p -- frontend/package.json | grep -B2 -A4 "<pkg>"`).
@@ -71,7 +65,7 @@ Some major upgrades are blocked by config-file module style. The configs referen
 These are listed in `package.json` but appear unused at the source level. Audit before removing — they may be transitive helpers that only matter under specific build flags. Verification command:
 
 ```sh
-rg -nF "<pkg>" frontend pro/frontend plus/frontend portal/frontend \
+rg -nF "<pkg>" frontend \
   --glob '!node_modules/**' --glob '!package-lock.json' --glob '!NOTICE'
 ```
 
@@ -86,7 +80,7 @@ rg -nF "<pkg>" frontend pro/frontend plus/frontend portal/frontend \
 2. Avoid packages that require `postinstall`/`install` scripts. Installs default to `--ignore-scripts`.
 3. Add to `frontend/package.json`. From the **repo root** run `npm install --ignore-scripts --no-audit --no-fund --no-update-notifier` so the workspace lockfile updates.
 4. `make audit` must report zero advisories.
-5. Run `make build-js` and `make test-js`. For Pro overlay changes also run `make -C pro build-js`.
+5. Run `make build-js` and `make test-js`.
 6. `make notice` to refresh `NOTICE` and `frontend/NOTICE`.
 
 ## Removing a Dependency
