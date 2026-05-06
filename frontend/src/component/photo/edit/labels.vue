@@ -109,19 +109,34 @@
                       </tr>
                       <tr v-if="!disabled" class="label result">
                         <td class="text-start">
-                          <v-text-field
-                            v-model="newLabel"
+                          <!-- No autofocus: v-combobox auto-opens its menu on
+                            focus, so autofocusing here would pop the dropdown
+                            the moment the Labels tab renders (and lay the menu
+                            out before the tab geometry settles, which
+                            mispositions it). The user clicks the input when
+                            they want to type. -->
+                          <v-combobox
+                            v-model="newLabelModel"
+                            v-model:search="newLabel"
+                            :items="labelOptions"
+                            item-title="Name"
+                            item-value="Name"
+                            return-object
                             :rules="[nameRule]"
                             color="surface-variant"
                             autocomplete="off"
-                            autofocus
                             single-line
                             flat
                             variant="plain"
                             hide-details
+                            hide-no-data
+                            append-icon=""
+                            :list-props="{ density: 'compact' }"
                             class="input-label ma-0 pa-0"
-                            @keydown.enter="addLabel"
-                          ></v-text-field>
+                            @focus="loadLabelOptions"
+                            @update:model-value="onLabelSelected"
+                            @keydown.enter.stop.prevent="addLabel"
+                          ></v-combobox>
                         </td>
                         <td class="text-start">
                           {{ sourceName("manual") }}
@@ -147,6 +162,7 @@
 
 <script>
 import Thumb from "model/thumb";
+import typeaheadCache from "common/typeahead-cache";
 
 export default {
   name: "PTabPhotoLabels",
@@ -165,6 +181,11 @@ export default {
       readonly: this.$config.get("readonly"),
       selected: [],
       newLabel: "",
+      newLabelModel: null,
+      // Typeahead suggestions sourced lazily from the shared cache
+      // (common/typeahead-cache.js) on first focus. Cache de-dupes
+      // across the sidebar combobox and the batch-edit dialog.
+      labelOptions: [],
       listColumns: [
         {
           title: this.$gettext("Label"),
@@ -211,15 +232,52 @@ export default {
       });
     },
     addLabel() {
-      if (!this.newLabel || !this.view?.model) {
+      const typed = (this.newLabel || "").trim();
+      if (!typed || !this.view?.model) {
         return;
       }
 
-      this.view.model.addLabel(this.newLabel).then(() => {
-        this.$notify.success("added " + this.newLabel);
+      // Apply the same canonical-match dedup the sidebar uses for L3:
+      // typing `Hello Cat` resolves to an existing `hello-cat` label so
+      // the backend isn't asked to create a near-duplicate. normalizeTitle
+      // ignores case, strips punctuation, and treats `+`/`_`/`-` as
+      // space.
+      const norm = this.$util.normalizeTitle ? this.$util.normalizeTitle(typed) : typed.toLowerCase();
+      let finalName = typed;
+      if (norm) {
+        const existing = this.labelOptions.find((l) =>
+          this.$util.normalizeTitle ? this.$util.normalizeTitle(l.Name) === norm : (l.Name || "").toLowerCase() === norm
+        );
+        if (existing) {
+          finalName = existing.Name;
+        }
+      }
 
+      this.view.model.addLabel(finalName).then(() => {
+        this.$notify.success("added " + finalName);
         this.newLabel = "";
+        this.newLabelModel = null;
       });
+    },
+    // Selecting an existing label from the dropdown commits via the same
+    // canonical-name path as addLabel — keeps the chip name consistent
+    // with what's stored server-side.
+    onLabelSelected(value) {
+      if (!value || typeof value !== "object" || !value.Name) {
+        return;
+      }
+      this.newLabel = value.Name;
+      this.addLabel();
+    },
+    // Pulls suggestions from the shared cache on first focus. Cheap on
+    // re-focus (cache hit) and refreshes after WS-driven evictions.
+    loadLabelOptions() {
+      typeaheadCache
+        .getLabels()
+        .then((models) => {
+          this.labelOptions = models.map((l) => ({ Name: l.Name, UID: l.UID }));
+        })
+        .catch(() => {});
     },
     activateLabel(label) {
       if (!label || !this.view?.model) {

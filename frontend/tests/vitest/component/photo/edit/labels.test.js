@@ -2,6 +2,8 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { shallowMount, config as VTUConfig } from "@vue/test-utils";
 import PTabPhotoLabels from "component/photo/edit/labels.vue";
 import Thumb from "model/thumb";
+import $util from "common/util";
+import typeaheadCache from "common/typeahead-cache";
 
 function mountPhotoLabels({ modelOverrides = {}, routerOverrides = {}, utilOverrides = {}, notifyOverrides = {}, viewHasModel = true } = {}) {
   const baseConfig = VTUConfig.global.mocks.$config || {};
@@ -25,6 +27,10 @@ function mountPhotoLabels({ modelOverrides = {}, routerOverrides = {}, utilOverr
   const util = {
     ...baseUtil,
     sourceName: vi.fn((s) => `source-${s}`),
+    // Mounted with the real normalizeTitle so the L11 canonical-match
+    // dedup pipeline runs against the same normalization the component
+    // uses at runtime (case + punctuation + `+`/`_`/`-` → space).
+    normalizeTitle: (s) => $util.normalizeTitle(s),
     ...utilOverrides,
   };
 
@@ -136,6 +142,18 @@ describe("component/photo/edit/labels", () => {
       expect(addSpy).not.toHaveBeenCalled();
     });
 
+    it("does nothing for whitespace-only input", () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.newLabel = "   ";
+      wrapper.vm.addLabel();
+
+      expect(addSpy).not.toHaveBeenCalled();
+    });
+
     it("calls model.addLabel, shows success message and clears newLabel", async () => {
       const addSpy = vi.fn(() => Promise.resolve());
       const notifySuccessSpy = vi.fn();
@@ -152,6 +170,107 @@ describe("component/photo/edit/labels", () => {
       expect(addSpy).toHaveBeenCalledWith("Dog");
       expect(notifySuccessSpy).toHaveBeenCalledWith("added Dog");
       expect(wrapper.vm.newLabel).toBe("");
+    });
+
+    // L11: typing a normalized-equal variant of an existing label
+    // (`Hello Cat` for an existing `hello-cat`) sends the canonical
+    // server-side name to the backend instead of creating a duplicate.
+    it("canonicalizes the typed name to an existing labelOption when normalized-equal", async () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.labelOptions = [{ UID: "lbl-canonical", Name: "Hello Cat" }];
+      wrapper.vm.newLabel = "hello-cat";
+      wrapper.vm.addLabel();
+      await Promise.resolve();
+
+      // Backend receives the canonical existing-label name, not the typed variant.
+      expect(addSpy).toHaveBeenCalledWith("Hello Cat");
+    });
+
+    it("passes the typed name through when no labelOption matches", async () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.labelOptions = [{ UID: "lbl-canonical", Name: "Hello Cat" }];
+      wrapper.vm.newLabel = "Sunset";
+      wrapper.vm.addLabel();
+      await Promise.resolve();
+
+      expect(addSpy).toHaveBeenCalledWith("Sunset");
+    });
+
+    it("trims surrounding whitespace before sending to the backend", async () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.newLabel = "  Beach  ";
+      wrapper.vm.addLabel();
+      await Promise.resolve();
+
+      expect(addSpy).toHaveBeenCalledWith("Beach");
+    });
+  });
+
+  describe("onLabelSelected", () => {
+    it("commits the dropdown selection via addLabel", async () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.onLabelSelected({ Name: "Mountains", UID: "lbl-mountains" });
+      await Promise.resolve();
+
+      expect(addSpy).toHaveBeenCalledWith("Mountains");
+    });
+
+    it("ignores non-object selections (typed strings)", () => {
+      const addSpy = vi.fn(() => Promise.resolve());
+      const { wrapper } = mountPhotoLabels({
+        modelOverrides: { addLabel: addSpy },
+      });
+
+      wrapper.vm.onLabelSelected("just-a-string");
+      wrapper.vm.onLabelSelected(null);
+
+      expect(addSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("loadLabelOptions", () => {
+    it("populates labelOptions from typeaheadCache.getLabels", async () => {
+      typeaheadCache.clear();
+      const cacheSpy = vi.spyOn(typeaheadCache, "getLabels").mockResolvedValueOnce([
+        { Name: "Cat", UID: "lbl-cat", Slug: "cat" },
+      ]);
+      const { wrapper } = mountPhotoLabels();
+
+      wrapper.vm.loadLabelOptions();
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(cacheSpy).toHaveBeenCalled();
+      // Labels tab maps to {Name, UID} just like the sidebar combobox.
+      expect(wrapper.vm.labelOptions).toEqual([{ Name: "Cat", UID: "lbl-cat" }]);
+      cacheSpy.mockRestore();
+    });
+
+    it("swallows cache errors so a transient fetch failure doesn't block typing", async () => {
+      const cacheSpy = vi.spyOn(typeaheadCache, "getLabels").mockRejectedValueOnce(new Error("boom"));
+      const { wrapper } = mountPhotoLabels();
+
+      expect(() => wrapper.vm.loadLabelOptions()).not.toThrow();
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(wrapper.vm.labelOptions).toEqual([]);
+      cacheSpy.mockRestore();
     });
   });
 
