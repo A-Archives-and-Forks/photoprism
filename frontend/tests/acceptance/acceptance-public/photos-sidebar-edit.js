@@ -73,7 +73,7 @@ test.meta("testID", "sidebar-edit-002").meta({ mode: "public" })("Common: Adds a
   await photoviewer.typeAndConfirmInlineChip("Labels", labelTitle);
   await photoviewer.typeAndConfirmInlineChip("Albums", albumTitle);
 
-  await photoviewer.closePhotoViewer();
+  await photoviewer.triggerPhotoViewerAction("close-button");
 
   await menu.openPage("labels");
   await label.openByTitle(labelTitle);

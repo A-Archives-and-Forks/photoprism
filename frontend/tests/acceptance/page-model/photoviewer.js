@@ -156,14 +156,6 @@ export default class Page {
     await t.expect(this.sidebar.visible).ok();
   }
 
-  // Close the lightbox. The PhotoSwipe close button uses the
-  // `--close-button` suffix, not `--close`, so `triggerPhotoViewerAction`
-  // cannot reach it with its generic `--${action}` pattern.
-  async closePhotoViewer() {
-    await t.click(Selector("button.pswp__button--close-button"));
-    await t.expect(this.viewer.exists).notOk();
-  }
-
   async toggleMarkersVisible() {
     await t.click(this.markersVisibilityToggle);
   }
