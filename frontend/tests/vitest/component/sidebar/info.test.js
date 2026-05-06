@@ -2302,6 +2302,44 @@ describe("PSidebarInfo component", () => {
       expect(w.vm.chipState.labels.options).toEqual([]);
       cacheSpy.mockRestore();
     });
+
+    // The backend's order=name doesn't always return a clean
+    // alphabetical list (and the cap-bounded fetch may interleave).
+    // Sort client-side via locale-aware comparison so the dropdown
+    // reads naturally for the user.
+    it("sorts label options alphabetically (case-insensitive)", async () => {
+      typeaheadCache.clear();
+      const cacheSpy = vi
+        .spyOn(typeaheadCache, "getLabels")
+        .mockResolvedValueOnce([
+          { Name: "Mountain", UID: "1" },
+          { Name: "apple", UID: "2" },
+          { Name: "Beach", UID: "3" },
+        ]);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("labels");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(w.vm.chipState.labels.options.map((l) => l.Name)).toEqual(["apple", "Beach", "Mountain"]);
+      cacheSpy.mockRestore();
+    });
+
+    it("sorts album options alphabetically by title", async () => {
+      typeaheadCache.clear();
+      const cacheSpy = vi
+        .spyOn(typeaheadCache, "getAlbums")
+        .mockResolvedValueOnce([
+          { Title: "Zebra", UID: "z" },
+          { Title: "alpha", UID: "a" },
+          { Title: "Mango", UID: "m" },
+        ]);
+      const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
+      w.vm.loadChipOptions("albums");
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(w.vm.chipState.albums.options.map((a) => a.Title)).toEqual(["alpha", "Mango", "Zebra"]);
+      cacheSpy.mockRestore();
+    });
   });
 
   // clearChipInput now takes a field argument; the no-arg form clears

@@ -1192,19 +1192,26 @@ export default {
     // `albums.updated` / `config.updated`) without per-component
     // subscriptions. Errors are swallowed so a transient network hiccup
     // never blocks the editor.
+    //
+    // The cache returns whatever order the backend emitted (which is
+    // not reliably alphabetical even when search?order=name is set),
+    // so we sort client-side via locale-aware localeCompare. This
+    // also keeps Hebrew/Cyrillic libraries readable, where byte-order
+    // sort would not match the user's expectation.
     loadChipOptions(field) {
+      const collator = (key) => (a, b) => (a[key] || "").localeCompare(b[key] || "", undefined, { sensitivity: "base", numeric: true });
       if (field === "labels") {
         typeaheadCache
           .getLabels()
           .then((models) => {
-            this.chipState.labels.options = models.map((l) => ({ Name: l.Name, UID: l.UID }));
+            this.chipState.labels.options = models.map((l) => ({ Name: l.Name, UID: l.UID })).sort(collator("Name"));
           })
           .catch(() => {});
       } else if (field === "albums") {
         typeaheadCache
           .getAlbums()
           .then((models) => {
-            this.chipState.albums.options = models;
+            this.chipState.albums.options = models.slice().sort(collator("Title"));
           })
           .catch(() => {});
       }
