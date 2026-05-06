@@ -18,7 +18,7 @@
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
     @keydown.esc.exact.stop="close"
-    @keydown.tab.stop="onTabKey"
+    @keydown.tab="onTabKey"
     @click.capture="captureDialogClick"
     @pointerdown.capture="captureDialogPointerDown"
   >
@@ -2389,13 +2389,22 @@ export default {
         ev.preventDefault();
       }
     },
-    // Tab keypress handler on the v-dialog root. The .stop template modifier
-    // halts the event before PhotoSwipe's document-level listener fires;
-    // browser-default Tab navigation continues normally so chips and other
-    // sidebar focusables are reachable. The Vuetify dialog scope and the
-    // PhotoPrism $view focus trap re-anchor focus if it ever escapes the
-    // lightbox tree.
-    onTabKey() {},
+    // Tab keypress handler on the v-dialog root. Stops propagation so
+    // PhotoSwipe's document-level _focusRoot() Tab handler doesn't fire,
+    // letting browser-default Tab navigation continue normally and keeping
+    // sidebar chips, inputs, and pencils reachable by keyboard. Suppression
+    // is gated on focus being inside the lightbox tree so an event bubbling
+    // up from somewhere unexpected (e.g. a teleported overlay) can still
+    // reach PhotoSwipe. Vuetify's v-dialog focus scope and the PhotoPrism
+    // $view focus trap re-anchor focus that escapes the modal.
+    onTabKey(ev) {
+      if (!ev) return;
+      const root = this.$refs.container || this.$refs.content;
+      const active = document.activeElement;
+      if (root && active && root.contains(active)) {
+        ev.stopPropagation();
+      }
+    },
     // Toggles video playback on the current video element, if any.
     toggleVideo() {
       // Get active video element, if any.
