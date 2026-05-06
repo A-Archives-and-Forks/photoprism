@@ -1035,6 +1035,9 @@ export default {
         const d = this.markerDrafts[uid];
         if (d) d.current = d.original;
       });
+      if (this.addNameDialog && this.addNameDialog.visible) {
+        this.addNameDialog = { visible: false, marker: null, name: "" };
+      }
     },
     // Inline text fields (title/caption/subject/...) are excluded on purpose:
     // onInlineFieldBlur() auto-commits them before any navigation source can
@@ -1047,6 +1050,14 @@ export default {
         if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) return true;
       }
       if (Object.values(this.chipState).some((s) => s.additions.length || s.removals.length)) return true;
+      // Typed-but-uncommitted text in the chip combobox/autocomplete: pressing
+      // Enter would push it into chipState.additions, but until then the
+      // characters live only in chipSearch and would silently vanish on
+      // navigation without this guard.
+      if ((this.editingField === "labels" || this.editingField === "albums") && (this.chipSearch || "").trim() !== "") return true;
+      // An open Add-name confirmation for an unnamed marker is also pending
+      // input until the user picks Add or Cancel.
+      if (this.addNameDialog && this.addNameDialog.visible) return true;
       return false;
     },
     // Async guard used by the lightbox before closing / hiding / navigating.

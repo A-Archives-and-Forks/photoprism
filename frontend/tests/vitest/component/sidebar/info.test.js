@@ -1143,6 +1143,50 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.hasPendingEdit()).toBe(true);
   });
 
+  it("should report hasPendingEdit for typed-but-uncommitted text in the labels combobox", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.editingField = "labels";
+    w.vm.chipSearch = "alpha";
+    expect(w.vm.hasPendingEdit()).toBe(true);
+    // Trimmed-empty input is not pending.
+    w.vm.chipSearch = "   ";
+    expect(w.vm.hasPendingEdit()).toBe(false);
+  });
+
+  it("should report hasPendingEdit for typed-but-uncommitted text in the albums autocomplete", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "albums";
+    w.vm.chipSearch = "vacation";
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
+  it("should NOT report hasPendingEdit for chipSearch when no chip editor is open", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = null;
+    w.vm.chipSearch = "leftover";
+    expect(w.vm.hasPendingEdit()).toBe(false);
+  });
+
+  it("should report hasPendingEdit while the Add-name confirmation dialog is visible", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    expect(w.vm.hasPendingEdit()).toBe(false);
+    w.vm.addNameDialog = { visible: true, marker: { UID: "m2" }, name: "Alice" };
+    expect(w.vm.hasPendingEdit()).toBe(true);
+  });
+
   it("should resolve confirmDiscardPending to true immediately when there is no pending edit", async () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
