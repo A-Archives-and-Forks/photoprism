@@ -494,16 +494,13 @@ import * as options from "options/options";
 import * as contexts from "options/contexts";
 import IconLivePhoto from "../icon/live-photo.vue";
 import { Batch } from "model/batch";
-import Album from "model/album";
-import Label from "model/label";
 import Thumb from "model/thumb";
 import PLocationDialog from "component/location/dialog.vue";
 import PLocationInput from "component/location/input.vue";
 import PInputChipSelector from "component/input/chip-selector.vue";
 import $util from "common/util";
+import typeaheadCache from "common/typeahead-cache";
 
-// TODO: Handle cases where users have more than 10000 albums and/or labels.
-const MaxResults = 10000;
 const iconClear = "mdi-close-circle";
 const iconUndo = "mdi-undo";
 
@@ -1451,22 +1448,24 @@ export default {
       this.formData[collectionType].items = items;
       this.formData[collectionType].action = hasChanges ? this.actions.update : this.actions.none;
     },
-    // Fetch available options for dropdowns
+    // Reads from the shared typeahead cache (common/typeahead-cache.js)
+    // so opening this dialog while the lightbox sidebar is also editable
+    // costs zero extra round-trips. The cache invalidates on
+    // labels.updated / albums.updated / config.updated so a label or
+    // album created in another tab shows up in the dropdowns next time
+    // the dialog opens.
     async fetchAvailableOptions() {
       try {
         this.loading = true;
 
-        const [albumsResponse, labelsResponse] = await Promise.all([
-          Album.search({ count: MaxResults, type: "album", order: "name" }),
-          Label.search({ count: MaxResults, order: "name", all: true }),
-        ]);
+        const [albums, labels] = await Promise.all([typeaheadCache.getAlbums(), typeaheadCache.getLabels()]);
 
-        this.availableAlbumOptions = (albumsResponse.models || []).map((album) => ({
+        this.availableAlbumOptions = albums.map((album) => ({
           value: album.UID,
           title: album.Title,
         }));
 
-        this.availableLabelOptions = (labelsResponse.models || []).map((label) => ({
+        this.availableLabelOptions = labels.map((label) => ({
           value: label.UID,
           title: label.Name,
           slug: (label.Slug || "").toLowerCase(),
