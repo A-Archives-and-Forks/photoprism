@@ -249,9 +249,12 @@
               <span
                 v-for="l in labels"
                 :key="l.Label.UID"
+                tabindex="0"
                 class="meta-chip meta-chip--primary"
                 :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('labels', l.Label.ID) }"
-                @click.stop.prevent="editingField !== 'labels' ? navigateToLabel(l.Label) : togglePendingChipRemoval('labels', l.Label.ID)"
+                @click.stop.prevent="onChipActivate('labels', l)"
+                @keydown.enter.stop.prevent="onChipActivate('labels', l)"
+                @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
                 {{ l.Label.Name }}
                 <v-icon
@@ -264,8 +267,11 @@
               <span
                 v-for="name in chipState.labels.additions"
                 :key="'add-' + name"
+                tabindex="0"
                 class="meta-chip meta-chip--pending-add"
                 @click.stop.prevent="removePendingChipAdd('labels', name)"
+                @keydown.enter.stop.prevent="removePendingChipAdd('labels', name)"
+                @keydown.delete.stop.prevent="removePendingChipAdd('labels', name)"
               >
                 {{ name }}
                 <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
@@ -312,9 +318,12 @@
               <span
                 v-for="a in albums"
                 :key="a.UID"
+                tabindex="0"
                 class="meta-chip meta-chip--primary"
                 :class="{ 'meta-chip--pending-remove': isChipPendingRemoval('albums', a.UID) }"
-                @click.stop.prevent="editingField !== 'albums' ? navigateToAlbum(a) : togglePendingChipRemoval('albums', a.UID)"
+                @click.stop.prevent="onChipActivate('albums', a)"
+                @keydown.enter.stop.prevent="onChipActivate('albums', a)"
+                @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
                 {{ a.Title }}
                 <v-icon
@@ -327,8 +336,11 @@
               <span
                 v-for="a in chipState.albums.additions"
                 :key="'add-' + a.UID"
+                tabindex="0"
                 class="meta-chip meta-chip--pending-add"
                 @click.stop.prevent="removePendingChipAdd('albums', a.UID)"
+                @keydown.enter.stop.prevent="removePendingChipAdd('albums', a.UID)"
+                @keydown.delete.stop.prevent="removePendingChipAdd('albums', a.UID)"
               >
                 {{ a.Title }}
                 <v-icon icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
@@ -1223,6 +1235,27 @@ export default {
         s.removals = [];
       });
     },
+    // Click + Enter behavior on a primary chip: navigate to the label/album
+    // page when not editing, toggle pending removal when editing the section.
+    // The two chip shapes differ: labels are wrapped (`{ Label: { ID, ... } }`)
+    // while albums come through directly (`{ UID, ... }`).
+    onChipActivate(field, item) {
+      if (!item) return;
+      if (this.editingField !== field) {
+        if (field === "labels") return this.navigateToLabel(item.Label);
+        if (field === "albums") return this.navigateToAlbum(item);
+        return;
+      }
+      const key = field === "labels" ? item?.Label?.ID : item.UID;
+      this.togglePendingChipRemoval(field, key);
+    },
+    // Delete / Backspace on a primary chip: only meaningful in edit mode,
+    // where it toggles pending removal (same effect as click).
+    onChipDelete(field, item) {
+      if (!item || this.editingField !== field) return;
+      const key = field === "labels" ? item?.Label?.ID : item.UID;
+      this.togglePendingChipRemoval(field, key);
+    },
     addPendingLabel(rawName) {
       const name = (rawName || "").trim();
       if (!name) return false;
@@ -1296,12 +1329,15 @@ export default {
       removals.forEach((id) => promises.push(this.photo.removeLabel(id)));
       additions.forEach((name) => promises.push(this.photo.addLabel(name)));
 
-      // Cache freshness: photo.addLabel / removeLabel patch this.photo.Labels
-      // locally on success, and the backend publishes photos.updated which
-      // evicts the cached entry via evictCachedFromEntities — see
-      // model/photo.js. confirmAlbums needs an explicit evict + re-find
-      // because Album mutations go through raw $api.delete/post and don't
-      // patch this.photo.Albums; that asymmetry is intentional.
+      // Cache freshness: photo.addLabel / removeLabel each chain
+      // .then((r) => this.setValues(r.data)) (see model/photo.js), so a
+      // successful response repopulates this.photo.Labels with the
+      // backend-provided list. The websocket photos.updated subscriber
+      // additionally evicts the cached entry via evictCachedFromEntities,
+      // so the next read after navigation rehydrates from GET /photos/:uid.
+      // confirmAlbums needs an explicit evict + re-find because album
+      // mutations go through raw $api.delete/post and don't patch
+      // this.photo.Albums; that asymmetry is intentional.
       if (promises.length) {
         Promise.all(promises).catch(() => {
           this.$notify.error(this.$gettext("Failed to save changes"));

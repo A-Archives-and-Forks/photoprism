@@ -1946,6 +1946,89 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.chipState.albums.additions).toHaveLength(0);
   });
 
+  // Chip keyboard accessibility (proposal item L6) — onChipActivate covers
+  // click + Enter, onChipDelete covers Delete + Backspace.
+  it("onChipActivate navigates a label chip when not editing", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/browse");
+    w.vm.editingField = null;
+    w.vm.onChipActivate("labels", { Label: { ID: 1, UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "label:nature" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it("onChipActivate toggles label removal in edit mode", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "labels";
+    const label = { Label: { ID: 7, UID: "lbl7", Name: "Beach" } };
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
+    w.vm.onChipActivate("labels", label);
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(true);
+    w.vm.onChipActivate("labels", label);
+    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
+  });
+
+  it("onChipActivate navigates an album chip when not editing", () => {
+    const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
+    const w = mountWithMockRouter("/library/albums/alb1/view");
+    w.vm.editingField = null;
+    w.vm.onChipActivate("albums", { UID: "alb1", Title: "Vacation 2023" });
+    expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "album", params: { album: "alb1", slug: "view" } });
+    expect(openSpy).toHaveBeenCalled();
+    openSpy.mockRestore();
+  });
+
+  it("onChipActivate toggles album removal in edit mode", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "albums";
+    const album = { UID: "alb-x", Title: "Trip" };
+    w.vm.onChipActivate("albums", album);
+    expect(w.vm.isChipPendingRemoval("albums", "alb-x")).toBe(true);
+  });
+
+  it("onChipDelete is a no-op when not editing", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = null;
+    w.vm.onChipDelete("labels", { Label: { ID: 1 } });
+    w.vm.onChipDelete("albums", { UID: "alb1" });
+    expect(w.vm.chipState.labels.removals).toHaveLength(0);
+    expect(w.vm.chipState.albums.removals).toHaveLength(0);
+  });
+
+  it("onChipDelete toggles removal in the matching edit mode only", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "albums";
+    // Delete on a label chip while editing albums must not toggle.
+    w.vm.onChipDelete("labels", { Label: { ID: 9 } });
+    expect(w.vm.chipState.labels.removals).toHaveLength(0);
+    // Same field deletes do toggle.
+    w.vm.onChipDelete("albums", { UID: "alb-y" });
+    expect(w.vm.isChipPendingRemoval("albums", "alb-y")).toBe(true);
+  });
+
+  it("onChipActivate / onChipDelete tolerate falsy items", () => {
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+    w.vm.editingField = "labels";
+    expect(() => w.vm.onChipActivate("labels", null)).not.toThrow();
+    expect(() => w.vm.onChipDelete("labels", undefined)).not.toThrow();
+  });
+
   it("should ignore non-object values in onAlbumSelected", () => {
     const w = mountInfoForChips({ modelValue: mockModel, photo: mockPhoto });
     w.vm.onAlbumSelected("string-value");
