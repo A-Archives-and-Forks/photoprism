@@ -19,8 +19,8 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-title"
-            @keydown.enter.prevent="confirmField"
-            @keydown.escape.prevent="cancelEditing"
+            @keydown.enter.stop.prevent="confirmField"
+            @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-text-field>
           <div v-else-if="model.Title" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
@@ -52,7 +52,7 @@
             hide-details="auto"
             autocomplete="off"
             class="meta-inline-edit meta-inline-caption"
-            @keydown.escape.prevent="cancelEditing"
+            @keydown.escape.stop.prevent="cancelEditing"
             @blur="onInlineFieldBlur"
           ></v-textarea>
           <!-- eslint-disable-next-line vue/no-v-html -- captionHtml is encode-then-sanitized via $util.sanitizeHtml($util.encodeHTML(raw)); see captionHtml() computed -->
@@ -203,8 +203,8 @@
               :class="{ 'meta-inline-marker--named': m.SubjUID }"
               @update:model-value="(v) => onPickPerson(m, v)"
               @update:search="(v) => setMarkerInputValue(m.UID, v)"
-              @keydown.enter.prevent="confirmMarkerName(m, 'enter')"
-              @keydown.escape.prevent="cancelMarkerName(m)"
+              @keydown.enter.stop.prevent="confirmMarkerName(m, 'enter')"
+              @keydown.escape.stop.prevent="cancelMarkerName(m)"
               @blur="confirmMarkerName(m, 'blur')"
               @click.stop
             >
@@ -300,7 +300,8 @@
               :menu-props="chipMenuProps"
               class="meta-inline-edit"
               @update:model-value="onLabelSelected"
-              @keydown.enter.prevent="onLabelEnter"
+              @keydown.enter.stop.prevent="onLabelEnter"
+              @keydown.escape.stop.prevent="cancelEditing"
             ></v-combobox>
           </v-list-item>
         </template>
@@ -369,7 +370,8 @@
               :menu-props="chipMenuProps"
               class="meta-inline-edit"
               @update:model-value="onAlbumSelected"
-              @keydown.enter="onAlbumEnter"
+              @keydown.enter.stop="onAlbumEnter"
+              @keydown.escape.stop.prevent="cancelEditing"
             ></v-autocomplete>
           </v-list-item>
         </template>
@@ -399,7 +401,7 @@
               class="meta-inline-edit"
               :class="`meta-inline-${f.key}`"
               @update:model-value="(v) => f.write(photo, v)"
-              @keydown.escape.prevent="cancelEditing"
+              @keydown.escape.stop.prevent="cancelEditing"
               @blur="onInlineFieldBlur"
             ></v-textarea>
             <div v-else-if="f.read(photo)" class="text-body-2 meta-scrollable">{{ f.read(photo) }}</div>
@@ -433,7 +435,7 @@
                 class="meta-inline-edit"
                 :class="`meta-inline-${f.key}`"
                 @update:model-value="(v) => f.write(photo, v)"
-                @keydown.escape.prevent="cancelEditing"
+                @keydown.escape.stop.prevent="cancelEditing"
                 @blur="onInlineFieldBlur"
               ></v-textarea>
               <!-- eslint-disable-next-line vue/no-v-html -- f.htmlValue references a sanitized computed (e.g. notesHtml) — encode-then-sanitize via $util.sanitizeHtml($util.encodeHTML(raw)). -->
@@ -1125,6 +1127,7 @@ export default {
       this.editOriginal = null;
       this._editStartedAt = null;
       this.resetChipState();
+      this.clearChipInput();
     },
     // Blur handler for inline text fields (title/caption/subject/artist/
     // copyright/license/keywords/notes). Commits the edit instead of
