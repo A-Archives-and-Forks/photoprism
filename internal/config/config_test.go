@@ -3,6 +3,7 @@ package config
 import (
 	"os"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -320,6 +321,60 @@ func TestConfig_IndexWorkers(t *testing.T) {
 	c := NewConfig(CliTestContext())
 
 	assert.GreaterOrEqual(t, c.IndexWorkers(), 1)
+}
+
+// TestConfig_IndexWorkersOverride exercises every branch of the
+// configured-value parsing — the auto sentinel, an empty string, a
+// numeric override, a junk string, and a value above runtime.NumCPU() —
+// and asserts the getter still respects the SQLite cap and returns at
+// least one worker.
+func TestConfig_IndexWorkersOverride(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	original := c.options.IndexWorkers
+	t.Cleanup(func() { c.options.IndexWorkers = original })
+
+	cases := []struct {
+		name     string
+		value    string
+		minCount int
+	}{
+		{"Auto", IndexWorkersAuto, 1},
+		{"AutoMixedCase", "Auto", 1},
+		{"Empty", "", 1},
+		{"Numeric", "1", 1},
+		{"Garbage", "not-a-number", 1},
+		{"OverCPU", "9999", 1},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			c.options.IndexWorkers = tc.value
+			got := c.IndexWorkers()
+			assert.GreaterOrEqual(t, got, tc.minCount)
+			assert.LessOrEqual(t, got, runtime.NumCPU())
+		})
+	}
+}
+
+func TestParseIndexWorkers(t *testing.T) {
+	cases := map[string]int{
+		"":               0,
+		" ":              0,
+		IndexWorkersAuto: 0,
+		"Auto":           0,
+		"AUTO":           0,
+		"0":              0,
+		"-1":             -1,
+		"4":              4,
+		"  8 ":           8,
+		"junk":           0,
+	}
+
+	for input, want := range cases {
+		t.Run(input, func(t *testing.T) {
+			assert.Equal(t, want, parseIndexWorkers(input))
+		})
+	}
 }
 
 func TestConfig_IndexSchedule(t *testing.T) {

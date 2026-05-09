@@ -34,6 +34,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"runtime"
+	"strconv"
 	"strings"
 	"sync"
 	"sync/atomic"
@@ -840,7 +841,10 @@ func (c *Config) Shutdown() {
 	}
 }
 
-// IndexWorkers returns the number of indexing workers.
+// IndexWorkers returns the number of indexing workers. The configured
+// option is a string so operators can either keep the default sentinel
+// IndexWorkersAuto ("auto"), pin a positive numeric count (e.g. "4"), or
+// fall through to derived values when the option is empty or unparsable.
 func (c *Config) IndexWorkers() int {
 	// Use one worker on systems with less than the recommended amount of memory.
 	if TotalMem < RecommendedMem {
@@ -852,16 +856,18 @@ func (c *Config) IndexWorkers() int {
 		// Limit to physical cores to avoid high load on HT capable CPUs.
 		runtime.NumCPU(), cpuid.CPU.PhysicalCores)
 
+	configured := parseIndexWorkers(c.options.IndexWorkers)
+
 	// Limit number of workers when using SQLite3 to avoid database locking issues.
-	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && c.options.IndexWorkers <= 0 || c.options.IndexWorkers > 4) {
+	if c.DatabaseDriver() == SQLite3 && (cores >= 8 && configured <= 0 || configured > 4) {
 		return 4
 	}
 
 	// Return explicit value if set and not too large.
-	if c.options.IndexWorkers > runtime.NumCPU() {
+	if configured > runtime.NumCPU() {
 		return runtime.NumCPU()
-	} else if c.options.IndexWorkers > 0 {
-		return c.options.IndexWorkers
+	} else if configured > 0 {
+		return configured
 	}
 
 	// Use half the available cores by default.
@@ -870,6 +876,26 @@ func (c *Config) IndexWorkers() int {
 	}
 
 	return 1
+}
+
+// parseIndexWorkers normalizes the configured index-workers option to an
+// integer. Empty strings, the IndexWorkersAuto sentinel, and unparsable
+// values map to 0 so IndexWorkers() falls through to the derived count;
+// numeric strings (positive or negative) parse with the same semantics
+// as the previous int field.
+func parseIndexWorkers(value string) int {
+	value = strings.TrimSpace(value)
+
+	if value == "" || strings.EqualFold(value, IndexWorkersAuto) {
+		return 0
+	}
+
+	n, err := strconv.Atoi(value)
+	if err != nil {
+		return 0
+	}
+
+	return n
 }
 
 // IndexSchedule returns the indexing schedule in cron format, e.g. "0 */3 * * *" to start indexing every 3 hours.
