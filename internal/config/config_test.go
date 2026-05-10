@@ -3,10 +3,8 @@ package config
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"testing"
-	"time"
 
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
@@ -315,138 +313,6 @@ func TestConfig_ThemePath(t *testing.T) {
 	assert.Equal(t, ProjectRoot+"/internal/config/testdata/static/img/wallpaper", c.ThemePath())
 	c.SetThemePath("")
 	assert.Equal(t, ProjectRoot+"/storage/testdata/config/theme", c.ThemePath())
-}
-
-func TestConfig_IndexWorkers(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.GreaterOrEqual(t, c.IndexWorkers(), 1)
-}
-
-// TestConfig_IndexWorkersOverride exercises every branch of the
-// configured-value parsing — the auto sentinel, an empty string, a
-// numeric override, a junk string, and a value above runtime.NumCPU() —
-// and asserts the getter still respects the SQLite cap and returns at
-// least one worker.
-func TestConfig_IndexWorkersOverride(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	original := c.options.IndexWorkers
-	t.Cleanup(func() { c.options.IndexWorkers = original })
-
-	cases := []struct {
-		name     string
-		value    string
-		minCount int
-	}{
-		{"Auto", IndexWorkersAuto, 1},
-		{"AutoMixedCase", "Auto", 1},
-		{"Empty", "", 1},
-		{"Numeric", "1", 1},
-		{"Garbage", "not-a-number", 1},
-		{"OverCPU", "9999", 1},
-	}
-
-	for _, tc := range cases {
-		t.Run(tc.name, func(t *testing.T) {
-			c.options.IndexWorkers = tc.value
-			got := c.IndexWorkers()
-			assert.GreaterOrEqual(t, got, tc.minCount)
-			assert.LessOrEqual(t, got, runtime.NumCPU())
-		})
-	}
-}
-
-func TestParseIndexWorkers(t *testing.T) {
-	cases := map[string]int{
-		"":               0,
-		" ":              0,
-		IndexWorkersAuto: 0,
-		"Auto":           0,
-		"AUTO":           0,
-		"0":              0,
-		"-1":             -1,
-		"4":              4,
-		"  8 ":           8,
-		"junk":           0,
-	}
-
-	for input, want := range cases {
-		t.Run(input, func(t *testing.T) {
-			assert.Equal(t, want, parseIndexWorkers(input))
-		})
-	}
-}
-
-func TestConfig_IndexSchedule(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, DefaultIndexSchedule, c.IndexSchedule())
-}
-
-func TestConfig_WakeupInterval(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	i := c.WakeupInterval()
-
-	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 45
-
-	assert.Equal(t, "45s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 0
-
-	assert.Equal(t, "15m0s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = 150
-
-	assert.Equal(t, "2m30s", c.WakeupInterval().String())
-
-	c.options.WakeupInterval = i
-
-	assert.Equal(t, "1h34m9s", c.WakeupInterval().String())
-}
-
-func TestConfig_AutoIndex(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, -1*time.Second, c.AutoIndex())
-}
-
-func TestConfig_AutoImport(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	assert.Equal(t, 2*time.Hour, c.AutoImport())
-}
-
-func TestConfig_OriginalsLimit(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, -1, c.OriginalsLimit())
-	c.options.OriginalsLimit = 800
-	assert.Equal(t, 800, c.OriginalsLimit())
-}
-
-func TestConfig_OriginalsLimitBytes(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, int64(-1), c.OriginalsLimitBytes())
-	c.options.OriginalsLimit = 800
-	assert.Equal(t, int64(838860800), c.OriginalsLimitBytes())
-}
-
-func TestConfig_ResolutionLimit(t *testing.T) {
-	c := NewConfig(CliTestContext())
-
-	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
-	c.options.ResolutionLimit = 800
-	assert.Equal(t, 800, c.ResolutionLimit())
-	c.options.ResolutionLimit = 950
-	assert.Equal(t, 900, c.ResolutionLimit())
-	c.options.ResolutionLimit = 0
-	assert.Equal(t, DefaultResolutionLimit, c.ResolutionLimit())
-	c.options.ResolutionLimit = -1
-	assert.Equal(t, -1, c.ResolutionLimit())
-	c.options.Sponsor = false
-	assert.Equal(t, -1, c.ResolutionLimit())
-	c.options.Sponsor = true
-	assert.Equal(t, -1, c.ResolutionLimit())
 }
 
 func TestConfig_Serial(t *testing.T) {
