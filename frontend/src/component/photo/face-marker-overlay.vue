@@ -9,7 +9,7 @@
     @pointerleave="onHoverLeave"
   >
     <svg v-if="bounds" class="p-face-markers__svg" :style="svgStyle" :viewBox="`0 0 ${bounds.width} ${bounds.height}`">
-      <template v-for="m in markers" :key="m.UID || m.CropID">
+      <g v-for="m in markers" :key="m.UID || m.CropID">
         <rect
           class="p-face-markers__rect"
           :class="{ 'p-face-markers__rect--named': !!m.Name }"
@@ -29,7 +29,7 @@
         >
           {{ m.Name }}
         </text>
-      </template>
+      </g>
       <rect
         v-if="activeDraft"
         class="p-face-markers__rect p-face-markers__rect--draft"
