@@ -251,6 +251,22 @@ export default {
       },
     };
   },
+  watch: {
+    // Pauses playable media (regular video, Live Photo, Animated) while
+    // the user is drawing a face region, then restores playback when
+    // they exit the draw mode. Drawing on a moving frame leads to
+    // wrong-rectangle saves (P1-10) and Live / Animated never expose
+    // video controls, so the user can't pause manually. Covers every
+    // path that flips addingMarker (toggle, cancel, resetFaceMarkers,
+    // sidebar onToggleAddingMarker).
+    addingMarker(now, was) {
+      if (now && !was) {
+        this.pausePlaybackForAddingMarker();
+      } else if (!now && was) {
+        this.restorePlaybackAfterAddingMarker();
+      }
+    },
+  },
   created() {
     this.subscriptions.push(this.$event.subscribe("lightbox.open", this.openLightbox.bind(this)));
     this.subscriptions.push(this.$event.subscribe("lightbox.pause", this.pauseLightbox.bind(this)));
@@ -2485,6 +2501,34 @@ export default {
 
       return true;
     },
+    // Pauses any actively playing media element while the user is drawing
+    // a face region (P1-10). Remembers the playing state in
+    // `_wasPlayingBeforeAddingMarker` so the matching restore method can
+    // resume only when the user had been actively playing. Covers regular
+    // video, Live Photos, and Animated images — getContent().video
+    // resolves to the underlying HTMLMediaElement for all three.
+    pausePlaybackForAddingMarker() {
+      this._wasPlayingBeforeAddingMarker = false;
+      const { video } = this.getContent();
+      if (!video) return;
+      const playing = !video.paused;
+      this._wasPlayingBeforeAddingMarker = playing;
+      if (playing) {
+        this.pauseVideo(video);
+      }
+    },
+    // Resumes playback after the user exits draw mode (saved a marker,
+    // pressed Done, hit Escape, closed the sidebar, etc.). No-op when the
+    // user had paused the media manually before entering draw mode — we
+    // only restore the auto-play state we interrupted.
+    restorePlaybackAfterAddingMarker() {
+      if (!this._wasPlayingBeforeAddingMarker) return;
+      this._wasPlayingBeforeAddingMarker = false;
+      const { video, data } = this.getContent();
+      if (!video) return;
+      const loop = data?.loop === true;
+      this.playVideo(video, loop);
+    },
     // Stops playback on the specified video element, if any.
     pauseVideo(video) {
       if (!video || !(video instanceof HTMLMediaElement)) {
@@ -2782,7 +2826,10 @@ export default {
         this.focusContent();
       });
     },
-    // Hides the lightbox sidebar, if visible.
+    // Hides the lightbox sidebar, if visible. Also exits face-marker draw
+    // mode (the ✓ Done button lives in the sidebar, so a closed sidebar
+    // would otherwise leave `addingMarker` stuck-on with the draw overlay
+    // active and any paused playback unrestored — see P1-10).
     async hideInfo() {
       if (!this.visible || !this.info) {
         return;
@@ -2792,6 +2839,9 @@ export default {
       if (!ok) return;
 
       this.info = false;
+      if (this.addingMarker) {
+        this.addingMarker = false;
+      }
 
       appStorage.setItem("lightbox.info", `${this.info.toString()}`);
 

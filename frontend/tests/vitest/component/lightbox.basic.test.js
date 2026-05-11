@@ -235,6 +235,149 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     expect(download.visible).toBe(true);
   });
 
+  // P1-10 — pause playable media while the user is drawing a face
+  // region. Drawing on a moving frame leads to wrong-rectangle saves
+  // and Live / Animated never expose video controls, so the user can't
+  // pause manually. The watcher on `addingMarker` covers every flip
+  // path (toggle, cancel, resetFaceMarkers).
+  describe("pausePlaybackForAddingMarker — face-marker draw mode", () => {
+    // jsdom's real HTMLMediaElement has read-only `paused`. We mock the
+    // subset the lightbox actually touches: `paused` flag + `pause` / `play`
+    // callable methods. pausePlaybackForAddingMarker treats anything with a
+    // truthy `video` and a boolean `paused` as the active element.
+    let videoEl;
+    let getContent;
+    beforeEach(() => {
+      videoEl = {
+        paused: false,
+        pause: vi.fn(function () {
+          this.paused = true;
+        }),
+        play: vi.fn(function () {
+          this.paused = false;
+          return Promise.resolve();
+        }),
+      };
+      getContent = () => ({ video: videoEl, data: { loop: false } });
+    });
+
+    it("pauses the active media element and remembers it was playing", () => {
+      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, pauseVideo: vi.fn((v) => v.pause()) };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
+      expect(ctx._wasPlayingBeforeAddingMarker).toBe(true);
+      expect(ctx.pauseVideo).toHaveBeenCalledWith(videoEl);
+    });
+
+    it("does NOT re-pause a media element that was already paused", () => {
+      videoEl.paused = true;
+      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, pauseVideo: vi.fn() };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
+      expect(ctx._wasPlayingBeforeAddingMarker).toBe(false);
+      expect(ctx.pauseVideo).not.toHaveBeenCalled();
+    });
+
+    it("is a safe no-op when no media element is currently shown", () => {
+      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent: () => ({ video: null, data: null }), pauseVideo: vi.fn() };
+      const wrapper = mountLightbox();
+      expect(() => wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx)).not.toThrow();
+      expect(ctx._wasPlayingBeforeAddingMarker).toBe(false);
+      expect(ctx.pauseVideo).not.toHaveBeenCalled();
+    });
+
+    it("restorePlaybackAfterAddingMarker resumes when entry flag is true", () => {
+      const ctx = { _wasPlayingBeforeAddingMarker: true, getContent, playVideo: vi.fn() };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
+      expect(ctx.playVideo).toHaveBeenCalledWith(videoEl, false);
+      // Flag clears so a second exit doesn't double-resume.
+      expect(ctx._wasPlayingBeforeAddingMarker).toBe(false);
+    });
+
+    it("restorePlaybackAfterAddingMarker is a no-op when the entry flag is false", () => {
+      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, playVideo: vi.fn() };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
+      expect(ctx.playVideo).not.toHaveBeenCalled();
+    });
+
+    it("restorePlaybackAfterAddingMarker passes the original loop flag", () => {
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: true,
+        getContent: () => ({ video: videoEl, data: { loop: true } }),
+        playVideo: vi.fn(),
+      };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
+      expect(ctx.playVideo).toHaveBeenCalledWith(videoEl, true);
+    });
+
+    // P1-10 — closing the sidebar while draw mode is active exits draw mode
+    // too. The ✓ Done button lives in the sidebar, so without this hook the
+    // overlay stays drawing-enabled with no way to cancel and any paused
+    // playback never resumes.
+    it("hideInfo cancels addingMarker so the draw overlay tears down and playback resumes", async () => {
+      const wrapper = mountLightbox();
+      const ctx = {
+        visible: true,
+        info: true,
+        addingMarker: true,
+        confirmDiscardSidebar: () => Promise.resolve(true),
+        $nextTick: (cb) => Promise.resolve().then(cb),
+        resize: vi.fn(),
+        focusContent: vi.fn(),
+      };
+      await wrapper.vm.$options.methods.hideInfo.call(ctx);
+      expect(ctx.info).toBe(false);
+      expect(ctx.addingMarker).toBe(false);
+    });
+
+    // Guard: hideInfo does not flip addingMarker if the user cancels out of
+    // the discard prompt. Sidebar (and overlay) stay open.
+    it("hideInfo keeps addingMarker when confirmDiscardSidebar resolves false", async () => {
+      const wrapper = mountLightbox();
+      const ctx = {
+        visible: true,
+        info: true,
+        addingMarker: true,
+        confirmDiscardSidebar: () => Promise.resolve(false),
+        $nextTick: (cb) => Promise.resolve().then(cb),
+        resize: vi.fn(),
+        focusContent: vi.fn(),
+      };
+      await wrapper.vm.$options.methods.hideInfo.call(ctx);
+      expect(ctx.info).toBe(true);
+      expect(ctx.addingMarker).toBe(true);
+    });
+
+    // Wiring: the addingMarker watcher delegates to the pause/restore pair
+    // on every flip, so every call site (toggle, cancelAddingMarker,
+    // resetFaceMarkers, sidebar-emitted toggle) is covered uniformly.
+    // We exercise the watcher function directly to keep the test
+    // deterministic instead of leaning on Vue's reactivity timing.
+    it("addingMarker watcher routes through pause on entry and restore on exit", () => {
+      const wrapper = mountLightbox();
+      const watcher = wrapper.vm.$options.watch.addingMarker;
+      const ctx = {
+        pausePlaybackForAddingMarker: vi.fn(),
+        restorePlaybackAfterAddingMarker: vi.fn(),
+      };
+      watcher.call(ctx, true, false);
+      expect(ctx.pausePlaybackForAddingMarker).toHaveBeenCalledTimes(1);
+      expect(ctx.restorePlaybackAfterAddingMarker).not.toHaveBeenCalled();
+      watcher.call(ctx, false, true);
+      expect(ctx.restorePlaybackAfterAddingMarker).toHaveBeenCalledTimes(1);
+      // Same-value transitions (false → false, true → true) are no-ops.
+      ctx.pausePlaybackForAddingMarker.mockClear();
+      ctx.restorePlaybackAfterAddingMarker.mockClear();
+      watcher.call(ctx, true, true);
+      watcher.call(ctx, false, false);
+      expect(ctx.pausePlaybackForAddingMarker).not.toHaveBeenCalled();
+      expect(ctx.restorePlaybackAfterAddingMarker).not.toHaveBeenCalled();
+    });
+  });
+
   it("formatCaption returns sanitized caption html", () => {
     const wrapper = mountLightbox();
     const caption = wrapper.vm.$.ctx.formatCaption({
