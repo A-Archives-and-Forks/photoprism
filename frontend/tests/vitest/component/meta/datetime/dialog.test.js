@@ -1,9 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { DateTime } from "luxon";
-import PMetaDateTimeDialog from "component/meta/datetime/dialog.vue";
+import PMetaDatetimeDialog from "component/meta/datetime/dialog.vue";
 
-describe("PMetaDateTimeDialog component", () => {
+describe("PMetaDatetimeDialog component", () => {
   function mockPhoto(overrides = {}) {
     const base = {
       Day: 15,
@@ -25,7 +25,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should load values from photo via loadFromPhoto", () => {
     const photo = mockPhoto();
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -43,7 +43,7 @@ describe("PMetaDateTimeDialog component", () => {
   });
 
   it("should handle null photo gracefully", () => {
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: null },
     });
 
@@ -57,7 +57,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should emit close event", () => {
     const onClose = vi.fn();
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onClose },
     });
 
@@ -67,7 +67,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should emit confirm with edited values", () => {
     const onConfirm = vi.fn();
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onConfirm },
     });
 
@@ -93,7 +93,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should not emit confirm when date is invalid", () => {
     const onConfirm = vi.fn();
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto(), onConfirm },
     });
 
@@ -111,7 +111,7 @@ describe("PMetaDateTimeDialog component", () => {
         return true;
       },
     });
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -119,7 +119,7 @@ describe("PMetaDateTimeDialog component", () => {
   });
 
   it("should show Local Time label when photo time is not UTC", () => {
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto() },
     });
 
@@ -128,7 +128,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should clamp day when month changes to shorter month", () => {
     const photo = mockPhoto({ Day: 31, Month: 1, Year: 2023 });
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -143,7 +143,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should handle leap year day clamping", () => {
     const photo = mockPhoto({ Day: 31, Month: 1, Year: 2024 });
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -155,7 +155,7 @@ describe("PMetaDateTimeDialog component", () => {
   });
 
   it("should build correct local date strings", () => {
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo: mockPhoto() },
     });
 
@@ -168,7 +168,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should pad single-digit values in date strings", () => {
     const photo = mockPhoto({ Day: 5, Month: 3, Year: 800 });
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 
@@ -181,7 +181,7 @@ describe("PMetaDateTimeDialog component", () => {
 
   it("should use defaults for missing photo fields", () => {
     const photo = mockPhoto({ Day: 0, Month: 0, Year: 2023, TimeZone: "" });
-    const w = mount(PMetaDateTimeDialog, {
+    const w = mount(PMetaDatetimeDialog, {
       props: { visible: false, photo },
     });
 

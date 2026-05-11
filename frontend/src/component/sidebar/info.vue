@@ -418,7 +418,7 @@
         </template>
       </v-list>
     </div>
-    <p-meta-date-time-dialog :visible="dateTimeDialog" :photo="photo" @close="dateTimeDialog = false" @confirm="confirmDateTime"></p-meta-date-time-dialog>
+    <p-meta-datetime-dialog :visible="dateTimeDialog" :photo="photo" @close="dateTimeDialog = false" @confirm="confirmDateTime"></p-meta-datetime-dialog>
     <p-meta-camera-dialog :visible="cameraDialog" :photo="photo" @close="cameraDialog = false" @confirm="confirmCamera"></p-meta-camera-dialog>
     <p-meta-location-dialog
       :visible="locationDialog"
@@ -453,7 +453,7 @@ import * as media from "common/media";
 import typeaheadCache from "common/typeahead-cache";
 import { Album } from "model/album";
 import PMap from "component/map.vue";
-import PMetaDateTimeDialog from "component/meta/datetime/dialog.vue";
+import PMetaDatetimeDialog from "component/meta/datetime/dialog.vue";
 import PMetaCameraDialog from "component/meta/camera/dialog.vue";
 import PMetaLocationDialog from "component/meta/location/dialog.vue";
 import PConfirmDialog from "component/confirm/dialog.vue";
@@ -463,7 +463,7 @@ export default {
   name: "PSidebarInfo",
   components: {
     PMap,
-    PMetaDateTimeDialog,
+    PMetaDatetimeDialog,
     PMetaCameraDialog,
     PMetaLocationDialog,
     PConfirmDialog,

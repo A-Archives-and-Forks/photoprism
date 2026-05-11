@@ -132,7 +132,7 @@ import * as options from "options/options";
 import { rules } from "common/form";
 
 export default {
-  name: "PMetaDateTimeDialog",
+  name: "PMetaDatetimeDialog",
   props: {
     visible: {
       type: Boolean,

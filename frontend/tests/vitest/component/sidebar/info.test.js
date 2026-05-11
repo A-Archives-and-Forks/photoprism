@@ -2945,7 +2945,7 @@ describe("PSidebarInfo component", () => {
     });
   });
 
-  // Pins the template bindings on <p-meta-date-time-dialog>, <p-meta-camera-dialog>,
+  // Pins the template bindings on <p-meta-datetime-dialog>, <p-meta-camera-dialog>,
   // and <p-meta-location-dialog>. Commit 7a611b6d6 removed the legacy `photo`
   // prop on PSidebarInfo and routed parent state through `$view.getData()`
   // (exposed via the `photo` computed). The three dialog tags in the sidebar
@@ -2956,7 +2956,7 @@ describe("PSidebarInfo component", () => {
   // bindings ever regress to a name that does not exist on the component.
   describe("dialog photo prop bindings", () => {
     const dialogStubs = {
-      PMetaDateTimeDialog: { name: "PMetaDateTimeDialog", template: "<div />", props: ["visible", "photo"] },
+      PMetaDatetimeDialog: { name: "PMetaDatetimeDialog", template: "<div />", props: ["visible", "photo"] },
       PMetaCameraDialog: { name: "PMetaCameraDialog", template: "<div />", props: ["visible", "photo"] },
       PMetaLocationDialog: { name: "PMetaLocationDialog", template: "<div />", props: ["visible", "latlng"] },
     };
@@ -2968,9 +2968,9 @@ describe("PSidebarInfo component", () => {
       });
     }
 
-    it("passes the current photo to <p-meta-date-time-dialog>", () => {
+    it("passes the current photo to <p-meta-datetime-dialog>", () => {
       const w = mountWithDialogStubs(mockPhoto);
-      const dialog = w.findComponent({ name: "PMetaDateTimeDialog" });
+      const dialog = w.findComponent({ name: "PMetaDatetimeDialog" });
       expect(dialog.exists()).toBe(true);
       // Vue 3 wraps `view` (data()) in a reactive proxy, so the dialog
       // sees a proxy of mockPhoto rather than the raw reference. A
