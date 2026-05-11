@@ -673,6 +673,25 @@
     visibility: visible;
 }
 
+/* Draw-mode swap: while the sidebar is in "Add face" mode, swap the
+   <video> out for the JPEG cover (`pswp__image`) so the face-marker
+   overlay aligns with the same frame the markers were detected on.
+   A paused <video> shows an arbitrary frame, not the still image. */
+.pswp--adding-marker .pswp__media.pswp__media--video .pswp__video,
+.pswp--adding-marker .pswp__media.pswp__media--live .pswp__video,
+.pswp--adding-marker .pswp__media.pswp__media--animated .pswp__video,
+.pswp--adding-marker .pswp__media.pswp__media--video .pswp__play,
+.pswp--adding-marker .pswp__media.pswp__media--live .pswp__play,
+.pswp--adding-marker .pswp__media.pswp__media--animated .pswp__play {
+    visibility: hidden !important;
+}
+
+.pswp--adding-marker .pswp__media.pswp__media--video .pswp__image,
+.pswp--adding-marker .pswp__media.pswp__media--live .pswp__image,
+.pswp--adding-marker .pswp__media.pswp__media--animated .pswp__image {
+    visibility: visible !important;
+}
+
 .pswp__img {
     -webkit-touch-callout: default;
 }

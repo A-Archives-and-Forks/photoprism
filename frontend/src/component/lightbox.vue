@@ -17,7 +17,7 @@
     @keydown.space.exact="onKeyDown"
     @keydown.left.exact="onKeyDown"
     @keydown.right.exact="onKeyDown"
-    @keydown.esc.exact.stop="close"
+    @keydown.esc.exact.stop="onEscapeKey"
     @keydown.tab="onTabKey"
     @click.capture="captureDialogClick"
     @pointerdown.capture="captureDialogPointerDown"
@@ -1783,6 +1783,27 @@ export default {
     cancelAddingMarker() {
       this.addingMarker = false;
     },
+    // Shared Escape handler. Delegated to from both the v-dialog template
+    // (`@keydown.esc.exact.stop="onEscapeKey"`) and the global
+    // `$view.onShortCut(ev)` forwarder (see `frontend/src/common/README.md`
+    // for the documented keyboard pattern). Routing priority:
+    //
+    // 1. If the face-marker overlay has an in-flight draft / pending rect,
+    //    let it cancel that without exiting draw mode.
+    // 2. Else, if the user is in face-draw mode (`addingMarker`), exit
+    //    draw mode — closing the lightbox would lose context.
+    // 3. Else, close the lightbox normally.
+    onEscapeKey() {
+      const overlay = this.$refs.faceMarkerOverlay;
+      if (overlay && typeof overlay.handleEscape === "function" && overlay.handleEscape()) {
+        return;
+      }
+      if (this.addingMarker) {
+        this.cancelAddingMarker();
+        return;
+      }
+      this.close();
+    },
     reloadFaceMarkers() {
       if (this.photo.UID && typeof this.photo.getMarkers === "function") {
         this.faceMarkers = this.photo.getMarkers(true);
@@ -2284,7 +2305,7 @@ export default {
 
       switch (ev.code) {
         case "Escape":
-          this.close();
+          this.onEscapeKey();
           return true;
         case "Period":
           if (!this.contextAllowsSelect) {
@@ -2502,13 +2523,33 @@ export default {
       return true;
     },
     // Pauses any actively playing media element while the user is drawing
-    // a face region (P1-10). Remembers the playing state in
-    // `_wasPlayingBeforeAddingMarker` so the matching restore method can
-    // resume only when the user had been actively playing. Covers regular
-    // video, Live Photos, and Animated images — getContent().video
-    // resolves to the underlying HTMLMediaElement for all three.
+    // a face region (P1-10) and swaps the visible slide content from the
+    // <video> to the JPEG cover (`pswp__image`). A stopped video is NOT a
+    // still image — the frame the browser holds is arbitrary, so the
+    // detected face markers (which were computed against the JPEG cover)
+    // won't visually align with anything. Adding `pswp--adding-marker` to
+    // `pswp.element` flips visibility via the existing CSS rules in
+    // lightbox.css — `.pswp__image` becomes visible, `.pswp__video` and
+    // `.pswp__play` go hidden.
+    //
+    // Remembers the playing state in `_wasPlayingBeforeAddingMarker` so
+    // the matching restore method can resume only when the user had been
+    // actively playing. Covers regular video, Live Photos, and Animated
+    // images — getContent().video resolves to the underlying
+    // HTMLMediaElement for all three.
     pausePlaybackForAddingMarker() {
       this._wasPlayingBeforeAddingMarker = false;
+      const pswp = this.pswp();
+      if (pswp?.element?.classList) {
+        pswp.element.classList.add("pswp--adding-marker");
+      }
+      // The visibility swap moves layout from <video> to <img>; the overlay
+      // anchors its bounds on the image element, so schedule a recompute
+      // once the next frame paints (after CSS visibility flips).
+      const overlay = this.$refs.faceMarkerOverlay;
+      if (overlay && typeof overlay.scheduleUpdate === "function") {
+        this.$nextTick(() => overlay.scheduleUpdate());
+      }
       const { video } = this.getContent();
       if (!video) return;
       const playing = !video.paused;
@@ -2520,8 +2561,14 @@ export default {
     // Resumes playback after the user exits draw mode (saved a marker,
     // pressed Done, hit Escape, closed the sidebar, etc.). No-op when the
     // user had paused the media manually before entering draw mode — we
-    // only restore the auto-play state we interrupted.
+    // only restore the auto-play state we interrupted. Always removes
+    // the `pswp--adding-marker` class so the video / play button become
+    // visible again even if the user had paused playback manually.
     restorePlaybackAfterAddingMarker() {
+      const pswp = this.pswp();
+      if (pswp?.element?.classList) {
+        pswp.element.classList.remove("pswp--adding-marker");
+      }
       if (!this._wasPlayingBeforeAddingMarker) return;
       this._wasPlayingBeforeAddingMarker = false;
       const { video, data } = this.getContent();

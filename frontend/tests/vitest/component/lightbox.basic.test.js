@@ -262,16 +262,77 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
 
     it("pauses the active media element and remembers it was playing", () => {
-      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, pauseVideo: vi.fn((v) => v.pause()) };
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent,
+        pauseVideo: vi.fn((v) => v.pause()),
+        pswp: () => null,
+        $refs: {},
+        $nextTick: (cb) => Promise.resolve().then(cb),
+      };
       const wrapper = mountLightbox();
       wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
       expect(ctx._wasPlayingBeforeAddingMarker).toBe(true);
       expect(ctx.pauseVideo).toHaveBeenCalledWith(videoEl);
     });
 
+    it("adds pswp--adding-marker on the pswp root so the CSS swaps video → still image", () => {
+      const pswpEl = document.createElement("div");
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent,
+        pauseVideo: vi.fn(),
+        pswp: () => ({ element: pswpEl }),
+        $refs: {},
+        $nextTick: (cb) => Promise.resolve().then(cb),
+      };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
+      expect(pswpEl.classList.contains("pswp--adding-marker")).toBe(true);
+    });
+
+    it("calls scheduleUpdate on the face-marker overlay after the swap so bounds re-anchor", async () => {
+      const overlay = { scheduleUpdate: vi.fn() };
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent,
+        pauseVideo: vi.fn(),
+        pswp: () => ({ element: document.createElement("div") }),
+        $refs: { faceMarkerOverlay: overlay },
+        $nextTick: (cb) => Promise.resolve().then(cb),
+      };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
+      await Promise.resolve();
+      await Promise.resolve();
+      expect(overlay.scheduleUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    it("removes pswp--adding-marker on exit even when entry flag was false (user paused manually)", () => {
+      const pswpEl = document.createElement("div");
+      pswpEl.classList.add("pswp--adding-marker");
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent,
+        playVideo: vi.fn(),
+        pswp: () => ({ element: pswpEl }),
+      };
+      const wrapper = mountLightbox();
+      wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
+      expect(pswpEl.classList.contains("pswp--adding-marker")).toBe(false);
+      expect(ctx.playVideo).not.toHaveBeenCalled();
+    });
+
     it("does NOT re-pause a media element that was already paused", () => {
       videoEl.paused = true;
-      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, pauseVideo: vi.fn() };
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent,
+        pauseVideo: vi.fn(),
+        pswp: () => null,
+        $refs: {},
+        $nextTick: (cb) => Promise.resolve().then(cb),
+      };
       const wrapper = mountLightbox();
       wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx);
       expect(ctx._wasPlayingBeforeAddingMarker).toBe(false);
@@ -279,7 +340,14 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
 
     it("is a safe no-op when no media element is currently shown", () => {
-      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent: () => ({ video: null, data: null }), pauseVideo: vi.fn() };
+      const ctx = {
+        _wasPlayingBeforeAddingMarker: false,
+        getContent: () => ({ video: null, data: null }),
+        pauseVideo: vi.fn(),
+        pswp: () => null,
+        $refs: {},
+        $nextTick: (cb) => Promise.resolve().then(cb),
+      };
       const wrapper = mountLightbox();
       expect(() => wrapper.vm.$options.methods.pausePlaybackForAddingMarker.call(ctx)).not.toThrow();
       expect(ctx._wasPlayingBeforeAddingMarker).toBe(false);
@@ -287,7 +355,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
 
     it("restorePlaybackAfterAddingMarker resumes when entry flag is true", () => {
-      const ctx = { _wasPlayingBeforeAddingMarker: true, getContent, playVideo: vi.fn() };
+      const ctx = { _wasPlayingBeforeAddingMarker: true, getContent, playVideo: vi.fn(), pswp: () => null };
       const wrapper = mountLightbox();
       wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
       expect(ctx.playVideo).toHaveBeenCalledWith(videoEl, false);
@@ -296,7 +364,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     });
 
     it("restorePlaybackAfterAddingMarker is a no-op when the entry flag is false", () => {
-      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, playVideo: vi.fn() };
+      const ctx = { _wasPlayingBeforeAddingMarker: false, getContent, playVideo: vi.fn(), pswp: () => null };
       const wrapper = mountLightbox();
       wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
       expect(ctx.playVideo).not.toHaveBeenCalled();
@@ -307,6 +375,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         _wasPlayingBeforeAddingMarker: true,
         getContent: () => ({ video: videoEl, data: { loop: true } }),
         playVideo: vi.fn(),
+        pswp: () => null,
       };
       const wrapper = mountLightbox();
       wrapper.vm.$options.methods.restorePlaybackAfterAddingMarker.call(ctx);
@@ -375,6 +444,66 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       watcher.call(ctx, false, false);
       expect(ctx.pausePlaybackForAddingMarker).not.toHaveBeenCalled();
       expect(ctx.restorePlaybackAfterAddingMarker).not.toHaveBeenCalled();
+    });
+  });
+
+  // Escape during face-draw mode must exit draw mode without closing the
+  // lightbox. The lightbox owns the routing via `onEscapeKey` (wired to
+  // both the v-dialog `@keydown.esc.exact` handler and `onShortCut`),
+  // delegating fine-grained draft / pending cleanup to the face-marker
+  // overlay first. See `frontend/src/common/README.md` for the documented
+  // keyboard pattern this follows.
+  describe("onEscapeKey — face-draw vs lightbox close routing", () => {
+    it("delegates to the face-marker overlay first when it has a pending rect", () => {
+      const wrapper = mountLightbox();
+      const handleEscape = vi.fn().mockReturnValue(true);
+      const cancelAddingMarker = vi.fn();
+      const close = vi.fn();
+      const ctx = {
+        $refs: { faceMarkerOverlay: { handleEscape } },
+        addingMarker: true,
+        cancelAddingMarker,
+        close,
+      };
+      wrapper.vm.$options.methods.onEscapeKey.call(ctx);
+      expect(handleEscape).toHaveBeenCalledTimes(1);
+      expect(cancelAddingMarker).not.toHaveBeenCalled();
+      expect(close).not.toHaveBeenCalled();
+    });
+
+    it("exits draw mode when the overlay had nothing to cancel and addingMarker is true", () => {
+      const wrapper = mountLightbox();
+      const handleEscape = vi.fn().mockReturnValue(false);
+      const cancelAddingMarker = vi.fn();
+      const close = vi.fn();
+      const ctx = {
+        $refs: { faceMarkerOverlay: { handleEscape } },
+        addingMarker: true,
+        cancelAddingMarker,
+        close,
+      };
+      wrapper.vm.$options.methods.onEscapeKey.call(ctx);
+      expect(cancelAddingMarker).toHaveBeenCalledTimes(1);
+      expect(close).not.toHaveBeenCalled();
+    });
+
+    it("closes the lightbox when no overlay is mounted and the user is not in draw mode", () => {
+      const wrapper = mountLightbox();
+      const cancelAddingMarker = vi.fn();
+      const close = vi.fn();
+      const ctx = { $refs: {}, addingMarker: false, cancelAddingMarker, close };
+      wrapper.vm.$options.methods.onEscapeKey.call(ctx);
+      expect(close).toHaveBeenCalledTimes(1);
+      expect(cancelAddingMarker).not.toHaveBeenCalled();
+    });
+
+    it("onShortCut Escape routes through onEscapeKey, not close directly", () => {
+      const wrapper = mountLightbox();
+      const onEscapeKey = vi.fn();
+      const ctx = { onEscapeKey };
+      const handled = wrapper.vm.$options.methods.onShortCut.call(ctx, { code: "Escape" });
+      expect(handled).toBe(true);
+      expect(onEscapeKey).toHaveBeenCalledTimes(1);
     });
   });
 
