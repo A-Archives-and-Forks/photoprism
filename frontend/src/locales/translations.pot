@@ -336,15 +336,15 @@ msgstr ""
 msgid "Added"
 msgstr ""
 
-#: src/component/sidebar/camera-dialog.vue:18
+#: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
 msgstr ""
 
-#: src/component/sidebar/datetime-dialog.vue:18
+#: src/component/meta/datetime/dialog.vue:18
 msgid "Adjust Date & Time"
 msgstr ""
 
-#: src/component/location/dialog.vue:18
+#: src/component/meta/location/dialog.vue:18
 #: src/component/photo/batch-edit.vue:274
 #: src/component/photo/edit/details.vue:146
 msgid "Adjust Location"
@@ -821,11 +821,11 @@ msgstr ""
 msgid "Calendar"
 msgstr ""
 
+#: src/component/meta/camera/dialog.vue:29
 #: src/component/photo/edit/details.vue:198
 #: src/component/photo/toolbar.vue:121
 #: src/component/photo/view/cards.vue:204
 #: src/component/photo/view/list.vue:40
-#: src/component/sidebar/camera-dialog.vue:29
 #: src/component/sidebar/info.vue:91
 msgid "Camera"
 msgstr ""
@@ -883,7 +883,9 @@ msgstr ""
 #: src/component/file/delete/dialog.vue:19
 #: src/component/label/delete/dialog.vue:19
 #: src/component/label/edit/dialog.vue:44
-#: src/component/location/dialog.vue:114
+#: src/component/meta/camera/dialog.vue:120
+#: src/component/meta/datetime/dialog.vue:119
+#: src/component/meta/location/dialog.vue:114
 #: src/component/people/edit/dialog.vue:47
 #: src/component/photo/album/dialog.vue:64
 #: src/component/photo/face-marker-overlay.vue:61
@@ -896,8 +898,6 @@ msgstr ""
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:83
 #: src/component/share/dialog.vue:161
-#: src/component/sidebar/camera-dialog.vue:120
-#: src/component/sidebar/datetime-dialog.vue:119
 #: src/locales.js:214
 #: src/page/auth/login.vue:120
 #: src/page/connect.vue:36
@@ -1053,7 +1053,9 @@ msgstr ""
 #: src/component/lightbox.vue:1242
 #: src/component/lightbox.vue:1243
 #: src/component/lightbox.vue:424
-#: src/component/location/dialog.vue:20
+#: src/component/meta/camera/dialog.vue:20
+#: src/component/meta/datetime/dialog.vue:20
+#: src/component/meta/location/dialog.vue:20
 #: src/component/people/edit/dialog.vue:20
 #: src/component/photo/album/dialog.vue:18
 #: src/component/photo/batch-edit.vue:21
@@ -1075,8 +1077,6 @@ msgstr ""
 #: src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71
 #: src/component/share/dialog.vue:80
-#: src/component/sidebar/camera-dialog.vue:20
-#: src/component/sidebar/datetime-dialog.vue:20
 #: src/component/sidebar/info.vue:4
 #: src/component/update.vue:25
 #: src/component/upload/dialog.vue:119
@@ -1136,11 +1136,19 @@ msgstr ""
 msgid "Confidence"
 msgstr ""
 
-#: src/component/location/dialog.vue:117
-#: src/component/location/dialog.vue:58
-#: src/component/location/dialog.vue:59
-#: src/component/location/dialog.vue:71
-#: src/component/location/dialog.vue:78
+#: src/component/meta/camera/dialog.vue:123
+#: src/component/meta/camera/dialog.vue:40
+#: src/component/meta/camera/dialog.vue:41
+#: src/component/meta/camera/dialog.vue:53
+#: src/component/meta/datetime/dialog.vue:122
+#: src/component/meta/datetime/dialog.vue:38
+#: src/component/meta/datetime/dialog.vue:39
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/meta/location/dialog.vue:117
+#: src/component/meta/location/dialog.vue:58
+#: src/component/meta/location/dialog.vue:59
+#: src/component/meta/location/dialog.vue:71
+#: src/component/meta/location/dialog.vue:78
 #: src/component/photo/album/dialog.vue:33
 #: src/component/photo/album/dialog.vue:34
 #: src/component/photo/album/dialog.vue:43
@@ -1151,14 +1159,6 @@ msgstr ""
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
 #: src/component/settings/passcode.vue:94
-#: src/component/sidebar/camera-dialog.vue:123
-#: src/component/sidebar/camera-dialog.vue:40
-#: src/component/sidebar/camera-dialog.vue:41
-#: src/component/sidebar/camera-dialog.vue:53
-#: src/component/sidebar/datetime-dialog.vue:122
-#: src/component/sidebar/datetime-dialog.vue:38
-#: src/component/sidebar/datetime-dialog.vue:39
-#: src/component/sidebar/datetime-dialog.vue:51
 msgid "Confirm"
 msgstr ""
 
@@ -1365,9 +1365,9 @@ msgstr ""
 
 #: src/page/settings/account.vue:220
 #: src/page/settings/account.vue:220
+#: src/component/meta/datetime/dialog.vue:30
 #: src/component/photo/batch-edit.vue:194
 #: src/component/photo/edit/details.vue:46
-#: src/component/sidebar/datetime-dialog.vue:30
 #: src/page/settings/account.vue:204
 msgid "Day"
 msgstr ""
@@ -1879,8 +1879,8 @@ msgstr ""
 msgid "Expires"
 msgstr ""
 
+#: src/component/meta/camera/dialog.vue:80
 #: src/component/photo/edit/details.vue:235
-#: src/component/sidebar/camera-dialog.vue:80
 msgid "Exposure"
 msgstr ""
 
@@ -1888,8 +1888,8 @@ msgstr ""
 msgid "Extract still images and generate thumbnails while indexing."
 msgstr ""
 
+#: src/component/meta/camera/dialog.vue:95
 #: src/component/photo/edit/details.vue:269
-#: src/component/sidebar/camera-dialog.vue:95
 msgid "F Number"
 msgstr ""
 
@@ -2043,8 +2043,8 @@ msgstr ""
 msgid "First page"
 msgstr ""
 
+#: src/component/meta/camera/dialog.vue:108
 #: src/component/photo/edit/details.vue:283
-#: src/component/sidebar/camera-dialog.vue:108
 msgid "Focal Length"
 msgstr ""
 
@@ -2531,9 +2531,9 @@ msgstr ""
 msgid "Legal Information"
 msgstr ""
 
+#: src/component/meta/camera/dialog.vue:45
 #: src/component/photo/edit/details.vue:248
 #: src/component/photo/view/cards.vue:213
-#: src/component/sidebar/camera-dialog.vue:45
 #: src/component/sidebar/info.vue:101
 msgid "Lens"
 msgstr ""
@@ -2633,8 +2633,8 @@ msgstr ""
 msgid "Local"
 msgstr ""
 
+#: src/component/meta/datetime/dialog.vue:164
 #: src/component/photo/edit/details.vue:110
-#: src/component/sidebar/datetime-dialog.vue:164
 msgid "Local Time"
 msgstr ""
 
@@ -2819,10 +2819,10 @@ msgstr ""
 
 #: src/page/settings/account.vue:240
 #: src/page/settings/account.vue:240
+#: src/component/meta/datetime/dialog.vue:50
 #: src/component/photo/batch-edit.vue:213
 #: src/component/photo/edit/details.vue:68
 #: src/component/photo/toolbar.vue:199
-#: src/component/sidebar/datetime-dialog.vue:50
 #: src/page/settings/account.vue:224
 msgid "Month"
 msgstr ""
@@ -3000,7 +3000,7 @@ msgstr ""
 msgid "No recently edited pictures"
 msgstr ""
 
-#: src/component/location/dialog.vue:83
+#: src/component/meta/location/dialog.vue:83
 msgid "No results"
 msgstr ""
 
@@ -3919,7 +3919,7 @@ msgstr ""
 #: src/page/admin/activity.vue:13
 #: src/page/admin/sessions.vue:13
 #: src/page/admin/users.vue:13
-#: src/component/location/dialog.vue:60
+#: src/component/meta/location/dialog.vue:60
 #: src/component/navigation.vue:706
 #: src/component/navigation.vue:91
 #: src/component/photo/toolbar.vue:34
@@ -4481,14 +4481,14 @@ msgstr ""
 msgid "Time"
 msgstr ""
 
+#: src/component/meta/datetime/dialog.vue:162
 #: src/component/photo/edit/details.vue:110
-#: src/component/sidebar/datetime-dialog.vue:162
 msgid "Time UTC"
 msgstr ""
 
+#: src/component/meta/datetime/dialog.vue:105
 #: src/component/photo/batch-edit.vue:251
 #: src/component/photo/edit/details.vue:127
-#: src/component/sidebar/datetime-dialog.vue:105
 #: src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr ""
@@ -4610,13 +4610,13 @@ msgstr ""
 #: src/page/settings/account.vue:241
 #: src/page/settings/account.vue:261
 #: src/common/util.js:606
+#: src/component/meta/datetime/dialog.vue:31
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/meta/datetime/dialog.vue:71
 #: src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47
 #: src/component/photo/edit/details.vue:69
 #: src/component/photo/edit/details.vue:90
-#: src/component/sidebar/datetime-dialog.vue:31
-#: src/component/sidebar/datetime-dialog.vue:51
-#: src/component/sidebar/datetime-dialog.vue:71
 #: src/component/sidebar/info.vue:109
 #: src/component/sidebar/info.vue:1138
 #: src/component/sidebar/info.vue:235
@@ -5034,10 +5034,10 @@ msgstr ""
 
 #: src/page/settings/account.vue:260
 #: src/page/settings/account.vue:260
+#: src/component/meta/datetime/dialog.vue:70
 #: src/component/photo/batch-edit.vue:232
 #: src/component/photo/edit/details.vue:89
 #: src/component/photo/toolbar.vue:180
-#: src/component/sidebar/datetime-dialog.vue:70
 #: src/page/albums.vue:57
 #: src/page/settings/account.vue:244
 msgid "Year"
@@ -5097,7 +5097,7 @@ msgstr ""
 msgid "You can only download one label"
 msgstr ""
 
-#: src/component/location/dialog.vue:96
+#: src/component/meta/location/dialog.vue:96
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr ""
 

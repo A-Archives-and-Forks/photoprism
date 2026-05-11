@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import PLocationInput from "component/location/input.vue";
+import PLocationInput from "component/meta/location/input.vue";
 import PMap from "component/map.vue";
 
 export default {

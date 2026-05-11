@@ -453,9 +453,9 @@ import * as media from "common/media";
 import typeaheadCache from "common/typeahead-cache";
 import { Album } from "model/album";
 import PMap from "component/map.vue";
-import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
-import PCameraDialog from "component/sidebar/camera-dialog.vue";
-import PLocationDialog from "component/location/dialog.vue";
+import PDateTimeDialog from "component/meta/datetime/dialog.vue";
+import PCameraDialog from "component/meta/camera/dialog.vue";
+import PLocationDialog from "component/meta/location/dialog.vue";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PSidebarInlineToolbar from "component/sidebar/inline-toolbar.vue";
 

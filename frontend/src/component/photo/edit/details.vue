@@ -423,8 +423,8 @@ import countries from "options/countries.json";
 import Thumb from "model/thumb";
 import * as options from "options/options";
 import { rules } from "common/form";
-import PLocationDialog from "component/location/dialog.vue";
-import PLocationInput from "component/location/input.vue";
+import PLocationDialog from "component/meta/location/dialog.vue";
+import PLocationInput from "component/meta/location/input.vue";
 
 export default {
   name: "PTabPhotoDetails",

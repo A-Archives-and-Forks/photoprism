@@ -266,15 +266,16 @@ msgstr "Voeg by alle gekose foto's"
 msgid "Added"
 msgstr "Bygevoeg"
 
-#: src/component/sidebar/camera-dialog.vue:18
+#: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
 msgstr "Pas kamera-inligting aan"
 
-#: src/component/sidebar/datetime-dialog.vue:18
+#: src/component/meta/datetime/dialog.vue:18
 msgid "Adjust Date & Time"
 msgstr "Pas datum en tyd aan"
 
-#: src/component/location/dialog.vue:18 src/component/photo/batch-edit.vue:274
+#: src/component/meta/location/dialog.vue:18
+#: src/component/photo/batch-edit.vue:274
 #: src/component/photo/edit/details.vue:146
 msgid "Adjust Location"
 msgstr "Pas Ligging aan"
@@ -682,9 +683,10 @@ msgstr "Deur die sagteware en dienste wat ons verskaf te gebruik, stem jy in tot
 msgid "Calendar"
 msgstr "Kalender"
 
+#: src/component/meta/camera/dialog.vue:29
 #: src/component/photo/edit/details.vue:198 src/component/photo/toolbar.vue:121
 #: src/component/photo/view/cards.vue:204 src/component/photo/view/list.vue:40
-#: src/component/sidebar/camera-dialog.vue:29 src/component/sidebar/info.vue:91
+#: src/component/sidebar/info.vue:91
 msgid "Camera"
 msgstr "Kamera"
 
@@ -720,7 +722,10 @@ msgstr "Kan nie meer items kies nie"
 #: src/component/album/edit/dialog.vue:87 src/component/confirm/dialog.vue:23
 #: src/component/file/delete/dialog.vue:19
 #: src/component/label/delete/dialog.vue:19
-#: src/component/label/edit/dialog.vue:44 src/component/location/dialog.vue:114
+#: src/component/label/edit/dialog.vue:44
+#: src/component/meta/camera/dialog.vue:120
+#: src/component/meta/datetime/dialog.vue:119
+#: src/component/meta/location/dialog.vue:114
 #: src/component/people/edit/dialog.vue:47
 #: src/component/photo/album/dialog.vue:64
 #: src/component/photo/face-marker-overlay.vue:61
@@ -729,9 +734,7 @@ msgstr "Kan nie meer items kies nie"
 #: src/component/settings/apps.vue:151 src/component/settings/passcode.vue:101
 #: src/component/settings/passcode.vue:142
 #: src/component/settings/password.vue:83 src/component/share/dialog.vue:161
-#: src/component/sidebar/camera-dialog.vue:120
-#: src/component/sidebar/datetime-dialog.vue:119 src/locales.js:214
-#: src/page/auth/login.vue:120 src/page/connect.vue:36
+#: src/locales.js:214 src/page/auth/login.vue:120 src/page/connect.vue:36
 #: src/page/library/import.vue:61 src/page/library/index.vue:61
 msgid "Cancel"
 msgstr "Kanselleer"
@@ -839,7 +842,10 @@ msgstr "Kliënt geloofsbriewe"
 #: src/component/album/edit/dialog.vue:19
 #: src/component/label/edit/dialog.vue:20 src/component/lightbox.vue:1242
 #: src/component/lightbox.vue:1243 src/component/lightbox.vue:424
-#: src/component/location/dialog.vue:20 src/component/people/edit/dialog.vue:20
+#: src/component/meta/camera/dialog.vue:20
+#: src/component/meta/datetime/dialog.vue:20
+#: src/component/meta/location/dialog.vue:20
+#: src/component/people/edit/dialog.vue:20
 #: src/component/photo/album/dialog.vue:18
 #: src/component/photo/batch-edit.vue:21 src/component/photo/batch-edit.vue:471
 #: src/component/photo/edit/details.vue:391
@@ -854,8 +860,6 @@ msgstr "Kliënt geloofsbriewe"
 #: src/component/settings/passcode.vue:61 src/component/settings/webdav.vue:74
 #: src/component/share/dialog.vue:126 src/component/share/dialog.vue:70
 #: src/component/share/dialog.vue:71 src/component/share/dialog.vue:80
-#: src/component/sidebar/camera-dialog.vue:20
-#: src/component/sidebar/datetime-dialog.vue:20
 #: src/component/sidebar/info.vue:4 src/component/update.vue:25
 #: src/component/upload/dialog.vue:119 src/component/upload/dialog.vue:20
 #: src/locales.js:210 src/page/library/errors.vue:105
@@ -907,9 +911,20 @@ msgstr "Voltooi herskandering"
 msgid "Confidence"
 msgstr "Vertroue"
 
-#: src/component/location/dialog.vue:117 src/component/location/dialog.vue:58
-#: src/component/location/dialog.vue:59 src/component/location/dialog.vue:71
-#: src/component/location/dialog.vue:78 src/component/photo/album/dialog.vue:33
+#: src/component/meta/camera/dialog.vue:123
+#: src/component/meta/camera/dialog.vue:40
+#: src/component/meta/camera/dialog.vue:41
+#: src/component/meta/camera/dialog.vue:53
+#: src/component/meta/datetime/dialog.vue:122
+#: src/component/meta/datetime/dialog.vue:38
+#: src/component/meta/datetime/dialog.vue:39
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/meta/location/dialog.vue:117
+#: src/component/meta/location/dialog.vue:58
+#: src/component/meta/location/dialog.vue:59
+#: src/component/meta/location/dialog.vue:71
+#: src/component/meta/location/dialog.vue:78
+#: src/component/photo/album/dialog.vue:33
 #: src/component/photo/album/dialog.vue:34
 #: src/component/photo/album/dialog.vue:43
 #: src/component/photo/album/dialog.vue:67
@@ -919,14 +934,6 @@ msgstr "Vertroue"
 #: src/component/settings/passcode.vue:69
 #: src/component/settings/passcode.vue:78
 #: src/component/settings/passcode.vue:94
-#: src/component/sidebar/camera-dialog.vue:123
-#: src/component/sidebar/camera-dialog.vue:40
-#: src/component/sidebar/camera-dialog.vue:41
-#: src/component/sidebar/camera-dialog.vue:53
-#: src/component/sidebar/datetime-dialog.vue:122
-#: src/component/sidebar/datetime-dialog.vue:38
-#: src/component/sidebar/datetime-dialog.vue:39
-#: src/component/sidebar/datetime-dialog.vue:51
 msgid "Confirm"
 msgstr "Bevestig"
 
@@ -1087,10 +1094,9 @@ msgstr "Databasisse"
 msgid "Date & Time"
 msgstr "Datum en tyd"
 
-#: src/page/settings/account.vue:220 src/component/photo/batch-edit.vue:194
-#: src/component/photo/edit/details.vue:46
-#: src/component/sidebar/datetime-dialog.vue:30
-#: src/page/settings/account.vue:204
+#: src/page/settings/account.vue:220 src/component/meta/datetime/dialog.vue:30
+#: src/component/photo/batch-edit.vue:194
+#: src/component/photo/edit/details.vue:46 src/page/settings/account.vue:204
 msgid "Day"
 msgstr "Dag"
 
@@ -1508,8 +1514,8 @@ msgstr "Eksperimentele kenmerke"
 msgid "Expires"
 msgstr "Verval"
 
+#: src/component/meta/camera/dialog.vue:80
 #: src/component/photo/edit/details.vue:235
-#: src/component/sidebar/camera-dialog.vue:80
 msgid "Exposure"
 msgstr "Blootstelling"
 
@@ -1517,8 +1523,8 @@ msgstr "Blootstelling"
 msgid "Extract still images and generate thumbnails while indexing."
 msgstr "Onttrek stilbeelde en genereer duimnaels tydens indeksering."
 
+#: src/component/meta/camera/dialog.vue:95
 #: src/component/photo/edit/details.vue:269
-#: src/component/sidebar/camera-dialog.vue:95
 msgid "F Number"
 msgstr "F nommer"
 
@@ -1644,8 +1650,8 @@ msgstr "Lêers met opeenvolgende name soos 'IMG_1234 (2)' en 'IMG_1234 (3)' beho
 msgid "First page"
 msgstr "Eerste bladsy"
 
+#: src/component/meta/camera/dialog.vue:108
 #: src/component/photo/edit/details.vue:283
-#: src/component/sidebar/camera-dialog.vue:108
 msgid "Focal Length"
 msgstr "Brandpuntsafstand"
 
@@ -2045,10 +2051,9 @@ msgstr "Kom meer te wete"
 msgid "Legal Information"
 msgstr "Regsinligting"
 
+#: src/component/meta/camera/dialog.vue:45
 #: src/component/photo/edit/details.vue:248
-#: src/component/photo/view/cards.vue:213
-#: src/component/sidebar/camera-dialog.vue:45
-#: src/component/sidebar/info.vue:101
+#: src/component/photo/view/cards.vue:213 src/component/sidebar/info.vue:101
 msgid "Lens"
 msgstr "Lens"
 
@@ -2122,8 +2127,8 @@ msgstr "Laai tans..."
 msgid "Local"
 msgstr "Plaaslik"
 
+#: src/component/meta/datetime/dialog.vue:164
 #: src/component/photo/edit/details.vue:110
-#: src/component/sidebar/datetime-dialog.vue:164
 msgid "Local Time"
 msgstr "Plaaslike tyd"
 
@@ -2275,9 +2280,9 @@ msgstr "Oomblikke"
 msgid "Monochrome"
 msgstr "Monochroom"
 
-#: src/page/settings/account.vue:240 src/component/photo/batch-edit.vue:213
+#: src/page/settings/account.vue:240 src/component/meta/datetime/dialog.vue:50
+#: src/component/photo/batch-edit.vue:213
 #: src/component/photo/edit/details.vue:68 src/component/photo/toolbar.vue:199
-#: src/component/sidebar/datetime-dialog.vue:50
 #: src/page/settings/account.vue:224
 msgid "Month"
 msgstr "Maand"
@@ -2419,7 +2424,7 @@ msgstr "Geen foto's gevind nie"
 msgid "No recently edited pictures"
 msgstr "Geen onlangs geredigeerde prente nie"
 
-#: src/component/location/dialog.vue:83
+#: src/component/meta/location/dialog.vue:83
 msgid "No results"
 msgstr "Geen resultate nie"
 
@@ -3176,7 +3181,7 @@ msgstr "Omvangsgebiede"
 
 #: src/page/admin/sessions.vue:13 src/page/admin/users.vue:13
 #: src/page/cluster/activity.vue:13 src/page/cluster/nodes.vue:13
-#: src/page/admin/activity.vue:13 src/component/location/dialog.vue:60
+#: src/page/admin/activity.vue:13 src/component/meta/location/dialog.vue:60
 #: src/component/navigation.vue:706 src/component/navigation.vue:91
 #: src/component/photo/toolbar.vue:34 src/locales.js:319
 #: src/options/options.js:256 src/page/albums.vue:20 src/page/labels.vue:15
@@ -3655,15 +3660,14 @@ msgstr "Dit plaas die oorspronklike lêergids as 'n netwerkaandrywer en laat jou
 msgid "Time"
 msgstr "Tyd"
 
+#: src/component/meta/datetime/dialog.vue:162
 #: src/component/photo/edit/details.vue:110
-#: src/component/sidebar/datetime-dialog.vue:162
 msgid "Time UTC"
 msgstr "Tyd UTC"
 
+#: src/component/meta/datetime/dialog.vue:105
 #: src/component/photo/batch-edit.vue:251
-#: src/component/photo/edit/details.vue:127
-#: src/component/sidebar/datetime-dialog.vue:105
-#: src/page/settings/general.vue:47
+#: src/component/photo/edit/details.vue:127 src/page/settings/general.vue:47
 msgid "Time Zone"
 msgstr "Tydsone"
 
@@ -3766,21 +3770,21 @@ msgstr "Unieke ID"
 
 #: src/model/cluster-node.js:42 src/page/settings/account.vue:221
 #: src/page/settings/account.vue:241 src/page/settings/account.vue:261
-#: src/common/util.js:606 src/component/photo/edit/details.vue:448
+#: src/common/util.js:606 src/component/meta/datetime/dialog.vue:31
+#: src/component/meta/datetime/dialog.vue:51
+#: src/component/meta/datetime/dialog.vue:71
+#: src/component/photo/edit/details.vue:448
 #: src/component/photo/edit/details.vue:47
 #: src/component/photo/edit/details.vue:69
-#: src/component/photo/edit/details.vue:90
-#: src/component/sidebar/datetime-dialog.vue:31
-#: src/component/sidebar/datetime-dialog.vue:51
-#: src/component/sidebar/datetime-dialog.vue:71
-#: src/component/sidebar/info.vue:109 src/component/sidebar/info.vue:1138
-#: src/component/sidebar/info.vue:235 src/component/sidebar/info.vue:611
-#: src/component/sidebar/info.vue:619 src/component/sidebar/info.vue:92
-#: src/model/album.js:155 src/model/photo.js:1009 src/model/photo.js:1031
-#: src/model/photo.js:1068 src/model/photo.js:1090 src/model/photo.js:303
-#: src/model/photo.js:808 src/model/photo.js:833 src/model/photo.js:856
-#: src/model/photo.js:874 src/model/photo.js:919 src/model/photo.js:927
-#: src/model/user.js:138 src/options/options.js:106 src/options/options.js:124
+#: src/component/photo/edit/details.vue:90 src/component/sidebar/info.vue:109
+#: src/component/sidebar/info.vue:1138 src/component/sidebar/info.vue:235
+#: src/component/sidebar/info.vue:611 src/component/sidebar/info.vue:619
+#: src/component/sidebar/info.vue:92 src/model/album.js:155
+#: src/model/photo.js:1009 src/model/photo.js:1031 src/model/photo.js:1068
+#: src/model/photo.js:1090 src/model/photo.js:303 src/model/photo.js:808
+#: src/model/photo.js:833 src/model/photo.js:856 src/model/photo.js:874
+#: src/model/photo.js:919 src/model/photo.js:927 src/model/user.js:138
+#: src/options/options.js:106 src/options/options.js:124
 #: src/options/options.js:141 src/options/options.js:155
 #: src/options/options.js:167 src/page/library/errors.vue:368
 #: src/page/library/errors.vue:375 src/page/settings/account.vue:205
@@ -4071,10 +4075,10 @@ msgstr "Wit"
 msgid "Work Details"
 msgstr "Werkbesonderhede"
 
-#: src/page/settings/account.vue:260 src/component/photo/batch-edit.vue:232
+#: src/page/settings/account.vue:260 src/component/meta/datetime/dialog.vue:70
+#: src/component/photo/batch-edit.vue:232
 #: src/component/photo/edit/details.vue:89 src/component/photo/toolbar.vue:180
-#: src/component/sidebar/datetime-dialog.vue:70 src/page/albums.vue:57
-#: src/page/settings/account.vue:244
+#: src/page/albums.vue:57 src/page/settings/account.vue:244
 msgid "Year"
 msgstr "Jaar"
 
@@ -4123,7 +4127,7 @@ msgstr "Jy kan net een album aflaai"
 msgid "You can only download one label"
 msgstr "Jy kan net een etiket aflaai"
 
-#: src/component/location/dialog.vue:96
+#: src/component/meta/location/dialog.vue:96
 msgid "You can search for a location or move the marker on the map to change the position:"
 msgstr "Jy kan na 'n ligging soek of die merker op die kaart skuif om die posisie te verander:"
 

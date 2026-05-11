@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { DateTime } from "luxon";
-import PDateTimeDialog from "component/sidebar/datetime-dialog.vue";
+import PDateTimeDialog from "component/meta/datetime/dialog.vue";
 
 describe("PDateTimeDialog component", () => {
   function mockPhoto(overrides = {}) {

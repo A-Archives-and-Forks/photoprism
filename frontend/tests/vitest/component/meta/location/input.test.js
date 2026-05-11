@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
-import PLocationInput from "component/location/input.vue";
+import PLocationInput from "component/meta/location/input.vue";
 
 describe("PLocationInput", () => {
   let wrapper;
