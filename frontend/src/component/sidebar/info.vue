@@ -256,7 +256,14 @@
                 @keydown.delete.stop.prevent="onChipDelete('labels', l)"
               >
                 {{ l.Label.Name }}
-                <v-icon v-if="isEditable" icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
+                <v-icon
+                  v-if="isEditable"
+                  icon="mdi-close-circle"
+                  size="x-small"
+                  class="ml-1 meta-chip__remove"
+                  :title="$gettext('Remove')"
+                  @click.stop.prevent="onChipDelete('labels', l)"
+                ></v-icon>
               </span>
             </div>
           </v-list-item>
@@ -307,7 +314,14 @@
                 @keydown.delete.stop.prevent="onChipDelete('albums', a)"
               >
                 {{ a.Title }}
-                <v-icon v-if="isEditable" icon="mdi-close-circle" size="x-small" class="ml-1"></v-icon>
+                <v-icon
+                  v-if="isEditable"
+                  icon="mdi-close-circle"
+                  size="x-small"
+                  class="ml-1 meta-chip__remove"
+                  :title="$gettext('Remove')"
+                  @click.stop.prevent="onChipDelete('albums', a)"
+                ></v-icon>
               </span>
             </div>
           </v-list-item>
@@ -1299,23 +1313,22 @@ export default {
         s.removals = [];
       });
     },
-    // Click + Enter behavior on a primary chip: navigate to the label/album
-    // page when the section is read-only, toggle pending removal when the
-    // section is editable. The two chip shapes differ: labels are wrapped
-    // (`{ Label: { ID, ... } }`) while albums come through directly
-    // (`{ UID, ... }`).
+    // Click + Enter behavior on a primary chip: navigate to the related
+    // label / album page in both read-only and editable contexts — the chip
+    // acts like a link. Removal lives on the × icon's own click handler and
+    // the keyboard Delete / Backspace path via `onChipDelete`. The two chip
+    // shapes differ: labels are wrapped (`{ Label: { ID, ... } }`) while
+    // albums come through directly (`{ UID, ... }`).
     onChipActivate(field, item) {
       if (!item) return;
-      if (!this.isEditable) {
-        if (field === "labels") return this.navigateToLabel(item.Label);
-        if (field === "albums") return this.navigateToAlbum(item);
-        return;
-      }
-      const key = field === "labels" ? item?.Label?.ID : item.UID;
-      this.togglePendingChipRemoval(field, key);
+      if (field === "labels") return this.navigateToLabel(item.Label);
+      if (field === "albums") return this.navigateToAlbum(item);
     },
-    // Delete / Backspace on a primary chip: only meaningful in edit mode,
-    // where it toggles pending removal (same effect as click).
+    // Removal entry point: wired to the chip's × icon click and to the
+    // chip's keyboard Delete / Backspace handler. No-op outside edit mode
+    // so read-only chips behave as plain links; in edit mode it toggles
+    // pending removal so the chip disappears from `visibleLabels` /
+    // `visibleAlbums` until the user clicks Undo or auto-commit runs.
     onChipDelete(field, item) {
       if (!item || !this.isEditable) return;
       const key = field === "labels" ? item?.Label?.ID : item.UID;

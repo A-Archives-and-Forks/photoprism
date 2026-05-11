@@ -1996,11 +1996,12 @@ describe("PSidebarInfo component", () => {
   });
 
   // Chip keyboard accessibility (proposal item L6) — onChipActivate covers
-  // click + Enter, onChipDelete covers Delete + Backspace.
+  // click + Enter (always navigates, in both editable and read-only modes),
+  // onChipDelete covers Delete + Backspace and the × icon click (toggles
+  // pending removal only when editable).
   it("onChipActivate navigates a label chip when the section is read-only", () => {
     const openSpy = vi.spyOn(window, "open").mockImplementation(() => null);
-    // mountWithMockRouter omits canEdit → isEditable false, so chips fall
-    // through to the navigate path instead of toggling pending removal.
+    // mountWithMockRouter omits canEdit → isEditable false.
     const w = mountWithMockRouter("/library/browse");
     w.vm.onChipActivate("labels", { Label: { ID: 1, UID: "lbl1", Name: "Nature", Slug: "nature", CustomSlug: "" } });
     expect(w.vm.$router.resolve).toHaveBeenCalledWith({ name: "browse", query: { q: "label:nature" } });
@@ -2008,17 +2009,22 @@ describe("PSidebarInfo component", () => {
     openSpy.mockRestore();
   });
 
-  it("onChipActivate toggles label removal when the section is editable", () => {
+  // Chip click is always a link — even in edit mode. Removal happens via
+  // the × icon (separate click handler on the v-icon) or the keyboard
+  // Delete / Backspace path. The earlier "click anywhere on the chip to
+  // remove" behavior was a regression flagged by the user on May 11.
+  it("onChipActivate navigates a label chip even when the section is editable", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
+    const navSpy = vi.spyOn(w.vm, "navigateToLabel").mockImplementation(() => null);
     const label = { Label: { ID: 7, UID: "lbl7", Name: "Beach" } };
-    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
     w.vm.onChipActivate("labels", label);
-    expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(true);
-    w.vm.onChipActivate("labels", label);
+
+    expect(navSpy).toHaveBeenCalledWith(label.Label);
     expect(w.vm.isChipPendingRemoval("labels", 7)).toBe(false);
+    navSpy.mockRestore();
   });
 
   it("onChipActivate navigates an album chip when the section is read-only", () => {
@@ -2030,14 +2036,18 @@ describe("PSidebarInfo component", () => {
     openSpy.mockRestore();
   });
 
-  it("onChipActivate toggles album removal when the section is editable", () => {
+  it("onChipActivate navigates an album chip even when the section is editable", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
+    const navSpy = vi.spyOn(w.vm, "navigateToAlbum").mockImplementation(() => null);
     const album = { UID: "alb-x", Title: "Trip" };
     w.vm.onChipActivate("albums", album);
-    expect(w.vm.isChipPendingRemoval("albums", "alb-x")).toBe(true);
+
+    expect(navSpy).toHaveBeenCalledWith(album);
+    expect(w.vm.isChipPendingRemoval("albums", "alb-x")).toBe(false);
+    navSpy.mockRestore();
   });
 
   it("onChipDelete is a no-op when the section is not editable", () => {
