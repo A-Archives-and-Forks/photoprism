@@ -90,16 +90,32 @@ export const typeaheadCache = {
   },
 };
 
-// Backend publishes labels.updated / albums.updated through
-// PublishLabelEvent / PublishAlbumEvent for create + update. Batch
-// label deletion publishes labels.deleted via EntitiesDeleted. Album
-// deletion does not publish a dedicated channel today — it only calls
-// UpdateClientConfig() which fires config.updated, so we subscribe to
-// that as the eviction signal for albums. Subscribing here at module
-// scope (mirrors the photos.* pattern in model/photo.js) means every
-// consumer benefits without per-component wiring.
+// Backend events that invalidate either list:
+//
+//   labels.created — entity layer fires `event.EntitiesCreated("labels", …)`
+//     from `FirstOrCreateLabel` whenever a brand-new label is inserted
+//     (e.g. the first time a user adds `你好` to a photo).
+//   labels.updated — `PublishLabelEvent(StatusUpdated, …)` runs on edits to
+//     an existing label (rename, priority change, etc.).
+//   labels.deleted — `event.EntitiesDeleted("labels", …)` runs on batch
+//     deletion.
+//   albums.created — entity layer fires `event.PublishUserEntities("albums",
+//     EntityCreated, …)` from `Album.Save()` for new albums. The websocket
+//     writer strips the `user.<uid>.` prefix before relaying so the client
+//     receives the canonical `albums.created` channel.
+//   albums.updated — same path with `EntityUpdated`, plus
+//     `PublishAlbumEvent(StatusUpdated, …)` from REST handlers.
+//   albums.deleted — fired on bulk delete; album DELETE handler also calls
+//     `UpdateClientConfig()` which broadcasts `config.updated`, so we also
+//     subscribe to that as a belt-and-braces signal.
+//
+// Subscribing at module scope (mirrors the photos.* pattern in
+// `model/photo.js`) means every consumer benefits without per-component
+// wiring.
+$event.subscribe("labels.created", () => evict("labels"));
 $event.subscribe("labels.updated", () => evict("labels"));
 $event.subscribe("labels.deleted", () => evict("labels"));
+$event.subscribe("albums.created", () => evict("albums"));
 $event.subscribe("albums.updated", () => evict("albums"));
 $event.subscribe("albums.deleted", () => evict("albums"));
 $event.subscribe("config.updated", () => evict("albums"));

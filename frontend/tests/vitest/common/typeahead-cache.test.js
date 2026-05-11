@@ -54,6 +54,27 @@ describe("typeaheadCache.getLabels", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
+  // Pins the create-channel subscription. Without this, freshly added
+  // labels (e.g. typing 你好 in the sidebar combobox when no such label
+  // exists yet) would stay invisible to subsequent typeahead consumers
+  // until something else evicted the cache.
+  it("re-fetches after labels.created WS event evicts the cache", async () => {
+    const first = [{ Name: "Existing", UID: "lbl-1" }];
+    const second = [
+      { Name: "Existing", UID: "lbl-1" },
+      { Name: "你好", UID: "lbl-2" },
+    ];
+    const spy = vi
+      .spyOn(Label, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getLabels()).toEqual(first);
+    $event.publishSync("labels.created", { entities: [{ UID: "lbl-2", Name: "你好" }] });
+    expect(await typeaheadCache.getLabels()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
   it("re-fetches after labels.deleted WS event", async () => {
     const first = [{ Name: "First", UID: "lbl-1" }];
     const second = [];
@@ -125,6 +146,28 @@ describe("typeaheadCache.getAlbums", () => {
 
     await typeaheadCache.getAlbums();
     $event.publishSync("albums.updated", { entities: [] });
+    expect(await typeaheadCache.getAlbums()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  // Mirrors the labels.created test: the entity layer publishes albums.created
+  // via PublishUserEntities("albums", EntityCreated, …) from Album.Save(),
+  // and the websocket writer strips the user.<uid>. prefix before relaying.
+  // Without this subscription, brand-new albums would stay invisible to
+  // every other typeahead consumer in the same browser session.
+  it("re-fetches after albums.created WS event", async () => {
+    const first = [{ Title: "Existing", UID: "alb-1" }];
+    const second = [
+      { Title: "Existing", UID: "alb-1" },
+      { Title: "Trip", UID: "alb-2" },
+    ];
+    const spy = vi
+      .spyOn(Album, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    await typeaheadCache.getAlbums();
+    $event.publishSync("albums.created", { entities: [{ UID: "alb-2", Title: "Trip" }] });
     expect(await typeaheadCache.getAlbums()).toEqual(second);
     expect(spy).toHaveBeenCalledTimes(2);
   });
