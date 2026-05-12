@@ -265,8 +265,10 @@ export default {
     // moving frame leads to wrong-rectangle saves (P1-10), and Live /
     // Animated never expose video controls so the user can't pause
     // manually. Watching `faceMarkerMode` covers every entry path (toggle,
-    // sidebar onToggleAddingMarker) and every exit path (✓ Done, Escape,
-    // resetFaceMarkers, hideInfo).
+    // sidebar onToggleAddingMarker) and every exit path — ✓ Done
+    // (draw → display), eye toggle (→ null), Escape, resetFaceMarkers,
+    // hideInfo — because we gate on `now/was === FaceMarkerDraw`, the
+    // restore fires regardless of which non-draw mode we land in.
     faceMarkerMode(now, was) {
       if (now === FaceMarkerDraw && was !== FaceMarkerDraw) {
         this.pausePlaybackForAddingMarker();
@@ -1776,7 +1778,18 @@ export default {
         return;
       }
       if (this.faceMarkerMode === FaceMarkerDraw) {
-        this.exitFaceMarkerMode();
+        // ✓ Done — step out of draw mode but keep markers visible.
+        // The user was looking at the markers (and may have just drawn
+        // one); landing on FaceMarkerDisplay shows the result instead of
+        // hiding everything. The eye toggle (rendered when at least one
+        // marker exists) fully exits to null when the user wants to hide
+        // the overlay; Escape and slide-nav still route through
+        // `exitFaceMarkerMode`, which also lands on null. The
+        // faceMarkerMode watcher catches the draw→display transition and
+        // runs `restorePlaybackAfterAddingMarker` so paused video / Live
+        // / Animated playback resumes the same way it would on a full
+        // exit.
+        this.faceMarkerMode = FaceMarkerDisplay;
         return;
       }
       this.faceMarkerMode = FaceMarkerDraw;
@@ -1785,13 +1798,16 @@ export default {
         this.$refs.menu.hide();
       }
     },
-    // Fully exits face-marker UI by clearing the state-machine flag and the
-    // local markers array. The ✓ Done button (toggleAddingMarker exit),
-    // the eye-toggle when active (toggleMarkersVisible exit), Escape (via
-    // onEscapeKey), and hideInfo all route through here so a resumed
-    // video is never painted with stale boxes anchored to the JPG cover.
-    // Re-enabling display-only review is one click away via the eye
-    // toggle in the sidebar.
+    // Fully exits face-marker UI by clearing the state-machine flag and
+    // the local markers array. The eye-toggle when active
+    // (toggleMarkersVisible exit), Escape (via onEscapeKey), and hideInfo
+    // all route through here so a resumed video is never painted with
+    // stale boxes anchored to the JPG cover. The ✓ Done button
+    // (toggleAddingMarker exit from draw) deliberately does NOT route
+    // through here — it steps down to FaceMarkerDisplay so markers stay
+    // visible after the user finishes drawing. Re-enabling display-only
+    // review from null is one click away via the eye toggle in the
+    // sidebar.
     exitFaceMarkerMode() {
       this.faceMarkerMode = null;
       this.faceMarkers = [];

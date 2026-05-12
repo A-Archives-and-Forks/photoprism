@@ -448,7 +448,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       ctx.restorePlaybackAfterAddingMarker.mockClear();
       watcher.call(ctx, FaceMarkerDraw, FaceMarkerDisplay);
       expect(ctx.pausePlaybackForAddingMarker).toHaveBeenCalledTimes(1);
-      // draw → display exits draw (rare, but valid); restore.
+      // draw → display is the ✓ Done path (user steps out of draw but
+      // keeps markers visible); restore playback the same way as a full
+      // exit since the user has stopped drawing.
       watcher.call(ctx, FaceMarkerDisplay, FaceMarkerDraw);
       expect(ctx.restorePlaybackAfterAddingMarker).toHaveBeenCalledTimes(1);
       // Non-draw transitions (null ↔ display) are no-ops.
@@ -540,7 +542,10 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(ctx.faceMarkers).toEqual([]);
     });
 
-    it("toggleAddingMarker's exit path routes through exitFaceMarkerMode (Done button)", () => {
+    // ✓ Done steps out of draw mode into display mode — the user was
+    // just drawing and likely wants to see the result. The eye toggle
+    // (or Escape) handles the full exit to null when desired.
+    it("toggleAddingMarker's exit path steps to FaceMarkerDisplay (Done keeps markers visible)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
@@ -550,16 +555,33 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         exitFaceMarkerMode,
       };
       wrapper.vm.$options.methods.toggleAddingMarker.call(ctx);
-      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
+      expect(ctx.faceMarkerMode).toBe(FaceMarkerDisplay);
+      expect(exitFaceMarkerMode).not.toHaveBeenCalled();
     });
 
-    // toggleMarkersVisible also routes through exitFaceMarkerMode when any
-    // mode is active — the same "fully exit on toggle" rule applies.
-    it("toggleMarkersVisible's exit path routes through exitFaceMarkerMode (eye toggle off)", () => {
+    // toggleMarkersVisible always routes through exitFaceMarkerMode when
+    // any mode is active — the eye toggle is the "hide everything" gesture
+    // and lands on null. Unlike ✓ Done, it doesn't step down to display.
+    it("toggleMarkersVisible's exit path routes through exitFaceMarkerMode from display (eye toggle off)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
         faceMarkerMode: FaceMarkerDisplay,
+        shouldShowEditButton: () => true,
+        exitFaceMarkerMode,
+      };
+      wrapper.vm.$options.methods.toggleMarkersVisible.call(ctx);
+      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
+    });
+
+    // Eye toggle from draw mode also fully exits (asymmetric with ✓ Done,
+    // which only steps down to display). The eye is the "hide everything"
+    // affordance regardless of which mode is currently active.
+    it("toggleMarkersVisible's exit path routes through exitFaceMarkerMode from draw too (eye toggle off mid-draw)", () => {
+      const wrapper = mountLightbox();
+      const exitFaceMarkerMode = vi.fn();
+      const ctx = {
+        faceMarkerMode: FaceMarkerDraw,
         shouldShowEditButton: () => true,
         exitFaceMarkerMode,
       };

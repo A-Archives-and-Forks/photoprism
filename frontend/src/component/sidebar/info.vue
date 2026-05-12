@@ -153,6 +153,7 @@
             <div class="text-subtitle-2">{{ $gettext("People") }}</div>
             <template v-if="isEditable" #append>
               <v-btn
+                v-if="people.length > 0"
                 :icon="markersVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
                 density="compact"
                 variant="plain"

@@ -449,14 +449,17 @@ describe("PSidebarInfo component", () => {
     expect(w.find(".meta-marker-add").exists()).toBe(true);
   });
 
-  it("should render the People header even when there are no markers, when editable", () => {
+  it("should render the People header with only the + button when there are no markers, when editable", () => {
     const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([]) };
     const w = mountSidebar({
       props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
+    // People header is rendered so the user can add the first face, but
+    // the eye toggle is gated to `people.length > 0` — it only renders
+    // once there is at least one marker to show / hide.
     expect(w.html()).toContain("People");
-    expect(w.find(".meta-markers-toggle").exists()).toBe(true);
+    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
     expect(w.find(".meta-marker-add").exists()).toBe(true);
   });
 

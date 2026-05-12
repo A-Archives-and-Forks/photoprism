@@ -440,10 +440,6 @@
     color: rgba(var(--v-theme-on-surface), 0.6);
 }
 
-.p-lightbox__container > .p-lightbox__sidebar .meta-markers-toggle.is-active {
-    color: rgb(var(--v-theme-info));
-}
-
 /* Per-row marker buttons (× reject, ⏏ eject) — hidden by default,
    revealed on row hover. Matches the .meta-inline-pencil pattern so
    a non-hovered row has no nested focusable targets. */
