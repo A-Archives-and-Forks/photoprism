@@ -104,24 +104,6 @@ export function getScrollbarWidth() {
   return window.innerWidth - body.offsetWidth;
 }
 
-// Checks if the element is a button.
-export function isInputElement(el) {
-  if (!el) {
-    return false;
-  }
-
-  return el instanceof HTMLButtonElement;
-}
-
-// Checks if the element is an image, video, or canvas.
-export function isMediaElement(el) {
-  if (!el) {
-    return false;
-  }
-
-  return el instanceof HTMLImageElement || el instanceof HTMLVideoElement || el instanceof HTMLCanvasElement;
-}
-
 // Component refs supported for automatic focus element detection.
 const focusRefs = ["form", "content", "container", "dialog", "page"];
 
