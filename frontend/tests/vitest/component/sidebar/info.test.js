@@ -30,6 +30,7 @@ const validationUtil = {
   typeName: (type, defaultValue) => $util.typeName(type, defaultValue),
   encodeHTML: (s) => s,
   sanitizeHtml: (s) => s,
+  copyText: vi.fn(),
   hasTouch: () => false,
   formatSeconds: (n) => String(n),
   formatRemainingSeconds: () => "0",
@@ -143,7 +144,8 @@ describe("PSidebarInfo component", () => {
       TimeZone: "UTC",
       Lat: 52.52,
       Lng: 13.405,
-      getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
+      getLatLng: vi.fn().mockReturnValue("52.5200°N 13.4050°E"),
+      getLatLngShort: vi.fn().mockReturnValue("52.5200°N 13.4050°E"),
       copyLatLng: vi.fn(),
     };
 
@@ -239,16 +241,17 @@ describe("PSidebarInfo component", () => {
     expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");
 
     expect(mockPhoto.getImageInfo).toHaveBeenCalled();
-    expect(mockModel.getLatLng).toHaveBeenCalled();
+    expect(mockModel.getLatLngShort).toHaveBeenCalled();
   });
 
-  it("should not render an icon or pencil next to the filename", () => {
-    const fileRow = wrapper.find(".metadata__file-name");
+  it("should not render an inline pencil next to the file row", () => {
+    const fileRow = wrapper.find(".meta-file");
     expect(fileRow.exists()).toBe(true);
-    // The whole point of this row is to print the filename inline with
-    // no edit/decorative affordance — no inline pencil, no v-icon.
+    // The file row is intentionally non-editable: it merges the type/
+    // size title with the filename subtitle and uses click-to-copy
+    // (which doesn't need a pencil affordance). The mdi-* prepend icon
+    // is intentional and decorative.
     expect(fileRow.find(".meta-inline-pencil").exists()).toBe(false);
-    expect(fileRow.find(".v-icon").exists()).toBe(false);
     expect(fileRow.text()).toContain(mockPhoto.FileName);
   });
 
@@ -268,12 +271,11 @@ describe("PSidebarInfo component", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
-  it("should trigger copyLatLng when location is clicked", async () => {
-    const clickableItems = wrapper.findAll(".clickable");
-    if (clickableItems.length > 0) {
-      await clickableItems[0].trigger("click");
-      expect(mockModel.copyLatLng).toHaveBeenCalled();
-    }
+  it("should trigger copyLatLng when the coordinates row is clicked", async () => {
+    const coordinatesRow = wrapper.find(".meta-coordinates");
+    expect(coordinatesRow.exists()).toBe(true);
+    await coordinatesRow.trigger("click");
+    expect(mockModel.copyLatLng).toHaveBeenCalled();
   });
 
   it("should handle model without taken time", () => {
@@ -404,7 +406,11 @@ describe("PSidebarInfo component", () => {
     expect(w.vm.labels).toEqual([]);
     expect(w.vm.albums).toEqual([]);
     expect(w.vm.placeName).toBe("");
-    expect(w.vm.fileName).toBe("");
+    // fileName returns null (not "") so the merged file row's
+    // `:subtitle` binding skips rendering an empty subtitle element —
+    // Vuetify gates the subtitle on `props.subtitle != null`, so "" would
+    // still render an empty slot.
+    expect(w.vm.fileName).toBeNull();
     expect(w.vm.fileInfo).toBe("");
     expect(w.vm.subject).toBe("");
     expect(w.vm.artist).toBe("");
@@ -3030,17 +3036,18 @@ describe("PSidebarInfo component", () => {
       expect(html).toContain("Test Title");
       expect(html).toContain("Test Caption");
       expect(html).toContain("JPEG, 1920 × 1080, 4.2 MB");
-      expect(html).toContain("52.5200, 13.4050");
+      expect(html).toContain("52.5200°N 13.4050°E");
     });
 
     it("hides every restricted sidebar section for restricted sessions", () => {
       const w = mountRestricted(true);
       const html = w.html();
 
-      // file-info row (type + dimensions + size) stays visible for
-      // restricted sessions per the parallel "renders permitted fields"
-      // test above; only the file-name row (path) is gated off.
-      expect(w.find(".metadata__file-name").exists()).toBe(false);
+      // The merged file row (type + dimensions + size as the title)
+      // stays visible for restricted sessions per the parallel
+      // "renders permitted fields" test above; the filename subtitle
+      // is gated off and the row collapses to a single line.
+      expect(w.find(".meta-file").exists()).toBe(true);
       expect(html).not.toContain("photos/2023/IMG_001.jpg");
 
       expect(html).not.toContain("Canon EOS R5");
@@ -3180,7 +3187,8 @@ describe("PSidebarInfo component", () => {
         UID: "matrix-photo",
         TakenAtLocal: "2024-05-01T10:00:00Z",
         TimeZone: "UTC",
-        getLatLng: vi.fn().mockReturnValue("52.5200, 13.4050"),
+        getLatLng: vi.fn().mockReturnValue("52.5200°N 13.4050°E"),
+        getLatLngShort: vi.fn().mockReturnValue("52.5200°N 13.4050°E"),
         copyLatLng: vi.fn(),
       };
       if (withMetadata) {
@@ -3307,7 +3315,7 @@ describe("PSidebarInfo component", () => {
           TEXT.title,
           TEXT.caption,
           "JPEG, 1920 x 1080, 4.2 MB",
-          "52.5200, 13.4050",
+          "52.5200°N 13.4050°E",
           TEXT.filename,
           TEXT.camera,
           TEXT.lens,
@@ -3329,10 +3337,12 @@ describe("PSidebarInfo component", () => {
         ]) {
           expect(html).toContain(needle);
         }
-        // Editable users see both the file-info row (type + size) and
-        // the file-name row (path).
-        expect(w.find(".metadata__file-info").exists()).toBe(true);
-        expect(w.find(".metadata__file-name").exists()).toBe(true);
+        // Editable users see the merged file row with both the file
+        // info (title: type + dimensions + size) and the filename
+        // (subtitle: path).
+        const fileRow = w.find(".meta-file");
+        expect(fileRow.exists()).toBe(true);
+        expect(fileRow.text()).toContain(TEXT.filename);
       });
 
       it("renders pencil icons and face-marker controls", () => {
@@ -3356,13 +3366,14 @@ describe("PSidebarInfo component", () => {
         expect(html).toContain(TEXT.title);
         expect(html).toContain(TEXT.caption);
         expect(html).toContain("JPEG, 1920 x 1080, 4.2 MB");
-        expect(html).toContain("52.5200, 13.4050");
-        // The file-info row (type + dimensions + size) is shared with
-        // restricted sessions; the file-name row (path) is gated behind
-        // `!restrictedRole` and must not render here.
-        expect(w.find(".metadata__file-info").exists()).toBe(true);
+        expect(html).toContain("52.5200°N 13.4050°E");
+        // The merged file row's title (type + dimensions + size) is
+        // shared with restricted sessions; the filename subtitle is
+        // gated behind `!restrictedRole` and must not appear here.
+        const fileRow = w.find(".meta-file");
+        expect(fileRow.exists()).toBe(true);
         // Deny-list.
-        expect(w.find(".metadata__file-name").exists()).toBe(false);
+        expect(fileRow.text()).not.toContain(TEXT.filename);
         for (const needle of [
           TEXT.filename,
           TEXT.camera,

@@ -153,7 +153,7 @@ export class Thumb extends Model {
   }
 
   // Formats Lat/Lng as an EXIF-style coordinate pair separated by
-  // an em-space (U+2003) — see the literal in the body. Returns a
+  // an en-space (U+2002) — see the literal in the body. Returns a
   // 0/0 placeholder when coordinates are missing so the sidebar
   // EXIF row doesn't collapse.
   getLatLng() {
@@ -161,7 +161,21 @@ export class Thumb extends Model {
       return `0°N\u20030°E`;
     }
 
-    return `${this.Lat.toFixed(5)}°N\u2003${this.Lng.toFixed(5)}°E`;
+    return `${this.Lat.toFixed(5)}°N\u2002${this.Lng.toFixed(5)}°E`;
+  }
+
+  // Formats Lat/Lng as a compact, space-separated pair rounded to 4
+  // fractional digits (~11 m precision). Used by the lightbox sidebar's
+  // combined Location row where the available width is tighter than the
+  // EXIF row's; the rounded form matches typical GPS quality and keeps
+  // the subtitle on one line. Returns an empty string when coordinates
+  // are missing.
+  getLatLngShort() {
+    if (!this.Lat || !this.Lng) {
+      return "";
+    }
+
+    return `${this.Lat.toFixed(4)}°N\u2002${this.Lng.toFixed(4)}°E`;
   }
 
   // Copies Lat/Lng to the system clipboard as `lat,lng` decimals so

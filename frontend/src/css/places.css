@@ -247,8 +247,8 @@
 }
 
 .p-lightbox__container > .p-lightbox__sidebar .p-map {
-    min-height: 259px;
-    aspect-ratio: 1;
+    height: 200px;
+    /* aspect-ratio: 1; */
     width: auto;
 }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="p-sidebar-info bg-background metadata">
+  <div class="p-sidebar-info bg-background metadata" :class="{ 'hide-edit-pencils': hideEditPencils }">
     <v-toolbar density="comfortable" color="background">
       <v-btn :icon="$isRtl ? 'mdi-chevron-left' : 'mdi-chevron-right'" :title="$gettext('Close')" @click.stop="close()"></v-btn>
       <v-toolbar-title>{{ $gettext(`Information`) }}</v-toolbar-title>
@@ -7,7 +7,11 @@
     <div v-if="model.UID">
       <v-list nav slim tile density="compact" bg-color="background" class="metadata__list mt-1">
         <!-- Title -->
-        <v-list-item v-if="editingField === 'title' || model.Title || isEditable" class="metadata__item">
+        <v-list-item
+          v-if="editingField === 'title' || model.Title || isEditable"
+          :class="['metadata__item', { clickable: editingField !== 'title' && (isEditable || model.Title) }]"
+          @click.stop="onTextRowClick('title', model.Title)"
+        >
           <v-text-field
             v-if="editingField === 'title'"
             :ref="setInlineEditorRef"
@@ -29,7 +33,11 @@
         </v-list-item>
 
         <!-- Caption -->
-        <v-list-item v-if="editingField === 'caption' || model.Caption || isEditable" class="metadata__item">
+        <v-list-item
+          v-if="editingField === 'caption' || model.Caption || isEditable"
+          :class="['metadata__item', { clickable: editingField !== 'caption' && (isEditable || model.Caption) }]"
+          @click.stop="onTextRowClick('caption', model.Caption)"
+        >
           <v-textarea
             v-if="editingField === 'caption'"
             :ref="setInlineEditorRef"
@@ -53,35 +61,26 @@
 
         <v-divider v-if="editingField === 'title' || editingField === 'caption' || model.Title || model.Caption || isEditable" class="my-3"></v-divider>
 
-        <v-list-item v-if="fileInfo" v-tooltip="fileTypeName" :lines="false" class="metadata__item metadata__file-info text-body-2">
-          <span class="break-word">{{ fileInfo }}</span>
-        </v-list-item>
-        <v-list-item v-if="!restrictedRole && fileName" class="metadata__item metadata__file-name text-body-2 pb-2">
-          <span class="break-word">{{ fileName }}</span>
+        <v-list-item
+          v-if="fileInfo"
+          v-tooltip="fileTypeName"
+          :prepend-icon="fileIcon"
+          :title="fileInfo"
+          :subtitle="fileName"
+          :lines="fileName ? 'two' : 'one'"
+          :class="['metadata__item', 'meta-file', { clickable: !!fileName }]"
+          @click.stop.prevent="fileName && $util.copyText(fileName)"
+        >
         </v-list-item>
 
-        <v-divider v-if="(!restrictedRole && fileName) || fileInfo" class="my-3"></v-divider>
-
-        <v-list-item v-tooltip="$gettext(`Taken`)" :title="formatTime(model)" prepend-icon="mdi-calendar" class="metadata__item">
-          <template v-if="isEditable" #append>
-            <v-btn
-              icon="mdi-pencil-outline"
-              density="compact"
-              variant="plain"
-              size="x-small"
-              class="meta-inline-pencil"
-              :title="$gettext('Edit')"
-              @click.stop="dateTimeDialog = true"
-            ></v-btn>
-          </template>
-        </v-list-item>
+        <v-divider v-if="fileName || fileInfo" class="my-3"></v-divider>
 
         <v-list-item
-          v-if="!restrictedRole && (cameraInfo || isEditable)"
-          v-tooltip="$gettext('Camera')"
-          :title="cameraInfo || $gettext('Unknown')"
-          prepend-icon="mdi-camera"
-          class="metadata__item"
+          v-tooltip="$gettext(`Taken`)"
+          :title="formatTime(model)"
+          prepend-icon="mdi-calendar"
+          :class="['metadata__item', { clickable: isEditable }]"
+          @click.stop="openDateTimeDialog"
         >
           <template v-if="isEditable" #append>
             <v-btn
@@ -91,24 +90,53 @@
               size="x-small"
               class="meta-inline-pencil"
               :title="$gettext('Edit')"
-              @click.stop="cameraDialog = true"
+              @click.stop="openDateTimeDialog"
             ></v-btn>
           </template>
         </v-list-item>
 
-        <v-list-item v-if="!restrictedRole && lensInfo" v-tooltip="$gettext('Lens')" :title="lensInfo" prepend-icon="mdi-camera-iris" class="metadata__item">
+        <v-list-item
+          v-if="!restrictedRole && (cameraInfo || isEditable)"
+          v-tooltip="$gettext('Camera')"
+          :title="cameraInfo || $gettext('Unknown')"
+          prepend-icon="mdi-camera"
+          :class="['metadata__item', { clickable: isEditable }]"
+          @click.stop="openCameraDialog"
+        >
+          <template v-if="isEditable" #append>
+            <v-btn
+              icon="mdi-pencil-outline"
+              density="compact"
+              variant="plain"
+              size="x-small"
+              class="meta-inline-pencil"
+              :title="$gettext('Edit')"
+              @click.stop="openCameraDialog"
+            ></v-btn>
+          </template>
         </v-list-item>
 
-        <template v-if="(model.Lat && model.Lng) || (!restrictedRole && isEditable && featPlaces)">
-          <v-divider class="my-3"></v-divider>
+        <v-list-item
+          v-if="!restrictedRole && lensInfo"
+          v-tooltip="$gettext('Lens')"
+          :title="lensInfo"
+          prepend-icon="mdi-camera-iris"
+          :class="['metadata__item', { clickable: isEditable }]"
+          @click.stop="openCameraDialog"
+        ></v-list-item>
+
+        <template v-if="locationRowVisible">
+          <!-- v-divider class="my-3"></v-divider -->
           <v-list-item
-            v-if="!restrictedRole && (placeName || !(model.Lat && model.Lng))"
             v-tooltip="$gettext('Location')"
-            :title="placeName || $gettext('Unknown')"
+            :title="locationTitle"
+            :subtitle="locationSubtitle"
+            :lines="locationSubtitle ? 'two' : 'one'"
             prepend-icon="mdi-map-marker"
-            class="metadata__item"
+            :class="['metadata__item', 'meta-location', { 'meta-coordinates': model.Lat && model.Lng, 'clickable': locationRowClickable }]"
+            @click.stop.prevent="onLocationRowClick"
           >
-            <template v-if="isEditable && featPlaces && !(model.Lat && model.Lng)" #append>
+            <template v-if="isEditable && featPlaces" #append>
               <v-btn
                 icon="mdi-pencil-outline"
                 density="compact"
@@ -116,33 +144,13 @@
                 size="x-small"
                 class="meta-inline-pencil meta-inline-pencil--location"
                 :title="$gettext('Edit')"
-                @click.stop.prevent="locationDialog = true"
+                @click.stop.prevent="openLocationDialog"
               ></v-btn>
             </template>
           </v-list-item>
-          <template v-if="model.Lat && model.Lng">
-            <v-list-item
-              v-tooltip="$gettext(`Coordinates`)"
-              :title="altitude && !restrictedRole ? model.getLatLng() + ' \u00b7 ' + altitude : model.getLatLng()"
-              class="clickable metadata__item"
-              @click.stop="model.copyLatLng()"
-            >
-              <template v-if="isEditable && featPlaces" #append>
-                <v-btn
-                  icon="mdi-pencil-outline"
-                  density="compact"
-                  variant="plain"
-                  size="x-small"
-                  class="meta-inline-pencil meta-inline-pencil--location"
-                  :title="$gettext('Edit')"
-                  @click.stop.prevent="locationDialog = true"
-                ></v-btn>
-              </template>
-            </v-list-item>
-            <v-list-item v-if="featPlaces" class="mx-0 px-0">
-              <p-map :latlng="[model.Lat, model.Lng]" :animate-duration="0"></p-map>
-            </v-list-item>
-          </template>
+          <v-list-item v-if="featPlaces && model.Lat && model.Lng" class="mx-0 px-0">
+            <p-map :latlng="[model.Lat, model.Lng]" :animate-duration="0"></p-map>
+          </v-list-item>
         </template>
 
         <template v-if="!restrictedRole && featPeople && (people.length > 0 || isEditable)">
@@ -378,8 +386,8 @@
             :key="f.key"
             v-tooltip="f.label"
             :prepend-icon="f.icon"
-            class="metadata__item"
-            :class="`meta-${f.key}`"
+            :class="['metadata__item', `meta-${f.key}`, { clickable: editingField !== f.key && (isEditable || f.read(photo)) }]"
+            @click.stop="onTextRowClick(f.key, f.read(photo))"
           >
             <v-textarea
               v-if="editingField === f.key"
@@ -414,7 +422,10 @@
                 <p-sidebar-inline-toolbar :editing="editingField === f.key" @confirm="confirmField" @start="startEditing(f.key)" />
               </template>
             </v-list-item>
-            <v-list-item class="metadata__item" :class="`meta-${f.key}`">
+            <v-list-item
+              :class="['metadata__item', `meta-${f.key}`, { clickable: editingField !== f.key && (isEditable || f.read(photo)) }]"
+              @click.stop="onTextRowClick(f.key, f.read(photo))"
+            >
               <v-textarea
                 v-if="editingField === f.key"
                 :ref="setInlineEditorRef"
@@ -520,6 +531,14 @@ export default {
       dateTimeDialog: false,
       cameraDialog: false,
       locationDialog: false,
+      // When true, the inline pencil edit buttons are hidden via CSS
+      // (`.hide-edit-pencils` rule in `css/lightbox.css`). Row-level
+      // click handlers still route to `startEditing` / `open*Dialog`,
+      // so the pencils are a redundant affordance that can be toggled
+      // off without affecting reachability. Save (`meta-inline-confirm`)
+      // and Undo (`meta-inline-undo`) buttons stay visible because they
+      // commit pending state rather than enter edit mode.
+      hideEditPencils: true,
       editingField: null,
       editOriginal: null,
       // Per-field combobox state. The combobox/autocomplete row stays
@@ -816,21 +835,71 @@ export default {
       if (!this.photo || !this.photo.Altitude) return "";
       return this.photo.Altitude + " m";
     },
+    // Returns the lat/lng (shortened, with optional altitude) for the
+    // combined Location row. Restricted users see only the lat/lng so
+    // altitude isn't leaked through the sidebar.
+    coordinatesLine() {
+      if (!this.model?.Lat || !this.model?.Lng) return "";
+      const coords = this.model.getLatLngShort();
+      if (this.altitude && !this.restrictedRole) {
+        return `${coords}\u2002${this.altitude}`;
+      }
+      return coords;
+    },
+    // True when the combined Location row should render — i.e., the row
+    // has coordinates to display, OR the user is non-restricted and has
+    // a place name / can edit a missing location.
+    locationRowVisible() {
+      if (this.model?.Lat && this.model?.Lng) return true;
+      if (this.restrictedRole) return false;
+      if (this.placeName) return true;
+      return this.isEditable && this.featPlaces;
+    },
+    // Returns the merged row's title: the place name when allowed (non-
+    // restricted, available), otherwise the coordinates line so the row
+    // never renders empty when the v-if gate has admitted it.
+    locationTitle() {
+      if (!this.restrictedRole && this.placeName) return this.placeName;
+      if (this.coordinatesLine) return this.coordinatesLine;
+      return this.$gettext("Unknown");
+    },
+    // Returns the merged row's subtitle: the coordinates line, but only
+    // when the title already shows the place name (so we don't render
+    // the coordinates twice on a restricted / no-placeName row).
+    locationSubtitle() {
+      if (this.restrictedRole) return null;
+      if (this.placeName && this.coordinatesLine) return this.coordinatesLine;
+      return null;
+    },
+    // True when the combined Location row has any click action: editing
+    // the location, copying the coordinates, or copying the place name.
+    // Drives the .clickable cursor class on the row.
+    locationRowClickable() {
+      if (this.isEditable && this.featPlaces) return true;
+      if (this.model?.Lat && this.model?.Lng) return true;
+      return !this.restrictedRole && !!this.placeName;
+    },
     // Returns the user-facing file path. For video, Live, and Animated
     // photos the primary file is the generated JPEG cover (used for
     // indexing and thumbnails), not the media file the user uploaded —
     // surface the underlying media file's Name so the sidebar shows the
     // .mp4 / .mov / .gif instead of "...mp4.jpg". The cards view uses the
     // same originalFile() routing via Photo.getOriginalName().
+    // Returns `null` (not `""`) for restricted sessions and the
+    // no-data state so the merged file row's `:subtitle` binding skips
+    // rendering an empty `<v-list-item-subtitle>` element — Vuetify
+    // gates the subtitle on `props.subtitle != null`, so an empty
+    // string would still render an empty slot. Keeping the gate in the
+    // computed lets the template stay free of restricted-role checks.
     fileName() {
-      if (!this.photo) return "";
+      if (this.restrictedRole || !this.photo) return null;
       if (typeof this.photo.originalFile === "function") {
         const original = this.photo.originalFile();
         if (original && original !== this.photo && original.Name) return original.Name;
       }
       if (this.photo.FileName) return this.photo.FileName;
       const primary = typeof this.photo.primaryFile === "function" ? this.photo.primaryFile() : null;
-      return primary?.Name || "";
+      return primary?.Name || null;
     },
     fileInfo() {
       if (this.photo) {
@@ -852,6 +921,24 @@ export default {
         return this.model.getTypeInfo();
       }
       return "";
+    },
+    fileIcon() {
+      switch (this.photo?.Type || this.model?.Type) {
+        case media.Raw:
+          return "mdi-raw";
+        case media.Video:
+          return "mdi-video";
+        case media.Live:
+          return "mdi-play-circle-outline";
+        case media.Animated:
+          return "mdi-file-gif-box";
+        case media.Vector:
+          return "mdi-vector-polyline";
+        case media.Document:
+          return "mdi-file-pdf-box";
+        default:
+          return "mdi-image-outline";
+      }
     },
     // Localized media type label for the file row's tooltip. Falls back
     // to the generic "File" label so the tooltip never reads as empty
@@ -888,6 +975,57 @@ export default {
   methods: {
     close() {
       this.$emit("close");
+    },
+    // openDateTimeDialog mounts the date-and-time-edit dialog when the
+    // session is editable. No-op otherwise, so callers (row @click and
+    // pencil button) don't need to inline the gate.
+    openDateTimeDialog() {
+      if (!this.isEditable) return;
+      this.dateTimeDialog = true;
+    },
+    // openCameraDialog mounts the camera-and-lens-edit dialog when the
+    // session is editable. Shared by the Camera and Lens row icons and
+    // the Camera pencil button.
+    openCameraDialog() {
+      if (!this.isEditable) return;
+      this.cameraDialog = true;
+    },
+    // openLocationDialog mounts the location-edit dialog when the
+    // session is editable and the `places` feature is enabled. Shared by
+    // the Location row pencil and the row click in edit mode.
+    openLocationDialog() {
+      if (!this.isEditable || !this.featPlaces) return;
+      this.locationDialog = true;
+    },
+    // onLocationRowClick dispatches the combined Location row's click:
+    // (1) edit mode -> open the location dialog; (2) read-only with
+    // coordinates -> copy them to the clipboard so they paste into
+    // mapping tools; (3) read-only with only a place name -> copy the
+    // place name. Mirrors the row-level click semantics used by the
+    // text-metadata rows but adds a coordinates-first preference under
+    // (2) so the existing copy-coords gesture survives the merge.
+    onLocationRowClick() {
+      if (this.isEditable && this.featPlaces) {
+        this.openLocationDialog();
+      } else if (this.model?.Lat && this.model?.Lng) {
+        this.model.copyLatLng();
+      } else if (this.placeName) {
+        this.$util.copyText(this.placeName);
+      }
+    },
+    // onTextRowClick routes a sidebar text-row click. In edit mode it
+    // enters the inline editor for the given field (Title, Caption,
+    // Subject, Artist, Copyright, License, Keywords, Notes). In
+    // read-only mode it copies the displayed value to the clipboard so
+    // users can grab metadata without pinch-selecting. No-op when the
+    // row is already in edit mode or the value is empty.
+    onTextRowClick(field, value) {
+      if (this.editingField === field) return;
+      if (this.isEditable) {
+        this.startEditing(field);
+      } else if (value) {
+        this.$util.copyText(value);
+      }
     },
     getFieldValue(field) {
       const f = this.fieldRegistry[field];

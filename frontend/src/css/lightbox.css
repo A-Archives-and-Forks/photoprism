@@ -435,6 +435,15 @@
     display: inline-flex;
 }
 
+/* Sidebar toggle: when `hideEditPencils` is true on the sidebar root,
+   suppress every pencil affordance even on row hover. Row-level @click
+   handlers (and the save/undo buttons in the chip-section toolbars,
+   which carry their own class names) remain reachable. */
+.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-pencils .metadata__item:hover > .v-list-item__append .meta-inline-pencil,
+.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-pencils .meta-inline-pencil {
+    display: none;
+}
+
 /* Add prompt for empty editable fields */
 .p-lightbox__container > .p-lightbox__sidebar .meta-add-prompt {
     color: rgba(var(--v-theme-on-surface), 0.35);
