@@ -30,7 +30,7 @@
         class="p-lightbox__content no-transition"
         :class="{
           'sidebar-visible': info,
-          'face-marker-mode': faceMarkerMode,
+          'face-marker-mode': faceMarkers.active,
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen(),
           'is-zoomable': isZoomable,
@@ -43,12 +43,12 @@
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
         <p-face-marker-overlay
-          v-if="shouldShowEditButton() && featPeople && faceMarkerMode && pswp()"
+          v-if="shouldShowEditButton() && featPeople && faceMarkers.active && pswp()"
           ref="faceMarkerOverlay"
-          :mode="faceMarkerMode"
-          :markers="faceMarkers"
+          :mode="faceMarkers.mode"
+          :markers="markers"
           :pswp="pswp()"
-          :busy="markersBusy"
+          :busy="faceMarkers.busy"
           @create="onCreateFaceMarker"
           @cancel="exitFaceMarkerMode"
         ></p-face-marker-overlay>
@@ -96,7 +96,7 @@
           @remove-marker="onRemoveFaceMarker"
           @eject-marker="onEjectFaceMarker"
           @reload-markers="onReloadFaceMarkers"
-          @naming-started="pendingNameMarkerUid = null"
+          @naming-started="faceMarkers.setPendingNameMarkerUid('')"
         ></p-sidebar-info>
       </div>
     </div>
@@ -124,7 +124,7 @@ import { Album } from "model/album";
 import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
-import { FaceMarkerDisplay, FaceMarkerDraw } from "options/face-marker";
+import { $faceMarkers } from "common/face-markers";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -208,21 +208,17 @@ export default {
       contextAllowsEdit: true,
       contextAllowsSelect: true,
       featPeople: this.$config.feature("people"),
-      // Face-marker UI state machine. Three valid states (`null`, `'display'`,
-      // `'draw'`) replace the legacy `markersVisible` + `addingMarker`
-      // booleans (which encoded one invalid combination: draw mode without
-      // markers visible). Transitions: toggleFaceMarkerMode flips between
-      // null ↔ 'display'; toggleFaceMarkerDraw flips between current ↔ 'draw'
-      // and auto-promotes null to draw when entering; resetFaceMarkers and
-      // exitFaceMarkerMode set null. Entering any non-null state pauses
-      // playback via `enterFaceMarkerMode` (the `faceMarkerMode` watcher);
-      // exit does NOT resume — the user reopens playback explicitly if
-      // wanted. Sidebar reads via `view.faceMarkerMode` (see `info.vue`
-      // computeds `markersVisible` / `addingMarker`).
-      faceMarkerMode: null,
-      markersBusy: false,
-      faceMarkers: [],
-      pendingNameMarkerUid: null,
+      // Face-marker UI state lives in the shared singleton
+      // `common/face-markers.js`. The lightbox is the policy owner — every
+      // write goes through this reactive handle and the sidebar reads
+      // from the same singleton (no `view.faceMarkerMode` bridge). Fields:
+      // `mode` (null | FaceMarkerDisplay | FaceMarkerDraw), `busy`
+      // (in-flight marker mutation lock), `pendingNameMarkerUid` (UID of
+      // a freshly-created marker to auto-focus). Entering any non-null
+      // mode pauses playback via the watcher on `faceMarkers.mode` and
+      // `enterFaceMarkerMode`; exit does NOT resume — the user reopens
+      // playback explicitly if wanted.
+      faceMarkers: $faceMarkers,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
       video: {
@@ -263,8 +259,24 @@ export default {
       },
     };
   },
+  computed: {
+    // Face-marker rectangles for the current photo, re-derived from
+    // `photo.getMarkers(true)` on every reactive read. Replaces the
+    // legacy local `faceMarkers` data array — Vue's reactivity tracks
+    // the underlying `file.Markers` array so create / eject / remove
+    // mutations propagate to the overlay without an explicit refresh.
+    markers() {
+      if (!this.photo?.UID || typeof this.photo.getMarkers !== "function") {
+        return [];
+      }
+      return this.photo.getMarkers(true);
+    },
+  },
   watch: {
-    faceMarkerMode(now, was) {
+    // Routes null ↔ active transitions through enterFaceMarkerMode /
+    // exitFaceMarkerMode. display ↔ draw transitions (both truthy) are
+    // no-ops — playback is already paused and markers stay on screen.
+    "faceMarkers.mode"(now, was) {
       if (!was && now) {
         this.enterFaceMarkerMode();
       } else if (was && !now) {
@@ -1776,19 +1788,16 @@ export default {
         this.$nextTick(() => overlay.scheduleUpdate());
       }
     },
-    // Fully exits face-marker UI by clearing the state-machine flag and
-    // the local markers array. The eye-toggle when active
-    // (toggleFaceMarkerMode exit), Escape (via onEscapeKey), and hideInfo
-    // all route through here so the overlay can never paint stale boxes
-    // anchored to the JPG cover after teardown. The ✓ Done button
-    // (toggleFaceMarkerDraw exit from draw) deliberately does NOT route
-    // through here — it steps down to FaceMarkerDisplay so markers stay
-    // visible after the user finishes drawing. Re-enabling display-only
-    // review from null is one click away via the eye toggle in the
+    // Fully exits face-marker UI by clearing the singleton's mode flag.
+    // The eye-toggle when active (toggleFaceMarkerMode exit), Escape (via
+    // onEscapeKey), and hideInfo all route through here. The ✓ Done
+    // button (toggleFaceMarkerDraw exit from draw) deliberately does NOT
+    // route through here — it steps down to FaceMarkerDisplay so markers
+    // stay visible after the user finishes drawing. Re-enabling display-
+    // only review from null is one click away via the eye toggle in the
     // sidebar.
     exitFaceMarkerMode() {
-      this.faceMarkerMode = null;
-      this.faceMarkers = [];
+      this.faceMarkers.exit();
     },
     // Eye-toggle handler. Flips between `null` (no overlay) and
     // `FaceMarkerDisplay` (read-only markers): when any face-marker mode
@@ -1798,12 +1807,11 @@ export default {
       if (!this.shouldShowEditButton()) {
         return;
       }
-      if (this.faceMarkerMode) {
+      if (this.faceMarkers.active) {
         this.exitFaceMarkerMode();
         return;
       }
-      this.faceMarkerMode = FaceMarkerDisplay;
-      this.reloadFaceMarkers();
+      this.faceMarkers.display();
     },
     // Add-face handler. Enters `FaceMarkerDraw` from any previous state;
     // pressing ✓ Done while already in draw mode steps down to
@@ -1811,39 +1819,24 @@ export default {
     // drawing) rather than fully exiting — the eye toggle / Escape are
     // the explicit "hide everything" gestures.
     toggleFaceMarkerDraw() {
-      if (!this.shouldShowEditButton() || this.markersBusy) {
+      if (!this.shouldShowEditButton() || this.faceMarkers.busy) {
         return;
       }
-      if (this.faceMarkerMode === FaceMarkerDraw) {
-        this.faceMarkerMode = FaceMarkerDisplay;
+      if (this.faceMarkers.isDraw) {
+        this.faceMarkers.display();
         return;
       }
-      this.faceMarkerMode = FaceMarkerDraw;
-      this.reloadFaceMarkers();
+      this.faceMarkers.draw();
       if (this.$refs.menu) {
         this.$refs.menu.hide();
       }
     },
-    // Re-reads markers from the current photo into the local `faceMarkers`
-    // array; used after entering display/draw mode and after mutations
-    // (create / eject / remove) so the overlay re-renders with fresh
-    // server values.
-    reloadFaceMarkers() {
-      if (this.photo.UID && typeof this.photo.getMarkers === "function") {
-        this.faceMarkers = this.photo.getMarkers(true);
-      } else {
-        this.faceMarkers = [];
-      }
-    },
-    // Hard reset of every face-marker data point — called from `hideDialog`
-    // and slide navigation so a closed lightbox or a different photo never
-    // inherits stale mode, markers, or pending-name UID from the previous
-    // session.
+    // Hard reset of every face-marker UI flag — called from `hideDialog`
+    // and slide navigation so a closed lightbox or a different photo
+    // never inherits stale mode, busy flag, or pending-name UID from the
+    // previous session.
     resetFaceMarkers() {
-      this.faceMarkerMode = null;
-      this.markersBusy = false;
-      this.faceMarkers = [];
-      this.pendingNameMarkerUid = null;
+      this.faceMarkers.reset();
     },
     // Asks the sidebar (if mounted) whether it has unsaved edits, returning
     // a Promise that resolves true to proceed and false to cancel. Used by
@@ -1858,10 +1851,11 @@ export default {
     },
     // Handles the overlay's `create` emit when the user confirms a drawn
     // face region. Persists the new Marker to the backend, evicts the
-    // Photo cache, refreshes the local marker array, and primes the
-    // sidebar to enter inline naming for the freshly-saved row.
+    // Photo cache, and primes the sidebar to enter inline naming for
+    // the freshly-saved row; the overlay re-renders via the `markers`
+    // computed.
     onCreateFaceMarker(area) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) return;
 
       const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
       if (!file || !file.UID) return;
@@ -1876,17 +1870,16 @@ export default {
         H: area.H,
       });
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .save()
         .then(() => {
           if (!file.Markers) file.Markers = [];
           file.Markers.push(marker.getValues());
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
           // Trigger inline naming on the fresh row in the sidebar.
           if (marker.UID) {
-            this.pendingNameMarkerUid = marker.UID;
+            this.faceMarkers.setPendingNameMarkerUid(marker.UID);
           }
           // Only clear on success — a failed save must leave the rect on
           // the photo so the user can retry confirmation or cancel.
@@ -1898,36 +1891,38 @@ export default {
           this.$notify.error(this.$gettext("Failed to save face marker"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
     // Handles the sidebar's `eject-marker` emit (⏏ button on a named
     // marker). Clears the marker's subject assignment via the backend,
-    // syncs the file's marker entry with fresh server values, evicts
-    // the Photo cache, and reloads the local marker array.
+    // syncs the file's marker entry with fresh server values, and
+    // evicts the Photo cache. The overlay re-renders via the `markers`
+    // computed, which re-reads `photo.getMarkers(true)` whenever the
+    // underlying `file.Markers` array is mutated.
     onEjectFaceMarker(marker) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) return;
       if (!marker || !marker.SubjUID || typeof marker.clearSubject !== "function") return;
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .clearSubject()
         .then(() => {
           this.syncMarkerInFile(marker);
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
         })
         .catch(() => {
           this.$notify.error(this.$gettext("Failed to remove name"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
-    // Replaces the raw marker entry in file.Markers with fresh values from
-    // the updated Marker instance. Without this, photo.getMarkers() keeps
-    // returning stale Name/SubjUID after setName/clearSubject, so toggling
-    // visibility re-renders the old label.
+    // Replaces the raw marker entry in file.Markers with fresh values
+    // from the updated Marker instance. Needed because setName /
+    // clearSubject mutate the Marker instance returned by the API but
+    // leave `file.Markers[idx]` (the raw object the overlay re-derives
+    // from via `photo.getMarkers(true)`) stale.
     syncMarkerInFile(marker) {
       if (!marker || !marker.UID || !this.photo.UID || !Array.isArray(this.photo.Files)) return;
       const file = this.photo.Files.find((f) => !!f.Primary);
@@ -1938,26 +1933,25 @@ export default {
       }
     },
     // Handles the sidebar's `reload-markers` emit (post-name-change).
-    // Syncs the saved marker into the file array, evicts the Photo cache
-    // so future reads see the updated row, and refreshes the local
-    // marker array.
+    // Syncs the saved marker into the file array and evicts the Photo
+    // cache so future reads see the updated row; the overlay re-renders
+    // via the `markers` computed.
     onReloadFaceMarkers(marker) {
       if (marker) this.syncMarkerInFile(marker);
       if (this.photo.UID) Photo.evictCache(this.photo.UID);
-      this.reloadFaceMarkers();
     },
     // Handles the sidebar's `remove-marker` emit (× button on an unnamed
-    // marker). Rejects the marker via the backend, removes it from the
-    // file's marker array on success, evicts the Photo cache, and
-    // refreshes the local marker array.
+    // marker). Rejects the marker via the backend, removes its raw
+    // entry from `file.Markers` on success, and evicts the Photo cache;
+    // the overlay re-renders via the `markers` computed.
     onRemoveFaceMarker(marker) {
-      if (!this.photo.UID || !this.shouldShowEditButton() || this.markersBusy) return;
+      if (!this.photo.UID || !this.shouldShowEditButton() || this.faceMarkers.busy) return;
       if (!marker || marker.SubjUID || typeof marker.reject !== "function") return;
 
       const file = Array.isArray(this.photo.Files) ? this.photo.Files.find((f) => !!f.Primary) : null;
       const uid = marker.UID;
 
-      this.markersBusy = true;
+      this.faceMarkers.setBusy(true);
       marker
         .reject()
         .then(() => {
@@ -1966,13 +1960,12 @@ export default {
             if (idx >= 0) file.Markers.splice(idx, 1);
           }
           Photo.evictCache(this.photo.UID);
-          this.reloadFaceMarkers();
         })
         .catch(() => {
           this.$notify.error(this.$gettext("Failed to remove face marker"));
         })
         .finally(() => {
-          this.markersBusy = false;
+          this.faceMarkers.setBusy(false);
         });
     },
     // Preloads the next photo's full metadata when the sidebar is visible.
@@ -2481,16 +2474,16 @@ export default {
     //
     // 1. If the face-marker overlay has an in-flight draft / pending rect,
     //    let it cancel that without exiting draw mode.
-    // 2. Else, if any face-marker UI is active (faceMarkerMode non-null),
-    //    hide the overlay — closing the lightbox would skip a step the
-    //    user can plausibly still want to undo.
+    // 2. Else, if any face-marker UI is active, hide the overlay —
+    //    closing the lightbox would skip a step the user can plausibly
+    //    still want to undo.
     // 3. Else, close the lightbox normally.
     onEscapeKey() {
       const overlay = this.$refs.faceMarkerOverlay;
       if (overlay && typeof overlay.handleEscape === "function" && overlay.handleEscape()) {
         return;
       }
-      if (this.faceMarkerMode) {
+      if (this.faceMarkers.active) {
         this.exitFaceMarkerMode();
         return;
       }
@@ -2902,7 +2895,7 @@ export default {
       if (!ok) return;
 
       this.info = false;
-      if (this.faceMarkerMode) {
+      if (this.faceMarkers.active) {
         this.exitFaceMarkerMode();
       }
 

@@ -482,7 +482,7 @@
 <script>
 import { DateTime } from "luxon";
 import * as formats from "options/formats";
-import { FaceMarkerDraw } from "options/face-marker";
+import { $faceMarkers } from "common/face-markers";
 
 import * as media from "common/media";
 import typeaheadCache from "common/typeahead-cache";
@@ -524,6 +524,13 @@ export default {
       // populated by the time data() runs. Mutations through this.view.X
       // write through to the parent and don't trigger vue/no-mutating-props.
       view: this.$view.getData(),
+      // Reactive handle to the shared face-marker state singleton
+      // (`common/face-markers.js`). Drives the eye/+ toggles, the inline
+      // naming flow, and the markersBusy gates. Sidebar emits transition
+      // requests via `toggle-face-marker-mode` / `toggle-face-marker-draw`
+      // / `remove-marker` / `eject-marker` / `reload-markers`; the
+      // lightbox is the policy owner and performs the actual writes.
+      faceMarkers: $faceMarkers,
       actions: [],
       featPeople: this.$config.feature("people"),
       featPlaces: this.$config.feature("places"),
@@ -614,22 +621,22 @@ export default {
     context() {
       return this.view?.context;
     },
-    // Derived from the lightbox's faceMarkerMode state machine (F2-1):
-    // null = no overlay, 'display' = read-only markers, 'draw' = Add Face.
-    // Reading via `view.faceMarkerMode` keeps the sidebar template stable
-    // (the eye / + icons still toggle on these two booleans) while the
-    // canonical state lives as a single field on the lightbox $data.
+    // Derived from the shared face-marker state singleton
+    // (`common/face-markers.js`): null = no overlay, 'display' = read-
+    // only markers, 'draw' = Add Face. The sidebar template still binds
+    // to `markersVisible` / `addingMarker` booleans so the eye / + icon
+    // logic stays compact.
     markersVisible() {
-      return this.view?.faceMarkerMode != null;
+      return this.faceMarkers.active;
     },
     addingMarker() {
-      return this.view?.faceMarkerMode === FaceMarkerDraw;
+      return this.faceMarkers.isDraw;
     },
     markersBusy() {
-      return Boolean(this.view?.markersBusy);
+      return this.faceMarkers.busy;
     },
     newMarkerUid() {
-      return this.view?.pendingNameMarkerUid;
+      return this.faceMarkers.pendingNameMarkerUid;
     },
     isEditable() {
       return this.canEdit && this.photo && this.photo.Details && !this.restrictedRole;

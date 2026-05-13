@@ -6,6 +6,7 @@ import { DateTime } from "luxon";
 import $util from "common/util";
 import { Album } from "model/album";
 import typeaheadCache from "common/typeahead-cache";
+import { $faceMarkers } from "common/face-markers";
 
 // Max name length used by the validation pipeline (matches the production
 // "clip" client-config value). Override the global $config.get mock so the
@@ -64,10 +65,18 @@ function mountSidebar(options = {}) {
     contextAllowsEdit: true,
     collection: props.collection,
     context: props.context,
-    faceMarkerMode,
-    markersBusy: props.markersBusy,
-    pendingNameMarkerUid: props.newMarkerUid,
   };
+
+  // Bridge legacy props that used to live on the parent lightbox $data
+  // into the shared face-markers singleton. The sidebar's computeds now
+  // read directly from `$faceMarkers` (mode / busy / pendingNameMarkerUid)
+  // so individual tests can still drive them via the friendly props
+  // (`markersVisible`, `addingMarker`, `markersBusy`, `newMarkerUid`).
+  // Each `mountSidebar()` call is treated as a fresh test scope.
+  $faceMarkers.reset();
+  if (faceMarkerMode) $faceMarkers.setMode(faceMarkerMode);
+  if (props.markersBusy) $faceMarkers.setBusy(true);
+  if (props.newMarkerUid) $faceMarkers.setPendingNameMarkerUid(props.newMarkerUid);
 
   // Strip legacy keys so Vue does not warn about unknown props.
   delete props.modelValue;
@@ -793,8 +802,8 @@ describe("PSidebarInfo component", () => {
 
   // pendingNameMarkerUid focuses the input on the freshly-created marker and
   // emits naming-started so the parent (lightbox) can clear its own state.
-  // The value lives on the parent's $view-data; mutating it through the
-  // captured reference triggers the `newMarkerUid` computed and its watcher.
+  // The value lives on the shared face-markers singleton; mutating it
+  // triggers the sidebar's `newMarkerUid` computed and its watcher.
   it("should focus the matching marker input when pendingNameMarkerUid changes", async () => {
     const onNamingStarted = vi.fn();
     const w = mountSidebar({
@@ -809,7 +818,7 @@ describe("PSidebarInfo component", () => {
       global: { stubs: { PMap: true } },
       attachTo: document.body,
     });
-    w.vm.view.pendingNameMarkerUid = "m2";
+    $faceMarkers.setPendingNameMarkerUid("m2");
     await w.vm.$nextTick();
     await w.vm.$nextTick();
     expect(onNamingStarted).toHaveBeenCalled();

@@ -11,6 +11,27 @@ import { buildNamespace } from "common/storage";
 import { FaceMarkerDisplay, FaceMarkerDraw } from "options/face-marker";
 import clientConfig from "../config";
 
+// makeFaceMarkers builds a minimal mock of the face-markers singleton.
+// Lightbox methods read `this.faceMarkers.X` via the data() handle in
+// real life; in tests the ctx object stands in for the component
+// instance, so we attach a hand-built mock matching the singleton shape.
+const makeFaceMarkers = (overrides = {}) => ({
+  mode: null,
+  busy: false,
+  pendingNameMarkerUid: "",
+  active: false,
+  isDisplay: false,
+  isDraw: false,
+  display: vi.fn(),
+  draw: vi.fn(),
+  exit: vi.fn(),
+  setMode: vi.fn(),
+  setBusy: vi.fn(),
+  setPendingNameMarkerUid: vi.fn(),
+  reset: vi.fn(),
+  ...overrides,
+});
+
 const storagePrefix = buildNamespace(clientConfig.storageNamespace);
 const infoKey = `${storagePrefix}lightbox.info`;
 const mutedKey = `${storagePrefix}lightbox.muted`;
@@ -288,7 +309,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const ctx = {
         visible: true,
         info: true,
-        faceMarkerMode: FaceMarkerDraw,
+        faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
         exitFaceMarkerMode,
         confirmDiscardSidebar: () => Promise.resolve(true),
         $nextTick: (cb) => Promise.resolve().then(cb),
@@ -305,10 +326,11 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     it("hideInfo keeps face-marker UI when confirmDiscardSidebar resolves false", async () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
+      const faceMarkers = makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw });
       const ctx = {
         visible: true,
         info: true,
-        faceMarkerMode: FaceMarkerDraw,
+        faceMarkers,
         exitFaceMarkerMode,
         confirmDiscardSidebar: () => Promise.resolve(false),
         $nextTick: (cb) => Promise.resolve().then(cb),
@@ -317,7 +339,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       };
       await wrapper.vm.$options.methods.hideInfo.call(ctx);
       expect(ctx.info).toBe(true);
-      expect(ctx.faceMarkerMode).toBe(FaceMarkerDraw);
+      expect(faceMarkers.mode).toBe(FaceMarkerDraw);
       expect(exitFaceMarkerMode).not.toHaveBeenCalled();
     });
 
@@ -325,9 +347,9 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     // on null → active transitions and exitFaceMarkerMode on active → null.
     // Transitions between two truthy modes (display ↔ draw) are no-ops —
     // playback is already paused and the markers stay on screen.
-    it("faceMarkerMode watcher enters on null → active and exits on active → null", () => {
+    it("faceMarkers.mode watcher enters on null → active and exits on active → null", () => {
       const wrapper = mountLightbox();
-      const watcher = wrapper.vm.$options.watch.faceMarkerMode;
+      const watcher = wrapper.vm.$options.watch["faceMarkers.mode"];
       const ctx = {
         enterFaceMarkerMode: vi.fn(),
         exitFaceMarkerMode: vi.fn(),
@@ -371,7 +393,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const close = vi.fn();
       const ctx = {
         $refs: { faceMarkerOverlay: { handleEscape } },
-        faceMarkerMode: FaceMarkerDraw,
+        faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
         exitFaceMarkerMode,
         close,
       };
@@ -388,7 +410,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const close = vi.fn();
       const ctx = {
         $refs: { faceMarkerOverlay: { handleEscape } },
-        faceMarkerMode: FaceMarkerDraw,
+        faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
         exitFaceMarkerMode,
         close,
       };
@@ -406,7 +428,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const close = vi.fn();
       const ctx = {
         $refs: {},
-        faceMarkerMode: FaceMarkerDisplay,
+        faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
         exitFaceMarkerMode,
         close,
       };
@@ -419,21 +441,21 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const close = vi.fn();
-      const ctx = { $refs: {}, faceMarkerMode: null, exitFaceMarkerMode, close };
+      const ctx = { $refs: {}, faceMarkers: makeFaceMarkers(), exitFaceMarkerMode, close };
       wrapper.vm.$options.methods.onEscapeKey.call(ctx);
       expect(close).toHaveBeenCalledTimes(1);
       expect(exitFaceMarkerMode).not.toHaveBeenCalled();
     });
 
-    // exitFaceMarkerMode clears the state machine flag AND the local
-    // markers array — display-mode markers anchor to the JPG cover, so
-    // leaving them visible would paint stale boxes over a resumed video.
-    it("exitFaceMarkerMode resets faceMarkerMode and clears faceMarkers", () => {
+    // exitFaceMarkerMode delegates to the singleton's exit() — the
+    // singleton clears mode (and the marker array is now derived from
+    // the photo, so no local copy needs resetting).
+    it("exitFaceMarkerMode calls faceMarkers.exit()", () => {
       const wrapper = mountLightbox();
-      const ctx = { faceMarkerMode: FaceMarkerDraw, faceMarkers: [{ UID: "m1" }] };
+      const faceMarkers = makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw });
+      const ctx = { faceMarkers };
       wrapper.vm.$options.methods.exitFaceMarkerMode.call(ctx);
-      expect(ctx.faceMarkerMode).toBeNull();
-      expect(ctx.faceMarkers).toEqual([]);
+      expect(faceMarkers.exit).toHaveBeenCalledTimes(1);
     });
 
     // ✓ Done steps out of draw mode into display mode — the user was
@@ -442,14 +464,16 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     it("toggleFaceMarkerDraw's exit path steps to FaceMarkerDisplay (Done keeps markers visible)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
+      const faceMarkers = makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw });
       const ctx = {
-        faceMarkerMode: FaceMarkerDraw,
-        markersBusy: false,
+        faceMarkers,
         shouldShowEditButton: () => true,
         exitFaceMarkerMode,
+        $refs: {},
       };
       wrapper.vm.$options.methods.toggleFaceMarkerDraw.call(ctx);
-      expect(ctx.faceMarkerMode).toBe(FaceMarkerDisplay);
+      expect(faceMarkers.display).toHaveBeenCalledTimes(1);
+      expect(faceMarkers.draw).not.toHaveBeenCalled();
       expect(exitFaceMarkerMode).not.toHaveBeenCalled();
     });
 
@@ -460,7 +484,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
-        faceMarkerMode: FaceMarkerDisplay,
+        faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
         shouldShowEditButton: () => true,
         exitFaceMarkerMode,
       };
@@ -475,7 +499,7 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
-        faceMarkerMode: FaceMarkerDraw,
+        faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
         shouldShowEditButton: () => true,
         exitFaceMarkerMode,
       };
