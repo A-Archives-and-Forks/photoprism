@@ -515,6 +515,100 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(handled).toBe(true);
       expect(onEscapeKey).toHaveBeenCalledTimes(1);
     });
+
+    // While face-marker mode is active, keys that open hidden chrome
+    // (menus), stack a competing modal, fire silent destructive
+    // actions, or contradict the entry-only-pause / overlay-stays-
+    // mounted contracts are gated to a no-op. Escape / Tab / KeyI /
+    // KeyD / KeyF / KeyM stay enabled.
+    describe("face-marker mode shortcut gates", () => {
+      const disabled = ["Period", "KeyA", "KeyE", "KeyL", "KeyS", "ArrowLeft", "ArrowRight", "Space"];
+      const enabled = ["KeyD", "KeyF", "KeyI", "KeyM"];
+
+      it("isShortcutDisabledInFaceMarkerMode returns true for every conflicting key and false for the rest", () => {
+        const wrapper = mountLightbox();
+        const predicate = wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode;
+        for (const code of disabled) expect(predicate(code)).toBe(true);
+        for (const code of enabled) expect(predicate(code)).toBe(false);
+        // Escape + Tab stay enabled — Escape via the priority chain,
+        // Tab via the v-dialog-level focus handler.
+        expect(predicate("Escape")).toBe(false);
+        expect(predicate("Tab")).toBe(false);
+      });
+
+      it("onShortCut short-circuits when face-marker mode is active and the key is gated", () => {
+        const wrapper = mountLightbox();
+        const onShowMenu = vi.fn();
+        const toggleSlideshow = vi.fn();
+        const onArchive = vi.fn();
+        const ctx = {
+          faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
+          isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
+          onShowMenu,
+          toggleSlideshow,
+          onArchive,
+          canArchive: true,
+          context: contexts.Photos,
+          model: { Archived: false },
+        };
+        for (const code of disabled) {
+          const r = wrapper.vm.$options.methods.onShortCut.call(ctx, { code });
+          expect(r).toBe(false);
+        }
+        expect(onShowMenu).not.toHaveBeenCalled();
+        expect(toggleSlideshow).not.toHaveBeenCalled();
+        expect(onArchive).not.toHaveBeenCalled();
+      });
+
+      it("onKeyDown short-circuits Space + Arrow keys when face-marker mode is active", () => {
+        const wrapper = mountLightbox();
+        const pswpStub = { prev: vi.fn(), next: vi.fn() };
+        const toggleVideo = vi.fn();
+        const ctx = {
+          visible: true,
+          info: false,
+          faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
+          isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
+          $view: { isActive: () => true },
+          pauseSlideshow: vi.fn(),
+          pswp: () => pswpStub,
+          toggleVideo,
+          toggleControls: vi.fn(),
+          getContent: () => ({ video: null }),
+          model: {},
+          video: { controls: false, playing: false },
+          models: [{}, {}],
+          index: 0,
+          $isRtl: false,
+        };
+        for (const code of ["ArrowLeft", "ArrowRight", "Space"]) {
+          wrapper.vm.$options.methods.onKeyDown.call(ctx, {
+            code,
+            preventDefault: () => {},
+            stopPropagation: () => {},
+          });
+        }
+        expect(pswpStub.prev).not.toHaveBeenCalled();
+        expect(pswpStub.next).not.toHaveBeenCalled();
+        expect(toggleVideo).not.toHaveBeenCalled();
+      });
+
+      it("onShortCut still routes Escape + KeyI even when face-marker mode is active", () => {
+        const wrapper = mountLightbox();
+        const onEscapeKey = vi.fn();
+        const toggleInfo = vi.fn();
+        const ctx = {
+          faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
+          isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
+          onEscapeKey,
+          toggleInfo,
+        };
+        wrapper.vm.$options.methods.onShortCut.call(ctx, { code: "Escape" });
+        wrapper.vm.$options.methods.onShortCut.call(ctx, { code: "KeyI" });
+        expect(onEscapeKey).toHaveBeenCalledTimes(1);
+        expect(toggleInfo).toHaveBeenCalledTimes(1);
+      });
+    });
   });
 
   it("formatCaption returns sanitized caption html", () => {

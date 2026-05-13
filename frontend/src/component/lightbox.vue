@@ -2364,6 +2364,18 @@ export default {
         this.log("shortcut", { ev });
       }
 
+      // While face-marker mode is active, shortcuts that open hidden
+      // chrome (menus), stack a competing modal, fire silent
+      // destructive actions, or contradict the entry-only-pause /
+      // overlay-stays-mounted contracts are gated to a no-op. Escape
+      // (priority chain), Tab (focus), KeyI (toggle sidebar — exits
+      // face-marker mode in lockstep via hideInfo), KeyD (download),
+      // KeyF (fullscreen), and KeyM (mute) stay enabled. See the
+      // matching gate in onKeyDown for Arrow / Space.
+      if (this.faceMarkers?.active && this.isShortcutDisabledInFaceMarkerMode(ev.code)) {
+        return false;
+      }
+
       switch (ev.code) {
         case "Escape":
           this.onEscapeKey();
@@ -2426,6 +2438,13 @@ export default {
         return;
       }
 
+      // See the matching gate in onShortCut. Arrow keys would tear
+      // down the overlay (slide-nav); Space would un-pause the video
+      // and contradict the entry-only-pause contract.
+      if (this.faceMarkers?.active && this.isShortcutDisabledInFaceMarkerMode(ev.code)) {
+        return;
+      }
+
       if (this.trace) {
         this.log("key.down", { ev });
       }
@@ -2468,6 +2487,26 @@ export default {
             this.toggleControls();
           }
           break;
+      }
+    },
+    // Returns true when the given KeyboardEvent.code names a shortcut
+    // that should be inert while face-marker mode is active. Used by
+    // both `onShortCut` (Ctrl/⌘ + key forwarder) and `onKeyDown`
+    // (template-bound Arrow / Space / Escape). Keep the set tight —
+    // every key that's safe in either mode stays out of this set.
+    isShortcutDisabledInFaceMarkerMode(code) {
+      switch (code) {
+        case "Period":
+        case "KeyA":
+        case "KeyE":
+        case "KeyL":
+        case "KeyS":
+        case "ArrowLeft":
+        case "ArrowRight":
+        case "Space":
+          return true;
+        default:
+          return false;
       }
     },
     // Shared Escape handler. Delegated to from both the v-dialog template
