@@ -1800,11 +1800,14 @@ export default {
       this.faceMarkers.exit();
     },
     // Eye-toggle handler. Flips between `null` (no overlay) and
-    // `FaceMarkerDisplay` (read-only markers): when any face-marker mode
-    // is active this is the "hide everything" gesture and always lands
-    // on `null`.
+    // `FaceMarkerDisplay` (read-only markers). The eye toggle is only
+    // rendered for NON-editable users (display mode is read-only by
+    // definition); editable users use `toggleFaceMarkerDraw` below.
+    // Gates on featPeople only — display mode doesn't need edit
+    // permission, and the template-level `!restrictedRole` gate keeps
+    // restricted sessions out of this path entirely.
     toggleFaceMarkerMode() {
-      if (!this.shouldShowEditButton()) {
+      if (!this.featPeople) {
         return;
       }
       if (this.faceMarkers.active) {
@@ -1813,17 +1816,19 @@ export default {
       }
       this.faceMarkers.display();
     },
-    // Add-face handler. Enters `FaceMarkerDraw` from any previous state;
-    // pressing ✓ Done while already in draw mode steps down to
-    // `FaceMarkerDisplay` (markers stay visible after the user finishes
-    // drawing) rather than fully exiting — the eye toggle / Escape are
-    // the explicit "hide everything" gestures.
+    // Edit-Faces toggle handler. Flips between `null` (no overlay) and
+    // `FaceMarkerDraw` (markers visible + drag-to-create + click-to-
+    // remove). Only rendered for editable users; the gate mirrors that.
+    // Previously the exit path stepped down to FaceMarkerDisplay (the
+    // historical ✓ Done semantic when the sidebar had two toggles); now
+    // that the pencil is the only editable-user toggle, exit must land
+    // on `null` so the pencil click actually ends face-marker mode.
     toggleFaceMarkerDraw() {
       if (!this.shouldShowEditButton() || this.faceMarkers.busy) {
         return;
       }
-      if (this.faceMarkers.isDraw) {
-        this.faceMarkers.display();
+      if (this.faceMarkers.active) {
+        this.exitFaceMarkerMode();
         return;
       }
       this.faceMarkers.draw();

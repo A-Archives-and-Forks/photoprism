@@ -458,10 +458,15 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       expect(faceMarkers.exit).toHaveBeenCalledTimes(1);
     });
 
-    // ✓ Done steps out of draw mode into display mode — the user was
-    // just drawing and likely wants to see the result. The eye toggle
-    // (or Escape) handles the full exit to null when desired.
-    it("toggleFaceMarkerDraw's exit path steps to FaceMarkerDisplay (Done keeps markers visible)", () => {
+    // The pencil toggle for editable users now fully exits face-marker
+    // mode on second click — landing on `null` instead of stepping
+    // down to FaceMarkerDisplay. The historical ✓ Done step-down made
+    // sense when the sidebar had both an eye toggle and a pencil
+    // toggle; with the per-role simplification (editable users see
+    // ONLY the pencil), exiting must land on `null` or the toggle
+    // gets stuck in the "on" state with no way to leave face-marker
+    // mode from the sidebar.
+    it("toggleFaceMarkerDraw exits to null when already active (pencil off)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const faceMarkers = makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw });
@@ -472,39 +477,46 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         $refs: {},
       };
       wrapper.vm.$options.methods.toggleFaceMarkerDraw.call(ctx);
-      expect(faceMarkers.display).toHaveBeenCalledTimes(1);
+      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
       expect(faceMarkers.draw).not.toHaveBeenCalled();
-      expect(exitFaceMarkerMode).not.toHaveBeenCalled();
+      expect(faceMarkers.display).not.toHaveBeenCalled();
     });
 
-    // toggleFaceMarkerMode always routes through exitFaceMarkerMode when
-    // any mode is active — the eye toggle is the "hide everything" gesture
-    // and lands on null. Unlike ✓ Done, it doesn't step down to display.
+    // toggleFaceMarkerMode is the non-editable eye toggle. Active →
+    // exitFaceMarkerMode (lands on null); null → display. The gate
+    // dropped the `shouldShowEditButton()` check so non-editable users
+    // who reach this handler (via the eye toggle the template now
+    // gives them) can actually toggle display mode.
     it("toggleFaceMarkerMode's exit path routes through exitFaceMarkerMode from display (eye toggle off)", () => {
       const wrapper = mountLightbox();
       const exitFaceMarkerMode = vi.fn();
       const ctx = {
         faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
-        shouldShowEditButton: () => true,
+        featPeople: true,
         exitFaceMarkerMode,
       };
       wrapper.vm.$options.methods.toggleFaceMarkerMode.call(ctx);
       expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
     });
 
-    // Eye toggle from draw mode also fully exits (asymmetric with ✓ Done,
-    // which only steps down to display). The eye is the "hide everything"
-    // affordance regardless of which mode is currently active.
-    it("toggleFaceMarkerMode's exit path routes through exitFaceMarkerMode from draw too (eye toggle off mid-draw)", () => {
+    it("toggleFaceMarkerMode enters display when null and featPeople is true", () => {
       const wrapper = mountLightbox();
-      const exitFaceMarkerMode = vi.fn();
+      const faceMarkers = makeFaceMarkers();
       const ctx = {
-        faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
-        shouldShowEditButton: () => true,
-        exitFaceMarkerMode,
+        faceMarkers,
+        featPeople: true,
+        exitFaceMarkerMode: vi.fn(),
       };
       wrapper.vm.$options.methods.toggleFaceMarkerMode.call(ctx);
-      expect(exitFaceMarkerMode).toHaveBeenCalledTimes(1);
+      expect(faceMarkers.display).toHaveBeenCalledTimes(1);
+    });
+
+    it("toggleFaceMarkerMode is a no-op when featPeople is false", () => {
+      const wrapper = mountLightbox();
+      const faceMarkers = makeFaceMarkers();
+      const ctx = { faceMarkers, featPeople: false, exitFaceMarkerMode: vi.fn() };
+      wrapper.vm.$options.methods.toggleFaceMarkerMode.call(ctx);
+      expect(faceMarkers.display).not.toHaveBeenCalled();
     });
 
     it("onShortCut Escape routes through onEscapeKey, not close directly", () => {
@@ -536,62 +548,74 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
         expect(predicate("Tab")).toBe(false);
       });
 
-      it("onShortCut short-circuits when face-marker mode is active and the key is gated", () => {
-        const wrapper = mountLightbox();
-        const onShowMenu = vi.fn();
-        const toggleSlideshow = vi.fn();
-        const onArchive = vi.fn();
-        const ctx = {
-          faceMarkers: makeFaceMarkers({ active: true, isDisplay: true, mode: FaceMarkerDisplay }),
-          isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
-          onShowMenu,
-          toggleSlideshow,
-          onArchive,
-          canArchive: true,
-          context: contexts.Photos,
-          model: { Archived: false },
-        };
-        for (const code of disabled) {
-          const r = wrapper.vm.$options.methods.onShortCut.call(ctx, { code });
-          expect(r).toBe(false);
-        }
-        expect(onShowMenu).not.toHaveBeenCalled();
-        expect(toggleSlideshow).not.toHaveBeenCalled();
-        expect(onArchive).not.toHaveBeenCalled();
-      });
+      // The gate keys on `faceMarkers.active` (truthy for BOTH display
+      // and draw modes), so the inert key set must apply identically
+      // in both modes — playback / slideshow / nav stay frozen in
+      // either case, so the corresponding shortcuts must stay inert in
+      // either case. Parametrized over both modes pins the contract.
+      const modes = [
+        ["display", { isDisplay: true, mode: FaceMarkerDisplay }],
+        ["draw", { isDraw: true, mode: FaceMarkerDraw }],
+      ];
 
-      it("onKeyDown short-circuits Space + Arrow keys when face-marker mode is active", () => {
-        const wrapper = mountLightbox();
-        const pswpStub = { prev: vi.fn(), next: vi.fn() };
-        const toggleVideo = vi.fn();
-        const ctx = {
-          visible: true,
-          info: false,
-          faceMarkers: makeFaceMarkers({ active: true, isDraw: true, mode: FaceMarkerDraw }),
-          isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
-          $view: { isActive: () => true },
-          pauseSlideshow: vi.fn(),
-          pswp: () => pswpStub,
-          toggleVideo,
-          toggleControls: vi.fn(),
-          getContent: () => ({ video: null }),
-          model: {},
-          video: { controls: false, playing: false },
-          models: [{}, {}],
-          index: 0,
-          $isRtl: false,
-        };
-        for (const code of ["ArrowLeft", "ArrowRight", "Space"]) {
-          wrapper.vm.$options.methods.onKeyDown.call(ctx, {
-            code,
-            preventDefault: () => {},
-            stopPropagation: () => {},
-          });
-        }
-        expect(pswpStub.prev).not.toHaveBeenCalled();
-        expect(pswpStub.next).not.toHaveBeenCalled();
-        expect(toggleVideo).not.toHaveBeenCalled();
-      });
+      for (const [label, modeFlags] of modes) {
+        it(`onShortCut short-circuits gated keys in ${label} mode`, () => {
+          const wrapper = mountLightbox();
+          const onShowMenu = vi.fn();
+          const toggleSlideshow = vi.fn();
+          const onArchive = vi.fn();
+          const ctx = {
+            faceMarkers: makeFaceMarkers({ active: true, ...modeFlags }),
+            isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
+            onShowMenu,
+            toggleSlideshow,
+            onArchive,
+            canArchive: true,
+            context: contexts.Photos,
+            model: { Archived: false },
+          };
+          for (const code of disabled) {
+            const r = wrapper.vm.$options.methods.onShortCut.call(ctx, { code });
+            expect(r).toBe(false);
+          }
+          expect(onShowMenu).not.toHaveBeenCalled();
+          expect(toggleSlideshow).not.toHaveBeenCalled();
+          expect(onArchive).not.toHaveBeenCalled();
+        });
+
+        it(`onKeyDown short-circuits Space + Arrow keys in ${label} mode`, () => {
+          const wrapper = mountLightbox();
+          const pswpStub = { prev: vi.fn(), next: vi.fn() };
+          const toggleVideo = vi.fn();
+          const ctx = {
+            visible: true,
+            info: false,
+            faceMarkers: makeFaceMarkers({ active: true, ...modeFlags }),
+            isShortcutDisabledInFaceMarkerMode: wrapper.vm.$options.methods.isShortcutDisabledInFaceMarkerMode,
+            $view: { isActive: () => true },
+            pauseSlideshow: vi.fn(),
+            pswp: () => pswpStub,
+            toggleVideo,
+            toggleControls: vi.fn(),
+            getContent: () => ({ video: null }),
+            model: {},
+            video: { controls: false, playing: false },
+            models: [{}, {}],
+            index: 0,
+            $isRtl: false,
+          };
+          for (const code of ["ArrowLeft", "ArrowRight", "Space"]) {
+            wrapper.vm.$options.methods.onKeyDown.call(ctx, {
+              code,
+              preventDefault: () => {},
+              stopPropagation: () => {},
+            });
+          }
+          expect(pswpStub.prev).not.toHaveBeenCalled();
+          expect(pswpStub.next).not.toHaveBeenCalled();
+          expect(toggleVideo).not.toHaveBeenCalled();
+        });
+      }
 
       it("onShortCut still routes Escape + KeyI even when face-marker mode is active", () => {
         const wrapper = mountLightbox();

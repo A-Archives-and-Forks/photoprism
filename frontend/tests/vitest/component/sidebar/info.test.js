@@ -452,35 +452,40 @@ describe("PSidebarInfo component", () => {
     expect(unnamedAvatar.classes()).not.toContain("clickable");
   });
 
-  // People section: face marker buttons (show/hide + add) and per-row remove.
-  // The sidebar emits events; the parent lightbox owns the actual state.
-  it("should render the People header with show/hide and + buttons when editable", () => {
+  // People section: per-role toggle in the header (#append slot of the
+  // section row). Editable users see ONLY the pencil/pencil-off "Edit
+  // Faces" toggle — draw mode is a strict superset of display mode for
+  // them, so a separate eye toggle adds no value. Non-editable users
+  // see ONLY the eye/eye-off "Show face markers" toggle and only when
+  // there is at least one marker to view. The state machine
+  // (`$faceMarkers`) still has both FaceMarkerDisplay and FaceMarkerDraw;
+  // each role just exposes one of the two via its button.
+  it("should render the People header with only the pencil toggle when editable", () => {
     const w = mountSidebar({
       props: { modelValue: mockModel, photo: mockPhoto, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
     expect(w.html()).toContain("People");
-    expect(w.find(".meta-markers-toggle").exists()).toBe(true);
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
+    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
   });
 
-  it("should render the People header with only the + button when there are no markers, when editable", () => {
+  it("should render the pencil toggle even when the photo has no face markers (so editable users can add the first one)", () => {
     const photo = { ...mockPhoto, getMarkers: vi.fn().mockReturnValue([]) };
     const w = mountSidebar({
       props: { modelValue: mockModel, photo, canEdit: true, context: contexts.Photos },
       global: { stubs: { PMap: true } },
     });
-    // People header is rendered so the user can add the first face, but
-    // the eye toggle is gated to `people.length > 0` — it only renders
-    // once there is at least one marker to show / hide.
     expect(w.html()).toContain("People");
-    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
+    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
   });
 
-  it("should not render the show/hide or + icons when not editable", () => {
+  it("should render only the eye toggle when not editable, on a photo with face markers", () => {
     // The default wrapper is mounted without canEdit → isEditable false.
-    expect(wrapper.find(".meta-markers-toggle").exists()).toBe(false);
+    // The eye toggle is the only marker control non-editable users see;
+    // the pencil toggle is editable-only.
+    expect(wrapper.find(".meta-markers-toggle").exists()).toBe(true);
     expect(wrapper.find(".meta-faces-edit").exists()).toBe(false);
   });
 
@@ -498,28 +503,30 @@ describe("PSidebarInfo component", () => {
     expect(w.html()).not.toContain("People");
   });
 
-  it("should reflect the markersVisible prop on the toggle icon", () => {
+  it("should reflect the markersVisible state on the eye toggle (non-editable role)", () => {
+    // Eye toggle is non-editable-only; markersVisible = true paints the
+    // is-active class so the icon flips to `mdi-eye-off-outline`.
     const w = mountSidebar({
       props: {
         modelValue: mockModel,
         photo: mockPhoto,
-        canEdit: true,
         context: contexts.Photos,
         markersVisible: true,
       },
       global: { stubs: { PMap: true } },
     });
     const toggle = w.find(".meta-markers-toggle");
+    expect(toggle.exists()).toBe(true);
     expect(toggle.classes()).toContain("is-active");
+    expect(toggle.find("i.mdi-eye-off-outline").exists()).toBe(true);
   });
 
-  it("should emit toggle-face-marker-mode when the eye icon is clicked", async () => {
+  it("should emit toggle-face-marker-mode when the eye icon is clicked (non-editable role)", async () => {
     const onToggle = vi.fn();
     const w = mountSidebar({
       props: {
         "modelValue": mockModel,
         "photo": mockPhoto,
-        "canEdit": true,
         "context": contexts.Photos,
         "onToggle-face-marker-mode": onToggle,
       },
@@ -3303,10 +3310,12 @@ describe("PSidebarInfo component", () => {
         expect(fileRow.text()).toContain(TEXT.filename);
       });
 
-      it("renders pencil icons and face-marker controls", () => {
+      it("renders inline pencils and only the Edit Faces toggle (no eye toggle for editable users)", () => {
         expect(w.findAll(".meta-inline-pencil").length).toBeGreaterThanOrEqual(10);
-        expect(w.find(".meta-markers-toggle").exists()).toBe(true);
         expect(w.find(".meta-faces-edit").exists()).toBe(true);
+        // Editable users see only the pencil toggle — draw mode is a
+        // strict superset of display mode for them.
+        expect(w.find(".meta-markers-toggle").exists()).toBe(false);
       });
     });
 

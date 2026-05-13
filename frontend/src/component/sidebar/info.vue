@@ -157,21 +157,23 @@
           <v-divider class="my-3"></v-divider>
           <v-list-item class="metadata__item">
             <div class="text-subtitle-2">{{ $gettext("People") }}</div>
-            <template v-if="isEditable" #append>
+            <template v-if="isEditable || people.length > 0" #append>
+              <!--
+                Per-role toggle:
+                - Editable users see the pencil / pencil-off "Edit Faces" toggle.
+                  Draw mode is a strict superset of display mode for editable
+                  users (boxes + names visible, plus drag-to-create and
+                  click-to-remove), so a separate display-mode toggle adds
+                  no value.
+                - Non-editable users see the eye / eye-off "Show face markers"
+                  toggle. Display mode is read-only.
+
+                Both modes hide the lightbox chrome, pause video / slideshow
+                on entry, and gate the conflict-only keyboard shortcuts —
+                see lightbox.vue isShortcutDisabledInFaceMarkerMode.
+              -->
               <v-btn
-                v-if="people.length > 0"
-                :icon="markersVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
-                density="compact"
-                variant="plain"
-                size="x-small"
-                class="meta-markers-toggle"
-                :class="{ 'is-active': markersVisible }"
-                :title="markersVisible ? $gettext('Hide face markers') : $gettext('Show face markers')"
-                :disabled="markersBusy"
-                @mousedown.prevent
-                @click.stop="onToggleFaceMarkerMode"
-              ></v-btn>
-              <v-btn
+                v-if="isEditable"
                 :icon="addingMarker ? 'mdi-pencil-off-outline' : 'mdi-pencil-outline'"
                 density="compact"
                 variant="plain"
@@ -182,6 +184,19 @@
                 :disabled="markersBusy"
                 @mousedown.prevent
                 @click.stop="onToggleFaceMarkerDraw"
+              ></v-btn>
+              <v-btn
+                v-else
+                :icon="markersVisible ? 'mdi-eye-off-outline' : 'mdi-eye-outline'"
+                density="compact"
+                variant="plain"
+                size="x-small"
+                class="meta-markers-toggle"
+                :class="{ 'is-active': markersVisible }"
+                :title="markersVisible ? $gettext('Hide face markers') : $gettext('Show face markers')"
+                :disabled="markersBusy"
+                @mousedown.prevent
+                @click.stop="onToggleFaceMarkerMode"
               ></v-btn>
             </template>
           </v-list-item>
@@ -1069,17 +1084,19 @@ export default {
         if (editor && typeof editor.focus === "function") editor.focus();
       });
     },
-    // Eye-icon click handler. Emits `toggle-face-marker-mode` so the
-    // lightbox can flip between hidden and FaceMarkerDisplay; guards on
-    // edit permission and the markersBusy lock to keep the gesture inert
-    // while a marker write is in flight.
+    // Eye-icon click handler (non-editable users only — display mode
+    // is read-only). Emits `toggle-face-marker-mode` so the lightbox
+    // can flip between `null` and `FaceMarkerDisplay`. Gates only on
+    // `markersBusy` so an in-flight marker write doesn't race a mode
+    // toggle; intentionally does NOT gate on `isEditable` because
+    // display mode doesn't require edit permission.
     onToggleFaceMarkerMode() {
-      if (!this.isEditable || this.markersBusy) return;
+      if (this.markersBusy) return;
       this.$emit("toggle-face-marker-mode");
     },
-    // +/Done click handler. Emits `toggle-face-marker-draw` so the
-    // lightbox can flip between FaceMarkerDraw and FaceMarkerDisplay;
-    // same edit/busy guards as the eye-icon path.
+    // Pencil-icon click handler (editable users only — draw mode adds
+    // drag-to-create + click-to-remove). Emits `toggle-face-marker-draw`
+    // so the lightbox can flip between `null` and `FaceMarkerDraw`.
     onToggleFaceMarkerDraw() {
       if (!this.isEditable || this.markersBusy) return;
       this.$emit("toggle-face-marker-draw");
