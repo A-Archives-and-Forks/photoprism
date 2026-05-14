@@ -20,7 +20,7 @@
 // module would become its orchestrator at that point.
 import Album from "model/album";
 import Label from "model/label";
-import $event from "common/event";
+import $event, { subscribeEntityActions } from "common/event";
 
 // Pragmatic ceiling shared by every consumer. Power users with more
 // than CAP labels or albums see a console.warn and a truncated list;
@@ -90,34 +90,45 @@ export const typeaheadCache = {
   },
 };
 
-// Backend events that invalidate either list:
+// One hierarchical subscriber per entity namespace, filtered to the
+// standard mutation verbs by subscribeEntityActions. The cache is
+// permissive — the action only matters as a "something changed"
+// signal, so we ignore payload and just evict.
 //
-//   labels.created — entity layer fires `event.EntitiesCreated("labels", …)`
-//     from `FirstOrCreateLabel` whenever a brand-new label is inserted
-//     (e.g. the first time a user adds `你好` to a photo).
-//   labels.updated — `PublishLabelEvent(StatusUpdated, …)` runs on edits to
-//     an existing label (rename, priority change, etc.).
-//   labels.deleted — `event.EntitiesDeleted("labels", …)` runs on batch
-//     deletion.
-//   albums.created — entity layer fires `event.PublishUserEntities("albums",
-//     EntityCreated, …)` from `Album.Save()` for new albums. The websocket
-//     writer strips the `user.<uid>.` prefix before relaying so the client
-//     receives the canonical `albums.created` channel.
-//   albums.updated — same path with `EntityUpdated`, plus
-//     `PublishAlbumEvent(StatusUpdated, …)` from REST handlers.
-//   albums.deleted — fired on bulk delete; album DELETE handler also calls
-//     `UpdateClientConfig()` which broadcasts `config.updated`, so we also
-//     subscribe to that as a belt-and-braces signal.
+// Backend emit sites at the time of writing:
 //
-// Subscribing at module scope (mirrors the photos.* pattern in
-// `model/photo.js`) means every consumer benefits without per-component
-// wiring.
-$event.subscribe("labels.created", () => evict("labels"));
-$event.subscribe("labels.updated", () => evict("labels"));
-$event.subscribe("labels.deleted", () => evict("labels"));
-$event.subscribe("albums.created", () => evict("albums"));
-$event.subscribe("albums.updated", () => evict("albums"));
-$event.subscribe("albums.deleted", () => evict("albums"));
+//   labels.created  — `event.EntitiesCreated("labels", …)` from
+//                     `entity/label.go` FirstOrCreateLabel.
+//   labels.updated  — `PublishLabelEvent(StatusUpdated, …)` from
+//                     `internal/api/labels.go` (rename, like, unlike).
+//   labels.deleted  — `event.EntitiesDeleted("labels", …)` from
+//                     `batch_labels.go`.
+//   albums.created  — `event.PublishUserEntities("albums", EntityCreated, …)`
+//                     from `entity/album.go`. The WS writer strips the
+//                     `user.<uid>.` prefix so the client receives
+//                     `albums.created`.
+//   albums.updated  — same entity path with EntityUpdated, plus
+//                     `PublishAlbumEvent(StatusUpdated, …)` from REST
+//                     handlers (albums.go, links.go, import.go,
+//                     users_upload.go).
+//   albums.deleted  — `event.EntitiesDeleted("albums", …)` from
+//                     `entity/album.go` Album.Delete.
+//
+// A future `labels.edited` / `albums.edited` (published via
+// event.EntitiesEdited) automatically joins this list without a code
+// change here, as does any new entity-mutation verb added to
+// ENTITY_MUTATIONS. Non-mutation channels on the same namespace
+// (today: none — the existing convention namespaces those elsewhere,
+// e.g. `count.labels` lives under `count.`) are no-ops.
+subscribeEntityActions("labels", () => evict("labels"));
+subscribeEntityActions("albums", () => evict("albums"));
+
+// config.updated is outside the albums/labels namespace but the album
+// DELETE handler also calls UpdateClientConfig(), historically the
+// only way the client learned about album removal. Now that
+// `entity/album.go` emits `albums.deleted` directly the dependency
+// is belt-and-braces, but keeping the subscription preserves
+// coverage for any future config-touching mutation we don't anticipate.
 $event.subscribe("config.updated", () => evict("albums"));
 
 // Drop both lists on logout so user A's labels/albums cannot be

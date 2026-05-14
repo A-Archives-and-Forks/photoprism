@@ -725,6 +725,17 @@ export default {
           }
 
           break;
+        case "edited":
+          // photos.edited is a lightweight UID-only batch signal
+          // (event.EntitiesEdited). Cards in this album view may now
+          // show stale labels/albums/title for the affected UIDs;
+          // mark dirty so the next return-to-view refetches from the
+          // server. The model-layer subscriber in model/photo.js
+          // handles the lightbox-cache eviction independently.
+          this.dirty = true;
+          this.complete = false;
+
+          break;
       }
 
       // TODO: Needed?

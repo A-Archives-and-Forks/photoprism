@@ -6,7 +6,7 @@ import Marker from "model/marker";
 import { DateTime } from "luxon";
 import { $config } from "app/session";
 import $api from "common/api";
-import $event from "common/event";
+import { subscribeEntityActions } from "common/event";
 import $util from "common/util";
 import countries from "options/countries.json";
 import { $gettext } from "common/gettext";
@@ -1409,17 +1409,19 @@ export class Photo extends RestModel {
 //
 //   - "photos.updated" (PublishPhotoEvent in internal/api/api_event.go)
 //     emits a search.Photos result: an array of objects with .UID.
-//   - "photos.archived" / "photos.restored" / "photos.deleted"
-//     (EntitiesArchived / EntitiesRestored / EntitiesDeleted in
-//     internal/event/publish_entities.go) emit a []string of bare UIDs.
+//   - "photos.archived" / "photos.restored" / "photos.deleted" /
+//     "photos.edited" (EntitiesArchived / EntitiesRestored /
+//     EntitiesDeleted / EntitiesEdited in internal/event/
+//     publish_entities.go) emit a []string of bare UIDs.
 //
-// A single helper covers both so we don't have to keep them in sync.
-// The "photos.updated" payload is consumed as an EVICT signal (not a
-// refresh) because search.Photos flattens nested fields like Details
-// into top-level columns (DetailsKeywords, DetailsSubject, ...);
-// hydrating from that snapshot would leave Photo.Details === undefined
-// and collapse the sidebar's isEditable computed. Eviction sends the
-// next read back to find() and the field-complete /photos/:uid endpoint.
+// A single helper covers every shape so we don't have to keep them
+// in sync. The "photos.updated" payload is consumed as an EVICT
+// signal (not a refresh) because search.Photos flattens nested
+// fields like Details into top-level columns (DetailsKeywords,
+// DetailsSubject, ...); hydrating from that snapshot would leave
+// Photo.Details === undefined and collapse the sidebar's isEditable
+// computed. Eviction sends the next read back to find() and the
+// field-complete /photos/:uid endpoint.
 function evictCachedFromEntities(data) {
   if (!data || !Array.isArray(data.entities)) {
     return;
@@ -1433,13 +1435,16 @@ function evictCachedFromEntities(data) {
   });
 }
 
-// Subscribe once per channel. Adding "archived" and "restored" here
-// retires the per-mutation Photo.evictCache calls that lightbox.vue
-// previously made after onArchive / onRestore — the WS round-trip
-// covers it for every consumer in this tab.
-$event.subscribe("photos.updated", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.deleted", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.archived", (_ev, data) => evictCachedFromEntities(data));
-$event.subscribe("photos.restored", (_ev, data) => evictCachedFromEntities(data));
+// One hierarchical subscriber on the photos namespace, filtered to
+// the standard mutation verbs by subscribeEntityActions. Mirrors the
+// page/photos.vue onUpdate switch pattern at the cache layer: a
+// future verb (e.g. a hypothetical "merged") joins via one edit to
+// ENTITY_MUTATIONS in common/event.js, and non-mutation channels on
+// the same namespace stay no-ops without needing per-channel guards
+// here. Also covers "created" from the indexer (index_mediafile.go)
+// and unstack (photo_unstack.go) — harmless no-op today since
+// brand-new UIDs are never cached, but future-proofs scenarios
+// where a recreated UID needs the stale entry dropped.
+subscribeEntityActions("photos", (_ev, data) => evictCachedFromEntities(data));
 
 export default Photo;

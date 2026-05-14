@@ -2117,6 +2117,28 @@ describe("model/photo", () => {
         expect(Photo._cache.has("uid-ws-res")).toBe(false);
       });
 
+      // event.EntitiesEdited("photos", savedUIDs) in
+      // internal/api/batch_photos_edit.go — one event per batch save,
+      // payload is the full UID list (always []string, not entity
+      // objects). This is the lightweight signal that closes the
+      // stale-cache bug after batch edits where PublishPhotoEvent
+      // would have emitted N heavy payloads.
+      it("evicts every cached entry when photos.edited arrives with the batch UID list", async () => {
+        seedCache("uid-edited-1", { Title: "Stale 1" });
+        seedCache("uid-edited-2", { Title: "Stale 2" });
+        seedCache("uid-edited-keep", { Title: "Untouched" });
+
+        $event.publish("photos.edited", {
+          entities: ["uid-edited-1", "uid-edited-2"],
+        });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-edited-1")).toBe(false);
+        expect(Photo._cache.has("uid-edited-2")).toBe(false);
+        // Entries outside the payload must survive.
+        expect(Photo._cache.has("uid-edited-keep")).toBe(true);
+      });
+
       it("ignores empty-string entries in archived/restored payloads", async () => {
         seedCache("uid-keep-empty", {});
 
@@ -2173,7 +2195,7 @@ describe("model/photo", () => {
 
         // Each subscribed channel runs the same guard, so malformed
         // payloads on any of them must leave the cache untouched.
-        ["photos.updated", "photos.deleted", "photos.archived", "photos.restored"].forEach((ev) => {
+        ["photos.updated", "photos.deleted", "photos.archived", "photos.restored", "photos.edited"].forEach((ev) => {
           $event.publish(ev, null);
           $event.publish(ev, {});
           $event.publish(ev, { entities: "not-an-array" });
@@ -2182,6 +2204,37 @@ describe("model/photo", () => {
         await flushEvents();
 
         expect(Photo._cache.has("uid-keep")).toBe(true);
+      });
+
+      // photos.created flows through the same subscribeEntityActions
+      // helper as the other mutation verbs. The cache doesn't usually
+      // hold a brand-new UID (the indexer creates it fresh), but if a
+      // call site has seeded one — e.g. an upsert flow where the UID
+      // already exists in cache — the WS event must evict it so the
+      // next read returns the post-create state instead of a stale
+      // snapshot.
+      it("evicts cached entries when photos.created arrives for a known UID", async () => {
+        seedCache("uid-created", { Title: "Pre-create" });
+
+        $event.publish("photos.created", { entities: ["uid-created"] });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-created")).toBe(false);
+      });
+
+      // Forward-compat: a hypothetical new mutation verb (e.g.
+      // "merged") would auto-evict if added to ENTITY_MUTATIONS in
+      // common/event.js. Until then it must be a no-op so unrelated
+      // future events on the photos namespace don't pull the cache
+      // out from under live consumers.
+      it("ignores photos.* events whose action is not in ENTITY_MUTATIONS", async () => {
+        seedCache("uid-merged", { Title: "Keep" });
+
+        $event.publish("photos.merged", { entities: ["uid-merged"] });
+        $event.publish("photos.viewed", { entities: ["uid-merged"] });
+        await flushEvents();
+
+        expect(Photo._cache.has("uid-merged")).toBe(true);
       });
     });
 
