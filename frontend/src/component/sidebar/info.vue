@@ -812,7 +812,7 @@ export default {
         artist: {
           key: "artist",
           label: this.$gettext("Artist"),
-          icon: "mdi-human-handsdown",
+          icon: "mdi-account-tie",
           read: (p) => p?.Details?.Artist,
           write: (p, v) => {
             if (p?.Details) p.Details.Artist = v;
