@@ -788,7 +788,7 @@ export default {
         subject: {
           key: "subject",
           label: this.$gettext("Subject"),
-          icon: "mdi-flower-tulip-outline",
+          icon: "mdi-flower-tulip",
           read: (p) => p?.Details?.Subject,
           write: (p, v) => {
             if (p?.Details) p.Details.Subject = v;
