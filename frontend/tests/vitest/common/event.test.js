@@ -5,7 +5,16 @@
 // malformed event names behave.
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-import $event, { ENTITY_MUTATIONS, subscribeEntityActions } from "common/event";
+import $event, {
+  ENTITY_MUTATIONS,
+  subscribeEntityActions,
+  ACTION_CREATED,
+  ACTION_UPDATED,
+  ACTION_DELETED,
+  ACTION_ARCHIVED,
+  ACTION_RESTORED,
+  ACTION_EDITED,
+} from "common/event";
 
 // Force pubsub-js to flush synchronously for the duration of one test.
 // The module configures `async: true` for production so a handler that
@@ -23,8 +32,21 @@ describe("common/event.js", () => {
       // / EntityEdited. Adding a verb here MUST also land a matching
       // constant on the Go side.
       expect([...ENTITY_MUTATIONS].sort()).toEqual(
-        ["archived", "created", "deleted", "edited", "restored", "updated"].sort()
+        [ACTION_ARCHIVED, ACTION_CREATED, ACTION_DELETED, ACTION_EDITED, ACTION_RESTORED, ACTION_UPDATED].sort()
       );
+    });
+
+    it("exports the six action verbs as individual string constants", () => {
+      // Switch cases in page-level onUpdate handlers reference these
+      // symbols so IDE find-references / grep locates every event-
+      // handling site without false positives from prose, Vue
+      // lifecycle hooks, Date methods, etc.
+      expect(ACTION_CREATED).toBe("created");
+      expect(ACTION_UPDATED).toBe("updated");
+      expect(ACTION_DELETED).toBe("deleted");
+      expect(ACTION_ARCHIVED).toBe("archived");
+      expect(ACTION_RESTORED).toBe("restored");
+      expect(ACTION_EDITED).toBe("edited");
     });
 
     it("is frozen so call sites cannot mutate the shared default", () => {

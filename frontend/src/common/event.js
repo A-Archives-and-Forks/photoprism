@@ -37,13 +37,26 @@ if (trace) {
   });
 }
 
-// Action verbs the backend's entity-event helpers publish — kept
-// in sync with EntityUpdated / EntityCreated / EntityDeleted /
+// Action-verb constants for the backend's entity-event helpers —
+// kept in sync with EntityCreated / EntityUpdated / EntityDeleted /
 // EntityArchived / EntityRestored / EntityEdited in
-// internal/event/publish_entities.go. Frozen so call sites can't
-// mutate the shared default; pass a different Set explicitly when
-// a caller needs a narrower scope.
-export const ENTITY_MUTATIONS = Object.freeze(new Set(["created", "updated", "deleted", "archived", "restored", "edited"]));
+// internal/event/publish_entities.go. Exported as symbols (not just
+// strings in a Set) so that switch cases and grep / IDE find-
+// references can locate every event-handling site without having
+// to disambiguate from unrelated occurrences of the same words
+// (Vue lifecycle hooks, Date methods, prose in comments, etc.).
+export const ACTION_CREATED = "created";
+export const ACTION_UPDATED = "updated";
+export const ACTION_DELETED = "deleted";
+export const ACTION_ARCHIVED = "archived";
+export const ACTION_RESTORED = "restored";
+export const ACTION_EDITED = "edited";
+
+// ENTITY_MUTATIONS lists the action verbs the cache layers and
+// namespace-level subscribers treat as "something changed; evict".
+// Frozen so call sites can't mutate the shared default; pass a
+// different Set explicitly when a caller needs a narrower scope.
+export const ENTITY_MUTATIONS = Object.freeze(new Set([ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED, ACTION_EDITED]));
 
 // Subscribes to every <namespace>.<action> event whose action is
 // in `actions`. Mirrors the page/photos.vue onUpdate switch

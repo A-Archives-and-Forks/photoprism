@@ -64,6 +64,7 @@
 <script>
 import { Photo } from "model/photo";
 import Thumb from "model/thumb";
+import { ACTION_CREATED, ACTION_UPDATED, ACTION_DELETED, ACTION_ARCHIVED, ACTION_RESTORED, ACTION_EDITED } from "common/event";
 import * as contexts from "options/contexts";
 import PPhotoToolbar from "component/photo/toolbar.vue";
 import PPhotoClipboard from "component/photo/clipboard.vue";
@@ -772,7 +773,7 @@ export default {
       const type = ev.split(".")[1];
 
       switch (type) {
-        case "updated":
+        case ACTION_UPDATED:
           for (let i = 0; i < data.entities.length; i++) {
             const values = data.entities[i];
 
@@ -785,7 +786,7 @@ export default {
             }
           }
           break;
-        case "restored":
+        case ACTION_RESTORED:
           this.dirty = true;
           this.complete = false;
 
@@ -799,7 +800,7 @@ export default {
           }
 
           break;
-        case "archived":
+        case ACTION_ARCHIVED:
           this.dirty = true;
           this.complete = false;
 
@@ -816,7 +817,7 @@ export default {
           }
 
           break;
-        case "deleted":
+        case ACTION_DELETED:
           this.dirty = true;
           this.complete = false;
 
@@ -829,13 +830,13 @@ export default {
           }
 
           break;
-        case "created":
+        case ACTION_CREATED:
           this.dirty = true;
           this.scrollDisabled = false;
           this.complete = false;
 
           break;
-        case "edited":
+        case ACTION_EDITED:
           // photos.edited is a lightweight UID-only batch signal
           // (event.EntitiesEdited). The cards list may now show stale
           // labels/albums/title for the affected UIDs; mark dirty so
