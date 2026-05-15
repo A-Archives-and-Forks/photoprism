@@ -348,49 +348,23 @@ export function setFocus(el, selector, scroll) {
   return false;
 }
 
-// Edge band (px) where iOS / browser navigation gestures originate.
-// Touches inside these bands trigger preventDefault below;
-// inner-area touches are left alone so legitimate UI gestures
-// (sidebar scroll, button taps, marker drawing, etc.) work normally.
+// Edge band (px) at the viewport sides/top where iOS swipe-back and browser
+// pull-to-refresh gestures originate; touches inside it are treated as nav gestures.
 const NavGestureEdgeBand = 30;
 
-// Selector for tap-actionable elements that must respond to taps
-// regardless of where they sit on screen. Buttons and other
-// interactive widgets that happen to land inside an edge band
-// (Back button in the face-marker overlay top-left corner, sidebar
-// action buttons flush against the right edge in LTR, top-bar
-// buttons inside the top 30 px band) would otherwise have their
-// taps eaten by the edge preventDefault. Browser navigation
-// gestures originate on bare canvas / scrim regions, not on
-// pressable widgets.
+// Tap-actionable elements exempted from edge-band preventDefault so buttons,
+// inputs, and links inside an edge band stay reliable on touch devices.
 const InteractiveTargetSelector = 'button, input, textarea, select, a[href], [role="button"]';
 
-// True when the touch event's target is (or sits inside) a
-// tap-actionable element. Defensive against missing closest support
-// and DocumentFragment / Window targets.
+// isInteractiveTarget reports whether the touch target is (or sits inside) a tappable widget.
 function isInteractiveTarget(target) {
   if (!target || typeof target.closest !== "function") return false;
   return target.closest(InteractiveTargetSelector) !== null;
 }
 
-// Prevents the default navigation touch gestures originating at the
-// screen edges. Registered against `window` while the lightbox view
-// is active (see View.apply), so this handler fires for every touch
-// on the page — its job is to suppress iOS swipe-back, browser
-// pull-to-refresh, and accidental horizontal navigation that would
-// otherwise close PhotoPrism mid-gesture while the user is using
-// PhotoSwipe (whose internal pan/swipe gestures collide with the
-// browser's defaults).
-//
-// The handler is scoped to edge bands ONLY: a touchstart or touchmove
-// inside the leftmost / rightmost / topmost `NavGestureEdgeBand`
-// pixels of the viewport is treated as a potential navigation
-// gesture and preventDefault()-ed. Inner-area touches are not blocked
-// (the previous implementation blocked every non-button touchmove,
-// which broke sidebar scroll on iPad). Taps on interactive widgets
-// (buttons, inputs, links) inside the bands are exempted so the
-// Back button in the overlay's top-left and the sidebar's right-edge
-// action buttons stay tap-reliable on iPad.
+// preventNavigationTouchEvent suppresses iOS swipe-back, browser pull-to-refresh, and
+// accidental horizontal navigation while the lightbox is active. Scoped to edge bands
+// only — inner-area touches and taps on interactive widgets pass through.
 export function preventNavigationTouchEvent(ev) {
   if (!(ev instanceof TouchEvent) || !ev.cancelable) return;
   if (ev.type !== TouchStartEvent && ev.type !== TouchMoveEvent) return;
@@ -540,12 +514,9 @@ export class View {
       return false;
     }
 
-    // When debug mode is enabled, write logs to a collapsed group in the browser console:
-    // https://developer.mozilla.org/en-US/docs/Web/API/console/groupCollapsed_static
+    // Write debug logs to a collapsed group with a recognizable purple header.
     if (debug) {
       const scope = this.scopes.map((s) => `${s?.$options?.name} #${s?.$?.uid.toString()}`).join(" › ");
-      // To make them easy to recognize, the collapsed view logs are displayed
-      // in the browser console with bold white text on a purple background.
       console.groupCollapsed(`%c${scope}`, "background: #502A85; color: white; padding: 3px 5px; border-radius: 8px; font-weight: bold;");
       console.log("data:", toRaw(c?.$data));
     }
@@ -746,40 +717,11 @@ export class View {
       return;
     }
 
-    // Sibling-menu gate: components like v-autocomplete, v-select, and v-combobox
-    // teleport their dropdown menus to <body>, so the menu's overlay element is
-    // a sibling of the dialog's overlay (both children of the same parent),
-    // NOT a descendant of the dialog. When the user opens such a menu, focus
-    // moves from the input (inside the dialog) to a list item (inside the
-    // sibling menu overlay) — the `root.contains(next)` check above does not
-    // cover that case, so without this gate the focus trap would yank focus
-    // back to the dialog and immediately close the menu.
-    //
-    // We only skip the trap when ALL of the following hold:
-    //   - the dialog is itself wrapped in a Vuetify overlay (v-dialog)
-    //   - relatedTarget points into a `.v-overlay__content` (the menu's content
-    //     wrapper) — anything else is treated as focus genuinely leaving the
-    //     dialog and gets re-trapped
-    //   - that overlay is a `.v-menu` (excludes nested v-dialogs and other
-    //     overlay types where re-trapping is still desired)
-    //   - the menu overlay is a sibling of the dialog overlay (same parent),
-    //     confirming both were teleported to the same root and that the menu
-    //     belongs to the same modal stack
-    //   - the menu is currently visible (`display !== "none"` — Vuetify uses
-    //     `v-show` to hide closed menus while keeping them mounted)
-    //   - relatedTarget really is inside that menu's content
-    //
-    // History note: Vuetify 3.12.3 added an `onFocusout` handler to
-    // VAutocomplete/VSelect/VCombobox that flips `isFocused=false` whenever
-    // relatedTarget is outside the textfield, which closed long autocomplete
-    // menus on open (issue #5538, Vuetify PR fixing #22697). PhotoPrism is
-    // pinned to Vuetify 3.12.2 to avoid that regression — see
-    // `frontend/package.json` and `frontend/CODEMAP.md`. If the pin is ever
-    // lifted to >=3.12.3, this gate alone is NOT sufficient: that bug fires
-    // before the user ever interacts with the menu. Vuetify 3.12.2 itself has
-    // an unrelated upstream caveat (issue #22828, v-select @blur firing on
-    // open); PhotoPrism is not affected because we don't bind @blur to
-    // v-select anywhere.
+    // Sibling-menu gate: v-autocomplete / v-select / v-combobox teleport their
+    // dropdown to <body>, so focus moving from the input into a list item exits
+    // the dialog's DOM subtree and would otherwise be yanked back by the trap,
+    // immediately closing the menu. Skip the trap only when relatedTarget sits
+    // inside a visible .v-menu overlay that is a sibling of this dialog's overlay.
     const dialogOverlay = root.closest(".v-overlay");
     const menuOverlayContent = next instanceof HTMLElement ? next.closest(".v-overlay__content") : null;
 

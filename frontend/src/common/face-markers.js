@@ -26,30 +26,11 @@ Additional information can be found in our Developer Guide:
 import { reactive } from "vue";
 import { FaceMarkerDisplay, FaceMarkerEdit, isFaceMarkerMode } from "options/face-marker";
 
-// FaceMarkers carries the reactive UI state for the face-marker overlay
-// and the surrounding controls (sidebar eye-toggle, + button, inline
-// name editor). State that depends on a specific photo (the marker
-// array itself) lives on the Photo model and is read via
-// `photo.getMarkers(true)` at render time; this singleton only carries
-// state that is global to "is the overlay active right now".
-//
-// Fields:
-//
-//   mode  — null | FaceMarkerDisplay | FaceMarkerEdit. `null` means the
-//           overlay is hidden; the two truthy values mirror the
-//           constants in `options/face-marker.js`.
-//   busy  — true while a marker-mutating API call is in flight. Sidebar
-//           buttons gate on this to prevent overlapping reject / eject /
-//           name-set requests.
-//   pendingNameMarkerUid — UID of a freshly-created marker whose name
-//           input should auto-focus after the overlay's save settles.
-//           The sidebar consumes this to drive the inline naming UI and
-//           emits `naming-started` to reset it back to "".
-//
-// The lightbox is the policy owner (it gates writes on
-// `shouldShowEditButton()` etc.) and writes through the singleton; the
-// sidebar reads from the singleton and emits sidebar→lightbox events
-// for state transitions it wants to request.
+// FaceMarkers carries the reactive UI state for the face-marker overlay and
+// its controls. Per-photo marker arrays live on the Photo model; this
+// singleton holds only state global to "is the overlay active right now".
+// The lightbox owns policy and writes here; the sidebar reads and emits
+// events for state transitions it wants to request.
 export class FaceMarkers {
   constructor() {
     this.mode = null;
@@ -68,14 +49,12 @@ export class FaceMarkers {
     return this.mode === FaceMarkerDisplay;
   }
 
-  // isEdit reports whether the overlay is in edit mode (drag-to-create
-  // + click-to-remove gestures active).
+  // isEdit reports whether the overlay is in edit mode (drag-to-create + click-to-remove).
   get isEdit() {
     return this.mode === FaceMarkerEdit;
   }
 
-  // setMode flips the state machine to the specified mode (or `null` to
-  // clear it). Invalid values are ignored.
+  // setMode flips the state machine to the given mode (or null to clear); invalid values are ignored.
   setMode(mode) {
     if (mode === null || isFaceMarkerMode(mode)) {
       this.mode = mode;
@@ -87,15 +66,13 @@ export class FaceMarkers {
     this.mode = FaceMarkerDisplay;
   }
 
-  // edit enters edit mode (pencil toggle on — drag-to-create new
-  // markers + click-to-remove existing unnamed markers).
+  // edit enters edit mode (pencil toggle on — drag-to-create + click-to-remove).
   edit() {
     this.mode = FaceMarkerEdit;
   }
 
-  // exit clears the mode to `null`; the lightbox watcher reacts to this
-  // by tearing down the overlay (and leaves any paused playback paused
-  // — playback is NOT resumed on exit, by design).
+  // exit clears the mode so the lightbox watcher tears down the overlay;
+  // paused playback is left paused (not resumed on exit, by design).
   exit() {
     this.mode = null;
   }
@@ -111,21 +88,13 @@ export class FaceMarkers {
     this.pendingNameMarkerUid = typeof uid === "string" ? uid : "";
   }
 
-  // setHoveredMarkerUid records the UID of the marker currently being
-  // hovered. Drives the sidebar → image highlight: sidebar people
-  // rows set it on @mouseenter (and clear it on @mouseleave) so the
-  // matching overlay rect picks up the `--hovered` modifier class.
-  // The reverse direction (rect → sidebar row) is not wired today
-  // because rects carry `pointer-events: none`; a future
-  // implementation would set this from a parent-level pointermove
-  // hit-test on the overlay.
+  // setHoveredMarkerUid records the hovered marker so the matching overlay
+  // rect picks up the `--hovered` modifier; sidebar rows drive this on hover.
   setHoveredMarkerUid(uid) {
     this.hoveredMarkerUid = typeof uid === "string" ? uid : "";
   }
 
-  // reset returns every field to its default. Called when the lightbox
-  // closes or the user navigates to a different photo so a fresh slide
-  // never inherits stale state.
+  // reset returns every field to its default so a new slide never inherits stale state.
   reset() {
     this.mode = null;
     this.busy = false;
@@ -134,10 +103,7 @@ export class FaceMarkers {
   }
 }
 
-// $faceMarkers is the shared singleton consumed by `PLightbox` and
-// `PSidebarInfo`. Components import it directly; it is not installed as
-// a Vue plugin because only two consumers need it today (and explicit
-// imports keep the dependency graph greppable).
+// $faceMarkers is the shared singleton consumed by PLightbox and PSidebarInfo.
 export const $faceMarkers = reactive(new FaceMarkers());
 
 export default $faceMarkers;

@@ -95,16 +95,10 @@ const sanitizeHtmlOptions = Object.freeze({
 const debug = window.__CONFIG__?.debug || window.__CONFIG__?.trace;
 
 export default class $util {
-  // Canonical-form normalizer for short identifiers that are user-typed
-  // and dedup-compared (label names, album titles, and similar). Lowercases,
-  // expands `&` to `and`, converts every non-letter / non-digit / non-emoji
-  // character to whitespace (so `hello.cat`, `hello,cat`, `hello-cat`,
-  // `hello_cat`, and `Hello Cat` all normalize to `hello cat`), collapses
-  // runs of whitespace, and trims leading and trailing whitespace.
-  // Letters, digits, and emoji sequences (incl. ZWJ + skin-tone modifiers +
-  // regional indicators) are preserved so user-defined emoji-only titles
-  // round-trip. Inputs consisting only of punctuation normalize to the
-  // empty string, so they cannot be created or matched.
+  // normalizeTitle returns the dedup-comparison form of a user-typed identifier:
+  // lowercased, `&` → `and`, non-letter/digit/emoji runs collapsed to single
+  // spaces and trimmed. Emoji sequences (ZWJ, skin tone, regional indicators)
+  // are preserved so emoji-only titles round-trip.
   static normalizeTitle(s) {
     if (s === null || s === undefined) return "";
     return (

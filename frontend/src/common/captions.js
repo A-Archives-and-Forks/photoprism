@@ -14,12 +14,8 @@ const defaultOptions = {
   mobileCaptionOverlapRatio: 0.3,
   mobileLayoutBreakpoint: 1024,
   verticallyCenterImage: false,
-  // enabled gates the layout-affecting work in onCalcSlideSize: when
-  // it returns false, the caption element is still created (so a later
-  // toggle-on can resume cleanly) but panAreaSize is left at the
-  // un-shrunken default so the photo can fill the entire viewport.
-  // The host calls `pswp.updateSize(true)` after flipping the gate to
-  // force a re-layout. Default returns true (legacy behavior).
+  // enabled gates the layout-shrinking work in onCalcSlideSize; the caption
+  // element is still created so a later toggle-on resumes cleanly.
   enabled: () => true,
 };
 
@@ -274,26 +270,13 @@ class PhotoSwipeDynamicCaption {
 
     this.storeOriginalPanAreaSize(slide);
 
-    // PhotoSwipe's slide.calculateSize() refreshed panAreaSize and
-    // zoomLevels.initial moments ago, but bounds are this plugin's
-    // responsibility — without this call, bounds stay tied to the
-    // previous zoomLevels.initial and adjustPanArea (which is called
-    // by zoomPanUpdate / beforeZoomTo) ends up positioning the photo
-    // inside the old box. Run unconditionally so the disabled-gate
-    // branch below also gets fresh bounds for the un-shrunken area.
+    // Refresh bounds against the current zoomLevels.initial so adjustPanArea
+    // positions the photo inside the new box (bounds is this plugin's job).
     slide.bounds.update(slide.zoomLevels.initial);
 
-    // External gate (e.g. the lightbox's Ctrl+H caption toggle): when
-    // disabled, skip the panAreaSize adjustments below so the photo
-    // fills the full viewport. Drop any stale `adjustedPanAreaSize`
-    // so adjustPanArea (called on zoom events) is a no-op until the
-    // caption is re-enabled and onCalcSlideSize re-runs.
-    // TODO Revisit: the `delete` works empirically but the precise
-    // contract with PhotoSwipe's adjustPanArea path is fuzzy. Possible
-    // alternatives — assign panAreaSize to adjustedPanAreaSize, move
-    // the gate into adjustPanArea, or skip storeOriginalPanAreaSize
-    // when disabled — should be evaluated when time permits. See #5580
-    // and the deferred follow-up task in the agent task list.
+    // External gate (e.g. the lightbox's Ctrl+H caption toggle): when disabled,
+    // skip the panAreaSize shrink so the photo fills the viewport. Drop any
+    // stale adjustedPanAreaSize so adjustPanArea is a no-op until re-enabled.
     if (typeof this.options.enabled === "function" && !this.options.enabled()) {
       delete slide.dynamicCaption.adjustedPanAreaSize;
       return;
