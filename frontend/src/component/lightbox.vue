@@ -2743,16 +2743,20 @@ export default {
       this.hideCaption = !this.hideCaption;
       appStorage.setItem("lightbox.caption", (!this.hideCaption).toString());
 
-      // Show controls if caption was hidden.
-      if (!this.hideCaption) {
-        this.showControls();
-      }
-
       // Resize and focus content element.
       this.$nextTick(() => {
+        // If there are still issues with resizing images after
+        // hiding the caption, consider the following approach:
+        //   const viewport = this.getViewport();
+        //   slide.zoomLevels.update(viewport.x, viewport.y, slide.panAreaSize);
+        //   slide.bounds.update(slide.zoomLevels.fit);
         this.resize(true).then(() => {
           this.focusContent();
           this.resize(true);
+          // Show controls if caption was hidden.
+          if (!this.hideCaption) {
+            this.showControls();
+          }
         });
       });
     },

@@ -793,19 +793,6 @@
     display: none !important;
 }
 
-/* User-toggled caption visibility (Ctrl+H, #5580). Lives next to
-   .sidebar-visible because both gate the same overlay; this is the
-   user-driven preference layer (persisted to localStorage as
-   `lightbox.caption`), the sidebar one is the side-effect layer.
-   Naming follows the existing `hide-{thing}` convention used by
-   .hide-scrollbar, .hide-nav, .hide-edit-pencils, etc. The plugin's
-   `enabled` callback (frontend/src/common/captions.js) is what
-   reclaims the layout space; this rule hides the leftover caption
-   element so it doesn't render at its stale coordinates. */
-.p-lightbox__container > .p-lightbox__content.hide-caption .pswp__dynamic-caption {
-    display: none !important;
-}
-
 .p-lightbox__container > .p-lightbox__content.is-video .pswp__dynamic-caption--faded,
 .p-lightbox__container > .p-lightbox__content:not(.slideshow-active) .pswp__dynamic-caption--faded {
     opacity: 0 !important;
@@ -912,6 +899,13 @@
 .pswp__dynamic-caption p {
     font-weight: 400;
     white-space: pre-wrap;
+}
+
+/* User-toggled caption visibility (Ctrl+H, #5580). */
+
+.p-lightbox__container > .p-lightbox__content.hide-caption .pswp__dynamic-caption {
+    display: none !important;
+    transition: none !important;
 }
 
 /* Top Bar Controls */
