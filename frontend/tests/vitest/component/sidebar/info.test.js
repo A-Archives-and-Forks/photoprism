@@ -160,6 +160,7 @@ describe("PSidebarInfo component", () => {
     };
 
     mockPhoto = {
+      UID: "ps6sg6be2lvl0y12",
       Type: "image",
       CameraID: 2,
       CameraMake: "Canon",
@@ -173,6 +174,9 @@ describe("PSidebarInfo component", () => {
       getVideoInfo: vi.fn().mockReturnValue(""),
       getVectorInfo: vi.fn().mockReturnValue(""),
       getExifInfo: vi.fn().mockReturnValue("50mm \u2022 \u0192/1.2 \u2022 ISO 400 \u2022 1/125"),
+      PlaceLabel: "Berlin, Germany",
+      Country: "de",
+      placeName: vi.fn().mockReturnValue("Berlin, Germany"),
       locationInfo: vi.fn().mockReturnValue("Berlin, Germany"),
       getMarkers: vi.fn().mockReturnValue([
         { UID: "m1", CropID: "crop1", Name: "Jane Doe", SubjUID: "subj1", thumbnailUrl: () => "/t/thumb1/public/tile_160" },
@@ -3358,6 +3362,7 @@ describe("PSidebarInfo component", () => {
         };
       }
       return {
+        UID: "ps6sg6be2lvl0y12",
         Type: "image",
         Lat: 52.52,
         Lng: 13.405,
@@ -3378,6 +3383,9 @@ describe("PSidebarInfo component", () => {
         getVideoInfo: vi.fn().mockReturnValue(""),
         getVectorInfo: vi.fn().mockReturnValue(""),
         getExifInfo: vi.fn().mockReturnValue("50mm \u2022 f/1.2 \u2022 ISO 400 \u2022 1/125"),
+        PlaceLabel: TEXT.placeName,
+        Country: "de",
+        placeName: vi.fn().mockReturnValue(TEXT.placeName),
         locationInfo: vi.fn().mockReturnValue(TEXT.placeName),
         getMarkers: vi.fn().mockReturnValue([
           { UID: "m1", CropID: "crop1", Name: TEXT.namedMarker, SubjUID: "subj1", thumbnailUrl: () => "/t/thumb1/public/tile_160" },

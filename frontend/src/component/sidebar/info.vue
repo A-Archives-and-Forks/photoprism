@@ -692,7 +692,10 @@ export default {
       return this.$config.allow("places", "view");
     },
     captionHtml() {
-      const raw = this.photo?.Caption ?? this.model?.Caption;
+      // `||` not `??`: limited-access sessions skip the Photo fetch, leaving
+      // `photo.Caption` as the empty-string default — must fall through to
+      // `model.Caption`.
+      const raw = this.photo?.Caption || this.model?.Caption;
       if (!raw) return "";
       return this.$util.sanitizeHtml(this.$util.encodeHTML(raw));
     },
@@ -924,8 +927,9 @@ export default {
       return hasAbove && hasBelow;
     },
     placeName() {
-      if (!this.photo) return "";
-      return this.photo.locationInfo() || "";
+      // Empty-string contract lives in the Photo model so other views
+      // can reuse it; see `Photo.placeName()`.
+      return this.photo?.placeName?.() || "";
     },
     altitude() {
       if (!this.photo || !this.photo.Altitude) return "";
@@ -999,7 +1003,11 @@ export default {
       return primary?.Name || null;
     },
     fileInfo() {
-      if (this.photo) {
+      // Gate on UID so the empty-Photo placeholder (limited-access
+      // sessions) skips `getImageInfo()` and falls through to the Thumb
+      // helper — otherwise the localized "Unknown" sentinel would render
+      // as the row title.
+      if (this.photo && this.photo.UID) {
         switch (this.photo.Type) {
           case media.Video:
           case media.Live:
@@ -1012,10 +1020,10 @@ export default {
             return this.photo.getImageInfo();
         }
       }
-      // Fallback for restricted roles: Thumb.getTypeInfo() produces
-      // format, megapixels, and dimensions from the viewer endpoint data.
+      // Thumb.getTypeInfo returns "" when no codec/dimensions/duration
+      // are set, so a truthy check hides the row cleanly.
       if (this.model && typeof this.model.getTypeInfo === "function") {
-        return this.model.getTypeInfo();
+        return this.model.getTypeInfo() || "";
       }
       return "";
     },
@@ -1729,13 +1737,8 @@ export default {
       }
       const norm = this.$util.normalizeTitle(name);
       if (!norm) return false;
-      // If the typed label matches a chip currently pending removal,
-      // restore it instead of calling the API. Without this branch the
-      // `visibleLabels.some` check below would still let the call through
-      // (the chip is filtered out of visibleLabels) but the resulting
-      // POST would race the deferred DELETE on auto-commit and leave the
-      // photo in an unpredictable state — and intuitively "type the name
-      // you just × clicked" should mean "put it back", not "round-trip".
+      // Re-typing a × clicked chip un-stages the removal locally so the
+      // re-add doesn't race the deferred DELETE on auto-commit.
       const pending = this.labels.find(
         (l) => this.isChipPendingRemoval("labels", l?.Label?.ID) && this.$util.normalizeTitle(l?.Label?.Name) === norm
       );
@@ -1774,9 +1777,7 @@ export default {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
       }
-      // If the album is pending removal, restore it instead of calling
-      // the API. Mirrors the Labels pending-restore path; see
-      // addLabelImmediate for the rationale.
+      // Mirrors the Labels pending-restore path (see addLabelImmediate).
       if (this.isChipPendingRemoval("albums", album.UID)) {
         this.togglePendingChipRemoval("albums", album.UID);
         return true;

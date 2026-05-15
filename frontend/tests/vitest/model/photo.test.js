@@ -1114,6 +1114,80 @@ describe("model/photo", () => {
     expect(photo2.locationInfo()).toBe("Spain");
   });
 
+  it("should return empty placeName when the photo has no geocoding", () => {
+    const photo = new Photo({ ID: 1, UID: "ABC1" });
+    expect(photo.placeName()).toBe("");
+  });
+
+  it("should resolve placeName from Place.Label when set", () => {
+    const photo = new Photo({
+      ID: 2,
+      UID: "ABC2",
+      PlaceID: "s2:abc",
+      Country: "de",
+      Place: { ID: "s2:abc", Label: "Berlin, Germany" },
+    });
+    expect(photo.placeName()).toBe("Berlin, Germany");
+  });
+
+  it("should fall back to PlaceLabel when Place is not preloaded", () => {
+    const photo = new Photo({
+      ID: 3,
+      UID: "ABC3",
+      PlaceID: "s2:def",
+      Country: "fr",
+      PlaceLabel: "Paris, France",
+    });
+    expect(photo.placeName()).toBe("Paris, France");
+  });
+
+  it("should resolve placeName to the country name for unknown places with a known country", () => {
+    const photo = new Photo({ ID: 4, UID: "ABC4", PlaceID: "zz", Country: "es" });
+    expect(photo.placeName()).toBe("Spain");
+  });
+
+  it("should strip the UnknownPlace literal so placeName returns empty for unresolved photos", () => {
+    // Mirrors the join shape PhotoPreloadByUID returns when a photo
+    // points at UnknownPlace (`internal/entity/place.go`): every text
+    // column is the English literal "Unknown" and Country is also "zz".
+    const photo = new Photo({
+      ID: 5,
+      UID: "ABC5",
+      PlaceID: "zz",
+      Country: "zz",
+      PlaceLabel: "Unknown",
+      Place: { ID: "zz", Label: "Unknown" },
+    });
+    expect(photo.placeName()).toBe("");
+    // locationInfo() still surfaces the localized fallback for callers
+    // that want a placeholder (cards / list / edit dialog).
+    expect(photo.locationInfo()).toBe("Unknown");
+  });
+
+  it("should strip a denormalized 'Unknown' PlaceLabel even when Place is not preloaded", () => {
+    const photo = new Photo({
+      ID: 6,
+      UID: "ABC6",
+      PlaceID: "zz",
+      Country: "zz",
+      PlaceLabel: "Unknown",
+    });
+    expect(photo.placeName()).toBe("");
+  });
+
+  it("should keep a user label that merely contains the substring Unknown", () => {
+    const photo = new Photo({
+      ID: 7,
+      UID: "ABC7",
+      PlaceID: "s2:ghi",
+      Country: "us",
+      PlaceLabel: "Unknown Trail, Yosemite",
+    });
+    // The filter matches the exact DB sentinel, not substrings — a
+    // user-curated label like "Unknown Trail" stays put.
+    expect(photo.placeName()).toBe("Unknown Trail, Yosemite");
+  });
+
   it("should return video info", () => {
     const values = {
       ID: 9,

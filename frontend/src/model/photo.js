@@ -874,22 +874,38 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
+  // Localized location label with the "Unknown" fallback — for views
+  // that render the placeholder as an edit prompt (cards, list, edit
+  // dialog). Read-only renderers should use `placeName()`.
   locationInfo() {
-    return this.generateLocationInfo(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
+    return this.placeName() || $gettext("Unknown");
   }
 
-  generateLocationInfo = memoizeOne((placeId, countryCode, place, placeLabel) => {
-    if (placeId === "zz" && countryCode !== "zz") {
-      const country = countries.find((c) => c.Code === countryCode);
+  // Returns the place label, or "" when the photo has no real
+  // geocoding data. Read-only callers gate row visibility on this.
+  placeName() {
+    return this.generatePlaceName(this.PlaceID, this.Country, this.Place, this.PlaceLabel);
+  }
 
+  generatePlaceName = memoizeOne((placeId, countryCode, place, placeLabel) => {
+    let label = "";
+
+    if (placeId === "zz" && countryCode && countryCode !== "zz") {
+      const country = countries.find((c) => c.Code === countryCode);
       if (country) {
         return country.Name;
       }
     } else if (place && place.Label) {
-      return place.Label;
+      label = place.Label;
     }
 
-    return placeLabel ? placeLabel : $gettext("Unknown");
+    if (!label) {
+      label = placeLabel || "";
+    }
+
+    // Strip the DB literal from UnknownPlace (`internal/entity/place.go`).
+    // Backend-set, not translated — safe to compare.
+    return label === "Unknown" ? "" : label;
   });
 
   addSizeInfo(file, info) {

@@ -58,11 +58,9 @@ export default {
       type: Boolean,
       default: false,
     },
-    // Marks the toolbar as a chip-section toolbar (Labels / Albums staged
-    // removals). Adds the `--chip` modifier class so the Save / Undo
-    // buttons stay visible even when the sidebar root has `hide-edit-save`
-    // / `hide-edit-undo`: chip sections have no keyboard alternative for
-    // committing or undoing pending removals.
+    // Tags the buttons with `meta-chip-*` so the `hide-edit-save` /
+    // `hide-edit-undo` rules in css/lightbox.css skip them — chip
+    // sections have no keyboard alternative for commit / undo.
     chipMode: {
       type: Boolean,
       default: false,

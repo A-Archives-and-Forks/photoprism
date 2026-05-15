@@ -277,6 +277,15 @@
     user-select: text;
 }
 
+/* Reset Vuetify's `v-list nav` blanket `cursor: pointer` on rows that
+   don't have a real click action — `cursor: auto` lets the browser
+   pick context-appropriate cursors (I-beam over the selectable text,
+   pointer over `<a href>` in sanitized Caption / Notes HTML, default
+   over icons / padding). */
+.p-lightbox__container > .p-lightbox__sidebar .metadata__item:not(.clickable) {
+    cursor: auto;
+}
+
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-title,
 .p-lightbox__container > .p-lightbox__sidebar .metadata__item .v-list-item-subtitle {
     white-space: normal;
@@ -517,19 +526,11 @@
     display: none;
 }
 
-/* Sidebar toggles for the inline Undo and Save buttons. Both default
-   to ON (buttons hidden) since the keyboard paths are first-class:
-   Enter commits on the commitOnEnter fields, blur commits on Caption
-   + Notes, Escape cancels, and Ctrl+Z reverts inside the focused
-   textarea. Per-user preference or A/B variants flip `hideEditUndo` /
-   `hideEditSave` on the sidebar root to surface the mouse-driven
-   affordances. Chip-section toolbars (Labels / Albums) carry the
-   `meta-chip-undo` / `meta-chip-confirm` opt-out class on each button —
-   they have no keyboard alternative for committing or undoing pending
-   removals so their Save/Undo affordances always stay visible. The
-   `:not()` exception sits on the hide rule itself rather than as a
-   separate override to keep the CSS minifier from collapsing them into
-   an `:is()` group that breaks the child combinator. */
+/* Hide inline-text Undo/Save (default ON — keyboard paths cover commit
+   / cancel / revert). Chip toolbars opt out via `meta-chip-*` since
+   they have no keyboard alternative. `:not()` lives on the hide rule
+   itself to avoid the CSS minifier collapsing a separate override into
+   `:is()` (which breaks the child combinator). */
 .p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-undo .meta-inline-undo:not(.meta-chip-undo) {
     display: none;
 }
