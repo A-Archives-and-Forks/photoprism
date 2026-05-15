@@ -507,11 +507,9 @@ export default {
     PSidebarInlineToolbar,
   },
   props: {
-    // UID of the photo currently shown in the parent lightbox. Drives the
-    // sidebar lifecycle (re-fetching markers, resetting inline edits) when
-    // the user navigates between slides. All other parent state is read
-    // through `view` (see data() below) — this matches the pattern used
-    // by component/photo/edit/labels.vue.
+    // UID of the photo currently in the parent lightbox; drives the
+    // slide-change lifecycle. All other parent state flows through
+    // `view` (data() below).
     uid: {
       type: String,
       default: "",
@@ -520,22 +518,12 @@ export default {
   emits: ["close", "toggle-face-marker-mode", "toggle-face-marker-edit", "eject-marker", "reload-markers", "naming-started"],
   data() {
     return {
-      // Live reactive handle to the parent lightbox's $data, captured once at
-      // mount via `$view.getData()`. The lightbox calls `$view.enter(this)`
-      // before the sidebar mounts (see lightbox.vue:showDialog), so this is
-      // populated by the time data() runs. Mutations through this.view.X
-      // write through to the parent and don't trigger vue/no-mutating-props.
+      // Reactive handle to the parent lightbox's $data via `$view.getData()`.
+      // Mutations through `this.view.X` write through to the parent.
       view: this.$view.getData(),
-      // Reactive handle to the shared face-marker state singleton
-      // (`common/face-markers.js`). Drives the eye / pencil toggles,
-      // the inline naming flow, and the markersBusy gates. Sidebar
-      // emits transition requests via `toggle-face-marker-mode` /
-      // `toggle-face-marker-edit` / `eject-marker` / `reload-markers`;
-      // the lightbox is the policy owner and performs the actual writes.
-      // Marker removal lives on the face-marker overlay (click an
-      // unnamed marker in edit mode → inline confirm pill) — not in
-      // the sidebar — so the per-row `mdi-close` button that used to
-      // sit inside the combobox was retired.
+      // Shared face-marker state singleton. The lightbox owns policy
+      // (transitions, API writes); the sidebar emits `toggle-face-marker-*`
+      // / `eject-marker` / `reload-markers`.
       faceMarkers: $faceMarkers,
       actions: [],
       featPeople: this.$config.feature("people"),
@@ -544,44 +532,20 @@ export default {
       dateTimeDialog: false,
       cameraDialog: false,
       locationDialog: false,
-      // When true, the inline pencil edit buttons are hidden via CSS
-      // (`.hide-edit-pencils` rule in `css/lightbox.css`). Row-level
-      // click handlers still route to `startEditing` / `open*Dialog`,
-      // so the pencils are a redundant affordance that can be toggled
-      // off without affecting reachability. Save (`meta-inline-confirm`)
-      // and Undo (`meta-inline-undo`) buttons have their own toggles
-      // below.
+      // CSS toggles for the inline pencil / Undo / Save affordances —
+      // hidden by default since row click + keyboard cover everything.
+      // Flip per-user / A/B to surface the mouse-driven affordances.
       hideEditPencils: true,
-      // hideEditUndo / hideEditSave hide the inline Undo and Save
-      // buttons via the `.hide-edit-undo` / `.hide-edit-save` rules in
-      // `css/lightbox.css`. Both default to true (hidden) since the
-      // keyboard paths are first-class: Enter commits on the
-      // commitOnEnter fields (Subject / Artist / Copyright / License /
-      // Keywords), blur commits on Caption + Notes, Escape cancels,
-      // and Ctrl+Z reverts inside the focused textarea. Flip either
-      // to false (per-user preference or A/B variant) to surface the
-      // mouse-driven affordances.
       hideEditUndo: true,
       hideEditSave: true,
       editingField: null,
       editOriginal: null,
-      // Per-field combobox state. The combobox/autocomplete row stays
-      // mounted whenever the section is editable (no pencil-to-edit
-      // gesture for chips), so each section needs its own input/search
-      // scratch refs and per-field force-remount key.
-      //
-      // - input/search: Vuetify v-model and v-model:search bindings.
-      //   `search` doubles as the "typed-but-not-yet-Enter" detector
-      //   for hasPendingEdit().
-      // - key: incremented on Enter to force-remount the combobox so
-      //   stale dropdown state clears alongside the input.
-      // - options: typeahead suggestions populated lazily from the
-      //   shared typeaheadCache (common/typeahead-cache.js); shape
-      //   matches the v-combobox/v-autocomplete item-title bindings.
-      // - removals: pending Label.ID / Album.UID removals committed
-      //   by the toolbar ✓. Additions take an instant-save path
-      //   (addLabelImmediate / addAlbumImmediate → Photo model
-      //   methods), so they never enter chipState.
+      // Per-field combobox state. input/search drive v-model bindings;
+      // `search` also acts as the "typed-but-not-yet-Enter" pending
+      // detector. `key` force-remounts the combobox on Enter to clear
+      // stale dropdown state. `options` is the typeahead list (lazy,
+      // shared cache). `removals` queues Label.ID / Album.UID for the
+      // toolbar ✓; additions skip this and take the instant-save path.
       chipState: {
         labels: { input: null, search: "", key: 0, options: [], removals: [] },
         albums: { input: null, search: "", key: 0, options: [], removals: [] },
@@ -735,14 +699,9 @@ export default {
       if (!this.photo) return [];
       return this.photo.getMarkers(true);
     },
-    // Sorted, locale-aware copy of $config.values.people for the marker
-    // combobox dropdown. Mirrors the Labels/Albums sort baked into
-    // loadChipOptions (L12): localeCompare with `undefined` locale +
-    // base sensitivity + numeric collation. Reading from $config keeps the
-    // list reactive to WS `people.{created,updated,deleted}` events that
-    // are already handled inside common/config.js. A future shared
-    // people-cache module (F1) will move this logic out of the component;
-    // until then the per-consumer sort matches the Labels/Albums pattern.
+    // Sorted, locale-aware copy of `$config.values.people` for the marker
+    // combobox. Reading from `$config` keeps the list reactive to WS
+    // `people.{created,updated,deleted}` events.
     knownPeople() {
       const values = this.$config && this.$config.values;
       if (!values || !Array.isArray(values.people)) return [];
@@ -921,24 +880,15 @@ export default {
       if (this.isEditable) return true;
       return this.detailsFields.some((f) => Boolean(f.read(this.photo)));
     },
-    // inlineEditDirty is true when the active inline-text editor's
-    // current value differs from the editOriginal captured at
-    // startEditing time. Drives the disabled state of the Undo button
-    // — when there's nothing to undo, the button stays visible (so the
-    // affordance is discoverable) but inactive.
+    // True when the active inline editor's value differs from the
+    // editOriginal snapshot — gates the Undo button's disabled state.
     inlineEditDirty() {
       if (!this.editingField) return false;
       return this.getFieldValue(this.editingField) !== (this.editOriginal ?? "");
     },
-    // showRightsDivider gates the single divider that visually splits
-    // the structured metadata fields (Subject / Artist / Copyright /
-    // License / Keywords) from the free-form Notes row inside the
-    // merged details v-for. Template renders the divider just before
-    // the Notes row (`f.key === 'notes'`). For editable users every
-    // row is mounted, so the divider is always meaningful; for
-    // read-only users we suppress it when either side would be empty,
-    // otherwise the divider appears as an orphan line above or below
-    // the lone visible row.
+    // Renders the divider between the rights cluster and the Notes row.
+    // For read-only users we drop it when either side is empty so it
+    // doesn't appear as an orphan line.
     showRightsDivider() {
       if (this.isEditable) return true;
       const hasAbove = ["subject", "artist", "copyright", "license", "keywords"].some((k) => this.shouldShowFieldRow(this.fieldRegistry[k]));
@@ -999,18 +949,10 @@ export default {
       if (this.model?.Lat && this.model?.Lng) return true;
       return this.canViewPlaces && !!this.placeName;
     },
-    // Returns the user-facing file path. For video, Live, and Animated
-    // photos the primary file is the generated JPEG cover (used for
-    // indexing and thumbnails), not the media file the user uploaded —
-    // surface the underlying media file's Name so the sidebar shows the
-    // .mp4 / .mov / .gif instead of "...mp4.jpg". The cards view uses the
-    // same originalFile() routing via Photo.getOriginalName().
-    // Returns `null` (not `""`) for users without library access and
-    // the no-data state so the merged file row's `:subtitle` binding
-    // skips rendering an empty `<v-list-item-subtitle>` element —
-    // Vuetify gates the subtitle on `props.subtitle != null`, so an
-    // empty string would still render an empty slot. Keeping the gate
-    // in the computed lets the template stay free of ACL checks.
+    // Prefers originalFile() so video / Live / Animated show .mp4 / .mov
+    // / .gif instead of the generated JPEG cover. Returns null (not "")
+    // so Vuetify's `:subtitle != null` gate hides the slot instead of
+    // rendering an empty `<v-list-item-subtitle>`.
     fileName() {
       if (!this.canViewLibrary || !this.photo) return null;
       if (typeof this.photo.originalFile === "function") {
@@ -1064,10 +1006,8 @@ export default {
           return "mdi-image-outline";
       }
     },
-    // Localized media type label for the file row's tooltip. Falls back
-    // to the generic "File" label so the tooltip never reads as empty
-    // when the photo's Type is unknown or the row is rendered for a
-    // restricted-role model that doesn't expose Type.
+    // Localized media-type label for the file row tooltip, with a
+    // generic "File" fallback when Type is missing.
     fileTypeName() {
       const type = this.photo?.Type || this.model?.Type;
       return this.$util.typeName(type, this.$gettext("File"));

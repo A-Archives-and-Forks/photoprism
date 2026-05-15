@@ -226,16 +226,9 @@ export default {
       contextAllowsEdit: true,
       contextAllowsSelect: true,
       featPeople: this.$config.feature("people"),
-      // Face-marker UI state lives in the shared singleton
-      // `common/face-markers.js`. The lightbox is the policy owner — every
-      // write goes through this reactive handle and the sidebar reads
-      // from the same singleton (no `view.faceMarkerMode` bridge). Fields:
-      // `mode` (null | FaceMarkerDisplay | FaceMarkerEdit), `busy`
-      // (in-flight marker mutation lock), `pendingNameMarkerUid` (UID of
-      // a freshly-created marker to auto-focus). Entering any non-null
-      // mode pauses playback via the watcher on `faceMarkers.mode` and
-      // `enterFaceMarkerMode`; exit does NOT resume — the user reopens
-      // playback explicitly if wanted.
+      // Shared face-marker state (`common/face-markers.js`). The lightbox
+      // owns policy; the sidebar reads the same singleton. Entering any
+      // non-null mode pauses playback; exit does NOT resume.
       faceMarkers: $faceMarkers,
       subscriptions: [], // Event subscriptions.
       // Video properties for rendering the controls.
@@ -1818,14 +1811,9 @@ export default {
         })
         .catch(() => {});
     },
-    // Pauses any actively playing media or slideshow when the user enters
-    // either face-marker mode (display or draw). The CSS class
-    // `face-marker-mode` on `.p-lightbox__content` swaps `<video>` /
-    // `<live>` / `<animated>` content for the JPEG cover so the overlay's
-    // boxes (positioned by image coordinates) align with the same frame
-    // the detector ran against — a paused `<video>` shows an arbitrary
-    // frame, not the still image. Playback is NOT resumed on exit; the
-    // user reopens it explicitly if desired (see `exitFaceMarkerMode`).
+    // Pauses playback on face-marker entry. The CSS `face-marker-mode`
+    // class swaps video for the JPEG cover so marker boxes align with
+    // the detector frame. Exit does NOT resume playback.
     enterFaceMarkerMode() {
       this.pauseLightbox();
 
@@ -1837,14 +1825,8 @@ export default {
         this.$nextTick(() => overlay.scheduleUpdate());
       }
     },
-    // Fully exits face-marker UI by clearing the singleton's mode flag.
-    // The eye-toggle when active (toggleFaceMarkerMode exit), Escape (via
-    // onEscapeKey), and hideInfo all route through here. The ✓ Done
-    // button (toggleFaceMarkerEdit exit from draw) deliberately does NOT
-    // route through here — it steps down to FaceMarkerDisplay so markers
-    // stay visible after the user finishes drawing. Re-enabling display-
-    // only review from null is one click away via the eye toggle in the
-    // sidebar.
+    // Fully exits face-marker UI. Eye-toggle / Escape / hideInfo all
+    // route through here.
     exitFaceMarkerMode() {
       this.faceMarkers.exit();
     },
@@ -2437,14 +2419,8 @@ export default {
         return false;
       }
 
-      // While face-marker mode is active, shortcuts that open hidden
-      // chrome (menus), stack a competing modal, fire silent
-      // destructive actions, or contradict the entry-only-pause /
-      // overlay-stays-mounted contracts are gated to a no-op. Escape
-      // (priority chain), Tab (focus), KeyI (toggle sidebar — exits
-      // face-marker mode in lockstep via hideInfo), KeyD (download),
-      // KeyF (fullscreen), and KeyM (mute) stay enabled. See the
-      // matching gate in onKeyDown for Arrow / Space.
+      // While face-marker mode is active, only Escape / Tab / KeyI /
+      // KeyD / KeyF / KeyM stay enabled (see `isShortcutDisabledInFaceMarkerMode`).
       if (this.faceMarkers?.active && this.isShortcutDisabledInFaceMarkerMode(ev.code)) {
         return false;
       }
@@ -2586,17 +2562,9 @@ export default {
           return false;
       }
     },
-    // Shared Escape handler. Delegated to from both the v-dialog template
-    // (`@keydown.esc.exact.stop="onEscapeKey"`) and the global
-    // `$view.onShortCut(ev)` forwarder (see `frontend/src/common/README.md`
-    // for the documented keyboard pattern). Priority chain:
-    //
-    // 1. If the face-marker overlay has an in-flight draft / pending rect,
-    //    let it cancel that without exiting edit mode.
-    // 2. Else, if any face-marker UI is active, hide the overlay —
-    //    closing the lightbox would skip a step the user can plausibly
-    //    still want to undo.
-    // 3. Else, close the lightbox normally.
+    // Escape priority: overlay's in-flight draft → exit face-marker
+    // mode → close lightbox. Shared by the v-dialog binding and the
+    // `$view.onShortCut` forwarder.
     onEscapeKey() {
       const overlay = this.$refs.faceMarkerOverlay;
       if (overlay && typeof overlay.handleEscape === "function" && overlay.handleEscape()) {
@@ -2616,16 +2584,9 @@ export default {
         overlay.handleEnter();
       }
     },
-    // Bridges PhotoSwipe's dispatched 'keydown' event so printable keys
-    // typed into the info sidebar (notably "z" for the Subject textarea)
-    // are not swallowed by PhotoSwipe's toggleZoom shortcut. Calling
-    // preventDefault on the dispatched event causes _onKeyDown in
-    // photoswipe.esm.js to return before its switch statement runs.
-    //
-    // Tab is handled separately at the v-dialog level via onTabKey: stopping
-    // propagation there is enough because PhotoSwipe's Tab path only calls
-    // _focusRoot() (a focus trap), which Vuetify's v-dialog and the
-    // PhotoPrism $view trap (common/view.js) already provide more generically.
+    // Stops PhotoSwipe's "z" shortcut from swallowing printable keys
+    // typed into sidebar inputs. `preventDefault` makes `_onKeyDown`
+    // bail before its switch statement.
     onPswpKeyDown(ev) {
       if (!ev || !this.info) return;
       const active = document.activeElement;
@@ -2633,14 +2594,10 @@ export default {
         ev.preventDefault();
       }
     },
-    // Tab keypress handler on the v-dialog root. Stops propagation so
-    // PhotoSwipe's document-level _focusRoot() Tab handler doesn't fire,
-    // letting browser-default Tab navigation continue normally and keeping
-    // sidebar chips, inputs, and pencils reachable by keyboard. Suppression
-    // is gated on focus being inside the lightbox tree so an event bubbling
-    // up from somewhere unexpected (e.g. a teleported overlay) can still
-    // reach PhotoSwipe. Vuetify's v-dialog focus scope and the PhotoPrism
-    // $view focus trap re-anchor focus that escapes the modal.
+    // Suppresses PhotoSwipe's document-level `_focusRoot` Tab handler
+    // when focus is inside the lightbox tree, so browser-default Tab
+    // navigation reaches sidebar inputs/chips. Vuetify + `$view` re-anchor
+    // any focus that escapes the modal.
     onTabKey(ev) {
       if (!ev) return;
       const root = this.$refs.container || this.$refs.content;
@@ -2729,21 +2686,11 @@ export default {
 
       return true;
     },
-    // Toggles visibility of the PhotoSwipe Dynamic Caption overlay
-    // (#5580). Persisted to localStorage as "lightbox.caption" so the
-    // choice survives slide nav, lightbox close/reopen, and page
-    // reload. The actual hide is driven by the .hide-caption class on
-    // .p-lightbox__content via the CSS rule next to .sidebar-visible
-    // in lightbox.css; the matching layout recompute (so the photo
-    // reclaims the caption's reserved pan area) flows through
-    // this.resize(true) — NOT a direct pswp.updateSize() call. The
-    // class binding on .p-lightbox__content is reactive, so the
-    // .hide-caption attribute (and the paddingFn early-return that
-    // reads hideCaption) only flips after Vue flushes; running resize
-    // synchronously would re-measure against the stale DOM. Same
-    // pattern as showInfo() / hideInfo(). No-op when the lightbox is
-    // not visible or the sidebar is open (the sidebar already
-    // suppresses the overlay and renders the caption inline).
+    // Toggles the Dynamic Caption overlay. Persisted to localStorage so
+    // the choice survives slide nav and reload. The relayout runs via
+    // `this.resize(true)` inside `$nextTick` so PhotoSwipe's `paddingFn`
+    // reads the flushed `.hide-caption` class — see H8 in best-practices.
+    // No-op when the lightbox is hidden or the sidebar is open.
     toggleCaption() {
       if (!this.visible || this.info) {
         return;
