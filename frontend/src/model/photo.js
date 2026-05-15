@@ -24,13 +24,8 @@ export const TimeZoneLocal = "Local";
 
 export let BatchSize = 156;
 
-// MaxLength mirrors the backend VARCHAR caps so UI validation matches
-// what the server will actually persist. Keep in sync with the GORM
-// struct tags in internal/entity/photo.go (PhotoTitle, PhotoCaption)
-// and internal/entity/details.go (Subject, Artist, Copyright, License,
-// Keywords, Notes). The Set* helpers in details.go further clip via
-// txt.ClipShortText (1024) / txt.ClipText (2048); these caps mirror
-// that ceiling, not the looser raw VARCHAR length.
+// MaxLength mirrors the backend Set*-helper clips (txt.ClipShortText / ClipText)
+// so UI validation matches what the server persists; keep in sync with details.go.
 export const MaxLength = Object.freeze({
   Title: 200,
   Caption: 4096,
@@ -1124,15 +1119,9 @@ export class Photo extends RestModel {
     return $gettext("Unknown");
   }
 
-  // Moves this photo to the archive (soft delete). Intentionally
-  // does NOT flip a local Archived flag the way Thumb.archive()
-  // does — no Photo consumer reads `photo.Archived` (the lightbox's
-  // `this.model?.Archived` checks all run against a Thumb), so an
-  // optimistic flip on Photo would just add dead state. The actual
-  // UI update for the photo-grid caller (view/cards.vue) is driven
-  // by the `photos.archived` WS event handler in page/photos.vue
-  // around line 802, which calls removeResult() to drop the row
-  // from the search results outside the Archive context.
+  // archive moves the photo to the archive (soft delete). No local flag flip:
+  // Photo consumers don't read .Archived (Thumb carries that state); the grid
+  // refreshes via the photos.archived WS handler.
   archive() {
     return $api.post("batch/photos/archive", { photos: [this.getId()] });
   }
@@ -1216,20 +1205,10 @@ export class Photo extends RestModel {
     return $api.delete(this.getEntityResource() + "/label/" + id).then((r) => Promise.resolve(this.setValues(r.data)));
   }
 
-  // Adds this photo to the given album. The album-membership endpoint
-  // returns only an ack, so on success the LRU cache is evicted and the
-  // photo is refetched so this.Albums reflects the saved state. Without
-  // the explicit refind, callers would have to wait for an albums.updated
-  // websocket round-trip — and the WS handler in this file evicts on
-  // photos.* channels, not albums.*.
-  //
-  // The name overlaps with Thumb.addToAlbum/removeFromAlbum on purpose:
-  // those operate at the photo-grid layer (toggling a Removed flag on a
-  // single thumbnail for lightbox menu visibility — see lightbox.vue
-  // onRemoveFromAlbum). The Photo-level methods here update this.Albums
-  // for sidebar chip rendering. Different layers, different semantics —
-  // both contracts are pinned in their respective tests so a future
-  // "consolidation" PR doesn't accidentally collapse them.
+  // addToAlbum adds this photo to the album, then evicts and refetches so
+  // this.Albums reflects the saved state without waiting on a WS round-trip.
+  // Distinct from Thumb.addToAlbum (grid layer, Removed flag); both contracts
+  // are pinned in tests.
   addToAlbum(albumUID) {
     if (!albumUID) return Promise.resolve(this);
     return $api
@@ -1241,8 +1220,7 @@ export class Photo extends RestModel {
       .then((photo) => Promise.resolve(this.setValues(photo.getValues())));
   }
 
-  // Removes this photo from the given album. Mirrors addToAlbum's
-  // evict + refind pattern — see that method for rationale.
+  // removeFromAlbum mirrors addToAlbum's evict + refind pattern.
   removeFromAlbum(albumUID) {
     if (!albumUID) return Promise.resolve(this);
     return $api
@@ -1375,26 +1353,17 @@ export class Photo extends RestModel {
     return Photo._cache;
   }
 
-  // Removes a photo from the LRU cache. Mutating methods on this model
-  // no longer call this directly: the backend publishes "photos.updated"
-  // / "photos.deleted" / "photos.archived" / "photos.restored" via
-  // websocket and the cache is evicted from there (see the module-level
-  // subscriptions below). This stays public as an escape hatch for flows
-  // that mutate a photo without firing one of those events — currently
-  // album-membership changes, which only emit "albums.updated".
+  // evictCache drops a photo from the LRU. Mutating methods rely on the
+  // photos.* WS subscriptions below; this stays as an escape hatch for flows
+  // that mutate a photo without a matching event (e.g. album-membership).
   static evictCache(uid) {
     if (uid) {
       Photo._cache.evict(uid);
     }
   }
 
-  // Drops every cached photo and any in-flight request. Called on session
-  // reset so metadata fetched under one role cannot be served to another.
-  // ModelCache.clear() bumps an internal session-epoch counter and any
-  // in-flight fetch whose epoch no longer matches REJECTS with
-  // ModelCacheStaleFetchError instead of resolving — so neither the
-  // cache nor a .then-chained UI assignment can leak role-A data into
-  // role B during the post-logout unmount window.
+  // clearCache drops every cached photo and rejects in-flight fetches via the
+  // session-epoch gate so metadata fetched under one role cannot reach another.
   static clearCache() {
     Photo._cache.clear();
   }
@@ -1438,24 +1407,10 @@ export class Photo extends RestModel {
   }
 }
 
-// Drops cached entries from the WS event payload. The backend uses
-// two different shapes on the same channel family — handle both:
-//
-//   - "photos.updated" (PublishPhotoEvent in internal/api/api_event.go)
-//     emits a search.Photos result: an array of objects with .UID.
-//   - "photos.archived" / "photos.restored" / "photos.deleted" /
-//     "photos.edited" (EntitiesArchived / EntitiesRestored /
-//     EntitiesDeleted / EntitiesEdited in internal/event/
-//     publish_entities.go) emit a []string of bare UIDs.
-//
-// A single helper covers every shape so we don't have to keep them
-// in sync. The "photos.updated" payload is consumed as an EVICT
-// signal (not a refresh) because search.Photos flattens nested
-// fields like Details into top-level columns (DetailsKeywords,
-// DetailsSubject, ...); hydrating from that snapshot would leave
-// Photo.Details === undefined and collapse the sidebar's isEditable
-// computed. Eviction sends the next read back to find() and the
-// field-complete /photos/:uid endpoint.
+// evictCachedFromEntities drops cached entries from a WS payload, accepting
+// both bare-UID arrays and search.Photos result objects. Treat photos.updated
+// as evict-only — its flattened search-result shape would collapse Photo.Details
+// on hydrate; the next read goes back through /photos/:uid for the full record.
 function evictCachedFromEntities(data) {
   if (!data || !Array.isArray(data.entities)) {
     return;
@@ -1469,16 +1424,7 @@ function evictCachedFromEntities(data) {
   });
 }
 
-// One hierarchical subscriber on the photos namespace, filtered to
-// the standard mutation verbs by subscribeEntityActions. Mirrors the
-// page/photos.vue onUpdate switch pattern at the cache layer: a
-// future verb (e.g. a hypothetical "merged") joins via one edit to
-// ENTITY_MUTATIONS in common/event.js, and non-mutation channels on
-// the same namespace stay no-ops without needing per-channel guards
-// here. Also covers "created" from the indexer (index_mediafile.go)
-// and unstack (photo_unstack.go) — harmless no-op today since
-// brand-new UIDs are never cached, but future-proofs scenarios
-// where a recreated UID needs the stale entry dropped.
+// Evict cache entries on any standard mutation verb in the photos namespace.
 subscribeEntityActions("photos", (_ev, data) => evictCachedFromEntities(data));
 
 export default Photo;
