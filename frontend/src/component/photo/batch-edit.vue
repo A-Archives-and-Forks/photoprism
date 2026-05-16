@@ -722,7 +722,7 @@ export default {
     },
     // canViewLabels gates the Labels section on the deployment's
     // `labels` feature flag and the session's `labels:search` grant —
-    // same composition as `sidebar/info.vue` so the dialog and the
+    // same composition as `lightbox/sidebar.vue` so the dialog and the
     // sidebar appear/disappear together.
     canViewLabels() {
       return this.$config.feature("labels") && this.$config.allow("labels", "search");

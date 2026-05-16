@@ -45,7 +45,7 @@ const mountLightbox = () =>
         "v-icon": true,
         "v-slider": true,
         "p-lightbox-menu": true,
-        "p-sidebar-info": true,
+        "p-lightbox-sidebar": true,
       },
       mocks: {
         $util,

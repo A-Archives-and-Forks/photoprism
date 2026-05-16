@@ -480,19 +480,19 @@
 
 /* `.hide-edit-pencils` on the sidebar root hides every pencil even on hover;
    row clicks and chip-toolbar Save/Undo remain reachable. */
-.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-pencils .metadata__item:hover > .v-list-item__append .meta-inline-pencil,
-.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-pencils .meta-inline-pencil {
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-pencils .metadata__item:hover > .v-list-item__append .meta-inline-pencil,
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-pencils .meta-inline-pencil {
     display: none;
 }
 
 /* Hide inline-text Undo/Save (keyboard covers commit/cancel/revert); chip
    toolbars opt out via `meta-chip-*`. Keep `:not()` on the hide rule itself
    so the minifier doesn't collapse it into `:is()` and break the combinator. */
-.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-undo .meta-inline-undo:not(.meta-chip-undo) {
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-undo .meta-inline-undo:not(.meta-chip-undo) {
     display: none;
 }
 
-.p-lightbox__container > .p-lightbox__sidebar > .p-sidebar-info.hide-edit-save .meta-inline-confirm:not(.meta-chip-confirm) {
+.p-lightbox__container > .p-lightbox__sidebar > .p-lightbox-sidebar.hide-edit-save .meta-inline-confirm:not(.meta-chip-confirm) {
     display: none;
 }
 

@@ -329,7 +329,7 @@ describe("component/photo/batch-edit", () => {
 
     // canViewLabels / canViewAlbums gate the Labels and Albums sections
     // on the deployment's feature flags + the session's resource grants.
-    // Mirrors the sidebar/info.vue pattern so the dialog and the sidebar
+    // Mirrors the lightbox/sidebar.vue pattern so the dialog and the sidebar
     // appear/disappear together.
     it("canViewLabels is true when feature and ACL both admit", () => {
       const w = mountWithConfig({

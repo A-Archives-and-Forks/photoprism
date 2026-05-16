@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import PSidebarInfo from "component/sidebar/info.vue";
+import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import * as contexts from "options/contexts";
 import { DateTime } from "luxon";
 import $util from "common/util";
@@ -41,12 +41,12 @@ const validationUtil = {
   thumb: () => ({ src: "/t.jpg", w: 100, h: 100 }),
 };
 // mountSidebar accepts the same option shape that the suite used to pass
-// directly to `mount(PSidebarInfo, ...)`. PSidebarInfo no longer takes the
+// directly to `mount(PLightboxSidebar, ...)`. PLightboxSidebar no longer takes the
 // legacy props (modelValue/photo/canEdit/context/markersVisible/...); they
 // live on the parent lightbox's $data and are surfaced through $view.getData()
 // (see lightbox.vue). This helper extracts the legacy keys from `options.props`
 // and exposes them as a $view mock so existing tests keep working with only
-// `mount(PSidebarInfo, ` -> `mountSidebar(` renamed.
+// `mount(PLightboxSidebar, ` -> `mountSidebar(` renamed.
 function mountSidebar(options = {}) {
   const props = { ...(options.props || {}) };
   // Translate the legacy boolean props (`markersVisible` / `addingMarker`)
@@ -109,7 +109,7 @@ function mountSidebar(options = {}) {
   const mocks = global.mocks || {};
   const stubs = global.stubs || {};
 
-  return mount(PSidebarInfo, {
+  return mount(PLightboxSidebar, {
     ...options,
     props,
     global: {
@@ -149,7 +149,7 @@ vi.mock("options/formats", () => ({
   DATETIME_MED_TZ: "DATETIME_MED_TZ",
 }));
 
-describe("PSidebarInfo component", () => {
+describe("PLightboxSidebar component", () => {
   let wrapper;
   let originalFromISO;
   let mockModel;
@@ -256,7 +256,7 @@ describe("PSidebarInfo component", () => {
 
   it("should render correctly with model data", () => {
     expect(wrapper.vm).toBeTruthy();
-    expect(wrapper.find(".p-sidebar-info").exists()).toBe(true);
+    expect(wrapper.find(".p-lightbox-sidebar").exists()).toBe(true);
 
     const html = wrapper.html();
     expect(html).toContain("Test Title");
@@ -2293,7 +2293,7 @@ describe("PSidebarInfo component", () => {
     // break the test. What we care about is that the root :class
     // binding actually mirrors the flags in both directions.
     it("hide-edit-undo / hide-edit-save root classes mirror the data flags in both directions", async () => {
-      const root = w.find(".p-sidebar-info");
+      const root = w.find(".p-lightbox-sidebar");
 
       w.vm.hideEditUndo = false;
       w.vm.hideEditSave = false;
@@ -3886,7 +3886,7 @@ describe("PSidebarInfo component", () => {
 
   // Pins the template bindings on <p-meta-datetime-dialog>, <p-meta-camera-dialog>,
   // and <p-meta-location-dialog>. Commit 7a611b6d6 removed the legacy `photo`
-  // prop on PSidebarInfo and routed parent state through `$view.getData()`
+  // prop on PLightboxSidebar and routed parent state through `$view.getData()`
   // (exposed via the `photo` computed). The three dialog tags in the sidebar
   // template kept referencing the now-undefined `photo` identifier, so the
   // dialogs received `:photo="undefined"` / `:latlng="[0, 0]"` and their

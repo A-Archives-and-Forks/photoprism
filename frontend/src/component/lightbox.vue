@@ -91,7 +91,7 @@
         </div>
       </div>
       <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
-        <p-sidebar-info
+        <p-lightbox-sidebar
           ref="sidebarInfo"
           :uid="model.UID"
           @close="hideInfo"
@@ -100,7 +100,7 @@
           @eject-marker="onEjectFaceMarker"
           @reload-markers="onReloadFaceMarkers"
           @naming-started="faceMarkers.setPendingNameMarkerUid('')"
-        ></p-sidebar-info>
+        ></p-lightbox-sidebar>
       </div>
     </div>
     <p-lightbox-menu
@@ -151,7 +151,7 @@ const VIDEO_EVENT_TYPES = [
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
 
 import PLightboxMenu from "component/lightbox/menu.vue";
-import PSidebarInfo from "component/sidebar/info.vue";
+import PLightboxSidebar from "component/lightbox/sidebar.vue";
 import { Marker } from "model/marker";
 import * as src from "common/src";
 
@@ -167,7 +167,7 @@ const shouldHideCaption = () => appStorage.getItem("lightbox.caption") === "fals
 
 export default {
   name: "PLightbox",
-  components: [PLightboxMenu, PSidebarInfo],
+  components: [PLightboxMenu, PLightboxSidebar],
   emits: ["enter", "leave"],
   expose: ["onShortCut"],
   data() {

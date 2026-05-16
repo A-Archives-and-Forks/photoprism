@@ -1,6 +1,6 @@
 <template>
   <div
-    class="p-sidebar-info bg-background metadata"
+    class="p-lightbox-sidebar bg-background metadata"
     :class="{ 'hide-edit-pencils': hideEditPencils, 'hide-edit-undo': hideEditUndo, 'hide-edit-save': hideEditSave }"
   >
     <v-toolbar density="comfortable" color="background">
@@ -31,7 +31,7 @@
           <div v-else-if="model.Title" class="text-subtitle-2 meta-title">{{ model.Title }}</div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('title')">{{ $pgettext("Photo", "Add a Title") }}</div>
           <template v-if="isEditable" #append>
-            <p-sidebar-inline-toolbar
+            <p-lightbox-sidebar-toolbar
               :editing="editingField === 'title'"
               :can-undo="editingField === 'title'"
               :undo-disabled="!inlineEditDirty"
@@ -66,7 +66,7 @@
           <div v-else-if="model.Caption" class="text-body-2 meta-caption meta-scrollable" v-html="captionHtml"></div>
           <div v-else class="meta-add-prompt" @click.stop="startEditing('caption')">{{ $gettext("Add a Caption") }}</div>
           <template v-if="isEditable" #append>
-            <p-sidebar-inline-toolbar
+            <p-lightbox-sidebar-toolbar
               :editing="editingField === 'caption'"
               :can-undo="editingField === 'caption'"
               :undo-disabled="!inlineEditDirty"
@@ -290,7 +290,7 @@
           <v-list-item class="metadata__item meta-albums">
             <div class="text-subtitle-2">{{ $gettext("Albums") }}</div>
             <template v-if="isEditable && chipState.albums.removals.length > 0" #append>
-              <p-sidebar-inline-toolbar :editing="true" :can-undo="true" chip-mode @confirm="confirmAlbums" @undo="undoChipRemovals('albums')" />
+              <p-lightbox-sidebar-toolbar :editing="true" :can-undo="true" chip-mode @confirm="confirmAlbums" @undo="undoChipRemovals('albums')" />
             </template>
           </v-list-item>
           <v-list-item v-if="visibleAlbums.length > 0" class="metadata__item metadata__chips meta-albums">
@@ -350,7 +350,7 @@
           <v-list-item class="metadata__item meta-labels">
             <div class="text-subtitle-2">{{ $gettext("Labels") }}</div>
             <template v-if="isEditable && chipState.labels.removals.length > 0" #append>
-              <p-sidebar-inline-toolbar :editing="true" :can-undo="true" chip-mode @confirm="confirmLabels" @undo="undoChipRemovals('labels')" />
+              <p-lightbox-sidebar-toolbar :editing="true" :can-undo="true" chip-mode @confirm="confirmLabels" @undo="undoChipRemovals('labels')" />
             </template>
           </v-list-item>
           <v-list-item v-if="visibleLabels.length > 0" class="metadata__item metadata__chips meta-labels">
@@ -438,7 +438,7 @@
               <div v-else-if="f.display !== 'html' && f.read(photo)" class="text-body-2 meta-scrollable" :class="`meta-${f.key}`">{{ f.read(photo) }}</div>
               <div v-else class="meta-add-prompt" @click.stop="startEditing(f.key)">{{ f.placeholder ? f.placeholder : f.label }}</div>
               <template v-if="isEditable" #append>
-                <p-sidebar-inline-toolbar
+                <p-lightbox-sidebar-toolbar
                   :editing="editingField === f.key"
                   :can-undo="editingField === f.key"
                   :undo-disabled="!inlineEditDirty"
@@ -496,17 +496,17 @@ import PMetaDatetimeDialog from "component/meta/datetime/dialog.vue";
 import PMetaCameraDialog from "component/meta/camera/dialog.vue";
 import PMetaLocationDialog from "component/meta/location/dialog.vue";
 import PConfirmDialog from "component/confirm/dialog.vue";
-import PSidebarInlineToolbar from "component/sidebar/inline-toolbar.vue";
+import PLightboxSidebarToolbar from "component/lightbox/sidebar/toolbar.vue";
 
 export default {
-  name: "PSidebarInfo",
+  name: "PLightboxSidebar",
   components: {
     PMap,
     PMetaDatetimeDialog,
     PMetaCameraDialog,
     PMetaLocationDialog,
     PConfirmDialog,
-    PSidebarInlineToolbar,
+    PLightboxSidebarToolbar,
   },
   props: {
     // UID of the photo currently in the parent lightbox; drives the

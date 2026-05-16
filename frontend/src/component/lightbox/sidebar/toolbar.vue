@@ -1,5 +1,5 @@
 <template>
-  <div :class="['p-sidebar-inline-toolbar', 'd-flex', { 'p-sidebar-inline-toolbar--chip': chipMode }]">
+  <div :class="['p-lightbox-sidebar-toolbar', 'd-flex', { 'p-lightbox-sidebar-toolbar--chip': chipMode }]">
     <v-btn
       v-if="editing && canUndo"
       :disabled="undoDisabled"
@@ -38,7 +38,7 @@
 
 <script>
 export default {
-  name: "PSidebarInlineToolbar",
+  name: "PLightboxSidebarToolbar",
   props: {
     editing: {
       type: Boolean,

@@ -103,7 +103,7 @@ export class FaceMarkers {
   }
 }
 
-// $faceMarkers is the shared singleton consumed by PLightbox and PSidebarInfo.
+// $faceMarkers is the shared singleton consumed by PLightbox and PLightboxSidebar.
 export const $faceMarkers = reactive(new FaceMarkers());
 
 export default $faceMarkers;
