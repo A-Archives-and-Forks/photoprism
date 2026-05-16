@@ -410,7 +410,22 @@
                     ></v-textarea>
                   </v-col>
                 </v-row>
-                <v-row dense>
+                <v-row v-if="canViewAlbums" dense>
+                  <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Albums`) }}</v-col>
+                  <v-col cols="12">
+                    <p-input-chip-selector
+                      v-model:items="albumItems"
+                      :available-items="availableAlbumOptions"
+                      :input-placeholder="$gettext('Select or create albums')"
+                      :empty-text="$gettext('No albums assigned')"
+                      :loading="loading"
+                      :disabled="false"
+                      class="input-albums"
+                      @update:items="onAlbumsUpdate"
+                    />
+                  </v-col>
+                </v-row>
+                <v-row v-if="canViewLabels" dense>
                   <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Labels`) }}</v-col>
                   <v-col cols="12">
                     <p-input-chip-selector
@@ -424,21 +439,6 @@
                       :disabled="false"
                       class="input-labels"
                       @update:items="onLabelsUpdate"
-                    />
-                  </v-col>
-                </v-row>
-                <v-row dense>
-                  <v-col cols="12" class="text-subtitle-2">{{ $gettext(`Albums`) }}</v-col>
-                  <v-col cols="12">
-                    <p-input-chip-selector
-                      v-model:items="albumItems"
-                      :available-items="availableAlbumOptions"
-                      :input-placeholder="$gettext('Select or create albums')"
-                      :empty-text="$gettext('No albums assigned')"
-                      :loading="loading"
-                      :disabled="false"
-                      class="input-albums"
-                      @update:items="onAlbumsUpdate"
                     />
                   </v-col>
                 </v-row>
@@ -715,6 +715,17 @@ export default {
         return false;
       }
       return !!(this.formData.Lat.value || this.formData.Lng.value);
+    },
+    // canViewLabels gates the Labels section on the deployment's
+    // `labels` feature flag and the session's `labels:search` grant —
+    // same composition as `sidebar/info.vue` so the dialog and the
+    // sidebar appear/disappear together.
+    canViewLabels() {
+      return this.$config.feature("labels") && this.$config.allow("labels", "search");
+    },
+    // canViewAlbums mirrors canViewLabels for the Albums section.
+    canViewAlbums() {
+      return this.$config.feature("albums") && this.$config.allow("albums", "search");
     },
     // Suggestions surfaced in the labels chip-selector dropdown — the
     // cached label list with anything already in labelItems filtered
@@ -1522,10 +1533,25 @@ export default {
     // availableLabelOptions / availableAlbumOptions computeds filter
     // out anything already in *Items and sort alphabetically.
     async fetchAvailableOptions() {
+      // Skip prefetch for disabled sections so a deployment that disables
+      // labels or albums via Settings doesn't spend a round-trip the
+      // dialog never reads.
+      const wantAlbums = this.canViewAlbums;
+      const wantLabels = this.canViewLabels;
+
+      if (!wantAlbums && !wantLabels) {
+        this.cachedAlbumOptions = [];
+        this.cachedLabelOptions = [];
+        return;
+      }
+
       try {
         this.loading = true;
 
-        const [albums, labels] = await Promise.all([typeaheadCache.getAlbums(), typeaheadCache.getLabels()]);
+        const [albums, labels] = await Promise.all([
+          wantAlbums ? typeaheadCache.getAlbums() : Promise.resolve([]),
+          wantLabels ? typeaheadCache.getLabels() : Promise.resolve([]),
+        ]);
 
         this.cachedAlbumOptions = albums.map((album) => ({
           value: album.UID,

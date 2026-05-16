@@ -17,6 +17,61 @@ describe("component/photo/batch-edit", () => {
   let wrapper;
   let mockBatchInstance;
 
+  // mountWithConfig mounts PPhotoBatchEdit with the same stubs as the
+  // default wrapper but lets callers override the $config feature/allow
+  // accessors so the per-section gating computeds can be exercised.
+  const mountWithConfig = ({ feature, allow }) => {
+    return shallowMount(PPhotoBatchEdit, {
+      props: {
+        visible: false,
+        selection: mockSelection,
+        openDate: vi.fn(),
+        openLocation: vi.fn(),
+        editPhoto: vi.fn(),
+      },
+      global: {
+        mocks: {
+          $lightbox: { openView: vi.fn() },
+          $vuetify: { display: { mdAndDown: false } },
+          $config: {
+            feature,
+            allow,
+            get: () => false,
+            getSettings: () => ({ features: {} }),
+            deny: () => false,
+            featExperimental: () => false,
+            featDevelop: () => false,
+            values: {},
+            dir: () => "ltr",
+          },
+        },
+        stubs: {
+          VDialog: {
+            template: '<div class="v-dialog">' + '<slot v-if="modelValue" />' + "</div>",
+            props: ["modelValue"],
+          },
+          VDataTable: { template: '<div class="v-data-table"></div>', props: ["headers", "items"] },
+          PMetaLocationInput: {
+            template: '<div class="p-meta-location-input"></div>',
+            props: ["latlng", "label"],
+            emits: ["update:latlng", "changed", "open-map", "delete", "undo"],
+          },
+          PMetaLocationDialog: {
+            template: '<div class="p-meta-location-dialog"></div>',
+            props: ["visible", "latlng"],
+            emits: ["close", "confirm"],
+          },
+          PInputChipSelector: {
+            template: '<div class="p-input-chip-selector"></div>',
+            props: ["items", "availableItems"],
+            emits: ["update:items"],
+          },
+          IconLivePhoto: { template: '<i class="icon-live-photo"></i>' },
+        },
+      },
+    });
+  };
+
   const mockSelection = ["uid1", "uid2", "uid3"];
 
   const mockModels = [
@@ -270,6 +325,70 @@ describe("component/photo/batch-edit", () => {
 
       const titles = wrapper.vm.availableAlbumOptions.map((o) => o.title);
       expect(titles).toEqual(["alpha", "Zebra"]);
+    });
+
+    // canViewLabels / canViewAlbums gate the Labels and Albums sections
+    // on the deployment's feature flags + the session's resource grants.
+    // Mirrors the sidebar/info.vue pattern so the dialog and the sidebar
+    // appear/disappear together.
+    it("canViewLabels is true when feature and ACL both admit", () => {
+      const w = mountWithConfig({
+        feature: (n) => (n === "labels" ? true : true),
+        allow: (r, p) => (r === "labels" && p === "search" ? true : true),
+      });
+      expect(w.vm.canViewLabels).toBe(true);
+      w.unmount();
+    });
+
+    it("canViewLabels is false when feature labels is disabled", () => {
+      const w = mountWithConfig({
+        feature: (n) => (n === "labels" ? false : true),
+        allow: () => true,
+      });
+      expect(w.vm.canViewLabels).toBe(false);
+      w.unmount();
+    });
+
+    it("canViewLabels is false when ACL denies labels:search", () => {
+      const w = mountWithConfig({
+        feature: () => true,
+        allow: (r, p) => !(r === "labels" && p === "search"),
+      });
+      expect(w.vm.canViewLabels).toBe(false);
+      w.unmount();
+    });
+
+    it("canViewAlbums is false when feature albums is disabled", () => {
+      const w = mountWithConfig({
+        feature: (n) => (n === "albums" ? false : true),
+        allow: () => true,
+      });
+      expect(w.vm.canViewAlbums).toBe(false);
+      w.unmount();
+    });
+
+    it("canViewAlbums is false when ACL denies albums:search", () => {
+      const w = mountWithConfig({
+        feature: () => true,
+        allow: (r, p) => !(r === "albums" && p === "search"),
+      });
+      expect(w.vm.canViewAlbums).toBe(false);
+      w.unmount();
+    });
+
+    it("fetchAvailableOptions skips both cache fetches when sections are gated off", async () => {
+      const w = mountWithConfig({
+        feature: (n) => (n === "labels" || n === "albums" ? false : true),
+        allow: () => true,
+      });
+      w.vm.cachedAlbumOptions = [{ value: "alb-stale", title: "Stale" }];
+      w.vm.cachedLabelOptions = [{ value: "lbl-stale", title: "Stale" }];
+
+      await w.vm.fetchAvailableOptions();
+
+      expect(w.vm.cachedAlbumOptions).toEqual([]);
+      expect(w.vm.cachedLabelOptions).toEqual([]);
+      w.unmount();
     });
   });
 
