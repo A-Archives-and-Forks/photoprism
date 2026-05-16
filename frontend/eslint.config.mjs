@@ -74,10 +74,10 @@ export default defineConfig([
     rules: {
       // Match what Prettier was producing: 2-space indent (4 for CSS lives in .prettierrc), switch
       // cases nested one level, method-chain continuations indented one level.
-      "indent": ["error", 2, { SwitchCase: 1, MemberExpression: 1 }],
+      "indent": ["warn", 2, { SwitchCase: 1, MemberExpression: 1 }],
       "linebreak-style": ["error", "unix"],
       "quotes": [
-        "error",
+        "warn",
         "double",
         {
           avoidEscape: true,
@@ -86,6 +86,10 @@ export default defineConfig([
       ],
       "semi": ["error", "always"],
       "curly": ["warn", "all"],
+      // Forces braced bodies onto their own line so curly's autofix produces
+      // multi-line `if (x) {\n  return;\n}` instead of `if (x) {return;}`.
+      // Deprecated in favor of @stylistic/brace-style; still functional in ESLint 9.
+      "brace-style": ["warn", "1tbs", { allowSingleLine: false }],
       "no-unused-vars": ["warn"],
       "no-console": 0,
       "no-case-declarations": 0,
