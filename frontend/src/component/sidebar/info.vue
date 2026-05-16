@@ -411,7 +411,7 @@
             <v-divider v-if="f.key === 'notes' && showRightsDivider" class="my-3 meta-rights-divider"></v-divider>
             <v-list-item
               v-show="shouldShowFieldRow(f)"
-              v-tooltip="editingField === f.key ? null : f.icon ? f.label : null"
+              v-tooltip="f.icon ? f.label : null"
               :prepend-icon="f.icon"
               :class="['metadata__item', `meta-${f.key}`, { clickable: editingField !== f.key && (isEditable || f.read(photo)) }]"
               @click.stop="onTextRowClick(f.key, f.read(photo))"
@@ -869,21 +869,29 @@ export default {
       return ["subject", "copyright", "artist", "license", "keywords", "notes"].map((k) => this.fieldRegistry[k]);
     },
     showDetailsSection() {
-      if (!this.canViewLibrary) return false;
-      if (this.isEditable) return true;
+      if (!this.canViewLibrary) {
+        return false;
+      }
+      if (this.isEditable) {
+        return true;
+      }
       return this.detailsFields.some((f) => Boolean(f.read(this.photo)));
     },
     // True when the active inline editor's value differs from the
     // editOriginal snapshot — gates the Undo button's disabled state.
     inlineEditDirty() {
-      if (!this.editingField) return false;
+      if (!this.editingField) {
+        return false;
+      }
       return this.getFieldValue(this.editingField) !== (this.editOriginal ?? "");
     },
     // Renders the divider between the rights cluster and the Notes row.
     // For read-only users we drop it when either side is empty so it
     // doesn't appear as an orphan line.
     showRightsDivider() {
-      if (this.isEditable) return true;
+      if (this.isEditable) {
+        return true;
+      }
       const hasAbove = ["subject", "artist", "copyright", "license", "keywords"].some((k) => this.shouldShowFieldRow(this.fieldRegistry[k]));
       const hasBelow = this.shouldShowFieldRow(this.fieldRegistry.notes);
       return hasAbove && hasBelow;
@@ -894,7 +902,9 @@ export default {
       return this.photo?.placeName?.() || "";
     },
     altitude() {
-      if (!this.photo || !this.photo.Altitude) return "";
+      if (!this.photo || !this.photo.Altitude) {
+        return "";
+      }
       return this.photo.Altitude + " m";
     },
     // Returns the lat/lng (shortened, with optional altitude) for the
@@ -912,9 +922,15 @@ export default {
     // has coordinates to display, OR the user holds places-view ACL and
     // has a place name / can edit a missing location.
     locationRowVisible() {
-      if (this.model?.Lat && this.model?.Lng) return true;
-      if (!this.canViewPlaces) return false;
-      if (this.placeName) return true;
+      if (this.model?.Lat && this.model?.Lng) {
+        return true;
+      }
+      if (!this.canViewPlaces) {
+        return false;
+      }
+      if (this.placeName) {
+        return true;
+      }
       return this.isEditable && this.featPlaces;
     },
     // Returns the merged row's title: the place name when the user holds
@@ -922,24 +938,36 @@ export default {
     // coordinates line so the row never renders empty when the v-if
     // gate has admitted it.
     locationTitle() {
-      if (this.canViewPlaces && this.placeName) return this.placeName;
-      if (this.coordinatesLine) return this.coordinatesLine;
+      if (this.canViewPlaces && this.placeName) {
+        return this.placeName;
+      }
+      if (this.coordinatesLine) {
+        return this.coordinatesLine;
+      }
       return this.$gettext("Unknown");
     },
     // Returns the merged row's subtitle: the coordinates line, but only
     // when the title already shows the place name (so we don't render
     // the coordinates twice on a no-places-ACL / no-placeName row).
     locationSubtitle() {
-      if (!this.canViewPlaces) return null;
-      if (this.placeName && this.coordinatesLine) return this.coordinatesLine;
+      if (!this.canViewPlaces) {
+        return null;
+      }
+      if (this.placeName && this.coordinatesLine) {
+        return this.coordinatesLine;
+      }
       return null;
     },
     // True when the combined Location row has any click action: editing
     // the location, copying the coordinates, or copying the place name.
     // Drives the .clickable cursor class on the row.
     locationRowClickable() {
-      if (this.isEditable && this.featPlaces) return true;
-      if (this.model?.Lat && this.model?.Lng) return true;
+      if (this.isEditable && this.featPlaces) {
+        return true;
+      }
+      if (this.model?.Lat && this.model?.Lng) {
+        return true;
+      }
       return this.canViewPlaces && !!this.placeName;
     },
     // Prefers originalFile() so video / Live / Animated show .mp4 / .mov
@@ -947,12 +975,18 @@ export default {
     // so Vuetify's `:subtitle != null` gate hides the slot instead of
     // rendering an empty `<v-list-item-subtitle>`.
     fileName() {
-      if (!this.canViewLibrary || !this.photo) return null;
+      if (!this.canViewLibrary || !this.photo) {
+        return null;
+      }
       if (typeof this.photo.originalFile === "function") {
         const original = this.photo.originalFile();
-        if (original && original !== this.photo && original.Name) return original.Name;
+        if (original && original !== this.photo && original.Name) {
+          return original.Name;
+        }
       }
-      if (this.photo.FileName) return this.photo.FileName;
+      if (this.photo.FileName) {
+        return this.photo.FileName;
+      }
       const primary = typeof this.photo.primaryFile === "function" ? this.photo.primaryFile() : null;
       return primary?.Name || null;
     },
@@ -1039,21 +1073,27 @@ export default {
     // session is editable. No-op otherwise, so callers (row @click and
     // pencil button) don't need to inline the gate.
     openDateTimeDialog() {
-      if (!this.isEditable) return;
+      if (!this.isEditable) {
+        return;
+      }
       this.dateTimeDialog = true;
     },
     // openCameraDialog mounts the camera-and-lens-edit dialog when the
     // session is editable. Shared by the Camera and Lens row icons and
     // the Camera pencil button.
     openCameraDialog() {
-      if (!this.isEditable) return;
+      if (!this.isEditable) {
+        return;
+      }
       this.cameraDialog = true;
     },
     // openLocationDialog mounts the location-edit dialog when the
     // session is editable and the `places` feature is enabled. Shared by
     // the Location row pencil and the row click in edit mode.
     openLocationDialog() {
-      if (!this.isEditable || !this.featPlaces) return;
+      if (!this.isEditable || !this.featPlaces) {
+        return;
+      }
       this.locationDialog = true;
     },
     // onLocationRowClick dispatches the combined Location row's click:
@@ -1079,7 +1119,9 @@ export default {
     // users can grab metadata without pinch-selecting. No-op when the
     // row is already in edit mode or the value is empty.
     onTextRowClick(field, value) {
-      if (this.editingField === field) return;
+      if (this.editingField === field) {
+        return;
+      }
       if (this.isEditable) {
         this.startEditing(field);
       } else if (value) {
@@ -1088,13 +1130,17 @@ export default {
     },
     getFieldValue(field) {
       const f = this.fieldRegistry[field];
-      if (!f) return "";
+      if (!f) {
+        return "";
+      }
       const v = f.read(this.photo);
       return v == null ? "" : v;
     },
     setFieldValue(field, value) {
       const f = this.fieldRegistry[field];
-      if (!f || !this.view?.photo) return;
+      if (!f || !this.view?.photo) {
+        return;
+      }
       f.write(this.view.photo, value);
     },
     // Function ref shared by every inline editor. Vue invokes it with the
@@ -1102,18 +1148,28 @@ export default {
     // gated by a unique `editingField === '<key>'`, only one is mounted at
     // a time, so the latest non-null call always identifies the active one.
     setInlineEditorRef(el) {
-      if (el) this._inlineEditorEl = el;
-      else if (!this.editingField) this._inlineEditorEl = null;
+      if (el) {
+        this._inlineEditorEl = el;
+      } else if (!this.editingField) {
+        this._inlineEditorEl = null;
+      }
     },
     fieldHtml(f) {
-      if (!f || f.display !== "html" || !f.htmlValue) return "";
+      if (!f || f.display !== "html" || !f.htmlValue) {
+        return "";
+      }
       return this[f.htmlValue] || "";
     },
     shouldShowFieldRow(f) {
-      if (!f) return false;
-      if (this.editingField === f.key) return true;
-      if (this.isEditable) return true;
-      if (f.display === "html") return Boolean(this.fieldHtml(f));
+      if (!f) {
+        return false;
+      }
+      if (this.isEditable || this.editingField === f.key) {
+        return true;
+      }
+      if (f.display === "html") {
+        return Boolean(this.fieldHtml(f));
+      }
       return Boolean(f.read(this.photo));
     },
     // Enter handler for the merged details textareas. Commits when the
@@ -1124,7 +1180,9 @@ export default {
     // also falls through, giving power users a way to add a line break
     // even on the single-line fields.
     onInlineEnter(ev, f) {
-      if (!f?.commitOnEnter || ev.shiftKey) return;
+      if (!f?.commitOnEnter || ev.shiftKey) {
+        return;
+      }
       ev.preventDefault();
       ev.stopPropagation();
       this.confirmField();
@@ -1135,7 +1193,9 @@ export default {
     // Undo button on every inline-text toolbar so mouse users get
     // parity with the keyboard cancel.
     undoInlineEdit() {
-      if (!this.editingField || this.editOriginal === null) return;
+      if (!this.editingField || this.editOriginal === null) {
+        return;
+      }
       this.setFieldValue(this.editingField, this.editOriginal);
     },
     startEditing(field) {
@@ -1159,18 +1219,24 @@ export default {
     // toggle; intentionally does NOT gate on `isEditable` because
     // display mode doesn't require edit permission.
     onToggleFaceMarkerMode() {
-      if (this.markersBusy) return;
+      if (this.markersBusy) {
+        return;
+      }
       this.$emit("toggle-face-marker-mode");
     },
     // Pencil-icon click handler (editable users only — edit mode adds
     // drag-to-create + click-to-remove). Emits `toggle-face-marker-edit`
     // so the lightbox can flip between `null` and `FaceMarkerEdit`.
     onToggleFaceMarkerEdit() {
-      if (!this.isEditable || this.markersBusy) return;
+      if (!this.isEditable || this.markersBusy) {
+        return;
+      }
       this.$emit("toggle-face-marker-edit");
     },
     onEjectMarker(marker) {
-      if (!this.isEditable || this.markersBusy || !marker || !marker.SubjUID) return;
+      if (!this.isEditable || this.markersBusy || !marker || !marker.SubjUID) {
+        return;
+      }
       // When the user types a fresh name and clicks ⏏ on the eject icon:
       // clearSubject flips SubjUID, the combobox re-renders editable, and
       // the implicit @blur from the re-render would commit the typed name
@@ -1194,10 +1260,15 @@ export default {
     syncMarkerDrafts(markers) {
       const seen = new Set();
       markers.forEach((m) => {
-        if (!m || !m.UID) return;
+        if (!m || !m.UID) {
+          return;
+        }
+
         seen.add(m.UID);
+
         const original = m.Name || "";
         const existing = this.markerDrafts[m.UID];
+
         if (!existing) {
           this.markerDrafts[m.UID] = { original, current: original, editing: false };
         } else if (existing.original !== original) {
@@ -1224,7 +1295,9 @@ export default {
     // cleared by commitMarkerName / cancelMarkerName / onAddName* once
     // the edit reaches a settled state.
     setMarkerInputValue(uid, value) {
-      if (!uid) return;
+      if (!uid) {
+        return;
+      }
       if (!this.markerDrafts[uid]) {
         this.markerDrafts[uid] = { original: "", current: value, editing: true };
       } else {
@@ -1233,7 +1306,9 @@ export default {
       }
     },
     focusMarkerInput(uid) {
-      if (!uid) return;
+      if (!uid) {
+        return;
+      }
       this.$emit("naming-started");
       this.$nextTick(() => {
         const input = this.$el && this.$el.querySelector(`[data-marker-uid="${uid}"] input`);
@@ -1245,7 +1320,9 @@ export default {
     // Locale `undefined` defers to the user's active locale so case-folding
     // works for Turkish dotted/dotless i, German ß, Cyrillic, Hebrew, etc.
     findKnownPerson(name) {
-      if (!name) return null;
+      if (!name) {
+        return null;
+      }
       return this.knownPeople.find((p) => p && p.Name && p.Name.localeCompare(name, undefined, { sensitivity: "base" }) === 0) || null;
     },
     // Resolves a marker by UID from the current photo. Used by the
@@ -1254,7 +1331,9 @@ export default {
     // exists on this photo (P1-8). Returns null when the marker has been
     // removed (e.g. rejected) or the slide moved to a different photo.
     findMarker(uid) {
-      if (!uid || !this.photo || typeof this.photo.getMarkers !== "function") return null;
+      if (!uid || !this.photo || typeof this.photo.getMarkers !== "function") {
+        return null;
+      }
       return this.photo.getMarkers(true).find((m) => m && m.UID === uid) || null;
     },
     // confirmMarkerName commits typed text from the per-marker draft; "blur"
@@ -1262,12 +1341,19 @@ export default {
     // another mutation is in flight, the marker is invalid, or a destructive
     // icon was clicked within the last 200 ms.
     confirmMarkerName(marker, source = "enter") {
-      if (!marker || !marker.UID) return;
-      if (this.markersBusy) return;
-      if (marker.Invalid) return;
-      if (this._lastDestructiveMarkerActionAt && Date.now() - this._lastDestructiveMarkerActionAt < 200) return;
+      if (!marker || !marker.UID) {
+        return;
+      }
+      if (this.markersBusy || marker.Invalid) {
+        return;
+      }
+      if (this._lastDestructiveMarkerActionAt && Date.now() - this._lastDestructiveMarkerActionAt < 200) {
+        return;
+      }
       const draft = this.markerDrafts[marker.UID];
-      if (!draft) return;
+      if (!draft) {
+        return;
+      }
       const name = this.unwrapMarkerName(draft.current).trim();
       const original = (draft.original || "").trim();
 
@@ -1278,7 +1364,10 @@ export default {
         draft.editing = false;
         return;
       }
-      if (typeof marker.setName !== "function") return;
+
+      if (typeof marker.setName !== "function") {
+        return;
+      }
 
       const match = this.findKnownPerson(name);
 
@@ -1294,7 +1383,9 @@ export default {
     },
     commitMarkerName(marker, match, name) {
       const draft = this.markerDrafts[marker.UID];
-      if (!draft) return;
+      if (!draft) {
+        return;
+      }
 
       if (match) {
         marker.Name = match.Name;
@@ -1319,7 +1410,9 @@ export default {
         });
     },
     onPickPerson(marker, value) {
-      if (!marker || !value || typeof value !== "object" || !value.Name) return;
+      if (!marker || !value || typeof value !== "object" || !value.Name) {
+        return;
+      }
       this.setMarkerInputValue(marker.UID, value.Name);
       this.confirmMarkerName(marker, "enter");
     },
@@ -1355,9 +1448,13 @@ export default {
       if (resolve) resolve(true);
     },
     cancelMarkerName(marker) {
-      if (!marker || !marker.UID) return;
+      if (!marker || !marker.UID) {
+        return;
+      }
       const draft = this.markerDrafts[marker.UID];
-      if (!draft) return;
+      if (!draft) {
+        return;
+      }
       draft.current = draft.original;
       draft.editing = false;
       // Blur the marker's own input so the user gets a visual cue the edit
@@ -1369,9 +1466,13 @@ export default {
       if (input && typeof input.blur === "function") input.blur();
     },
     resetInlineEdits() {
-      if (this.editingField) this.cancelEditing();
+      if (this.editingField) {
+        this.cancelEditing();
+      }
+
       this.resetChipState();
       this.clearChipInput();
+
       Object.keys(this.markerDrafts).forEach((uid) => {
         const d = this.markerDrafts[uid];
         if (d) {
@@ -1379,6 +1480,7 @@ export default {
           d.editing = false;
         }
       });
+
       if (this.addNameDialog && this.addNameDialog.visible) {
         this.addNameDialog = { visible: false, markerUid: "", name: "" };
       }
@@ -1396,18 +1498,21 @@ export default {
       for (const uid of Object.keys(this.markerDrafts)) {
         const d = this.markerDrafts[uid];
         if (!d) continue;
-        if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) return true;
+        if (this.unwrapMarkerName(d.current).trim() !== (d.original || "").trim()) {
+          return true;
+        }
       }
       // Pending chip removals (staged via × icon) and typed-but-uncommitted
       // text in the always-visible combobox both count as pending. Pressing
       // Enter would fire the instant-save path (addLabelImmediate /
       // addAlbumImmediate), but until then the characters live only in
       // chipState.<field>.search and would silently vanish on navigation.
-      if (Object.values(this.chipState).some((s) => s.removals.length || (s.search || "").trim() !== "")) return true;
+      if (Object.values(this.chipState).some((s) => s.removals.length || (s.search || "").trim() !== "")) {
+        return true;
+      }
       // An open Add-name confirmation for an unnamed marker is also pending
       // input until the user picks Add or Cancel.
-      if (this.addNameDialog && this.addNameDialog.visible) return true;
-      return false;
+      return !!(this.addNameDialog && this.addNameDialog.visible);
     },
     // Fire-and-forget commit of any pending chip removals. Mirrors the
     // inline-text auto-commit on blur: the user's intent (clicking ×) is
@@ -1554,24 +1659,36 @@ export default {
       }
     },
     openInNewTab(route) {
-      if (!route) return;
+      if (!route) {
+        return;
+      }
       const resolved = this.$router ? this.$router.resolve(route) : null;
       const href = resolved?.href || "";
-      if (!href || typeof window === "undefined" || typeof window.open !== "function") return;
+      if (!href || typeof window === "undefined" || typeof window.open !== "function") {
+        return;
+      }
       window.open(href, "_blank", "noopener,noreferrer");
     },
     navigateToLabel(label) {
-      if (!label) return;
+      if (!label) {
+        return;
+      }
       const slug = label.CustomSlug || label.Slug;
-      if (!slug) return;
+      if (!slug) {
+        return;
+      }
       this.openInNewTab({ name: "browse", query: { q: "label:" + slug } });
     },
     navigateToAlbum(album) {
-      if (!album || !album.UID) return;
+      if (!album || !album.UID) {
+        return;
+      }
       this.openInNewTab({ name: "album", params: { album: album.UID, slug: "view" } });
     },
     navigateToPerson(marker) {
-      if (!marker) return;
+      if (!marker) {
+        return;
+      }
       if (marker.SubjUID) {
         this.openInNewTab({ name: "browse", query: { q: "subject:" + marker.SubjUID } });
       } else if (marker.Name) {
@@ -1615,7 +1732,9 @@ export default {
         return;
       }
       const state = this.chipState[field];
-      if (!state) return;
+      if (!state) {
+        return;
+      }
       state.input = null;
       state.search = "";
       state.key++;
@@ -1626,7 +1745,9 @@ export default {
     // crossing into editingField (chip sections no longer have one).
     onChipEscape(field) {
       const state = this.chipState[field];
-      if (!state) return;
+      if (!state) {
+        return;
+      }
       state.removals = [];
       this.clearChipInput(field);
     },
@@ -1639,7 +1760,9 @@ export default {
     },
     togglePendingChipRemoval(field, key) {
       const state = this.chipState[field];
-      if (!state || key == null) return;
+      if (!state || key == null) {
+        return;
+      }
       const idx = state.removals.indexOf(key);
       if (idx >= 0) {
         state.removals.splice(idx, 1);
@@ -1653,7 +1776,9 @@ export default {
     // `visibleLabels` / `visibleAlbums` computeds repopulate reactively.
     undoChipRemovals(field) {
       const state = this.chipState[field];
-      if (!state) return;
+      if (!state) {
+        return;
+      }
       state.removals = [];
     },
     resetChipState() {
@@ -1668,9 +1793,14 @@ export default {
     // shapes differ: labels are wrapped (`{ Label: { ID, ... } }`) while
     // albums come through directly (`{ UID, ... }`).
     onChipActivate(field, item) {
-      if (!item) return;
-      if (field === "labels") return this.navigateToLabel(item.Label);
-      if (field === "albums") return this.navigateToAlbum(item);
+      if (!item) {
+        return;
+      }
+      if (field === "labels") {
+        return this.navigateToLabel(item.Label);
+      } else if (field === "albums") {
+        return this.navigateToAlbum(item);
+      }
     },
     // Removal entry point: wired to the chip's × icon click and to the
     // chip's keyboard Delete / Backspace handler. No-op outside edit mode
@@ -1678,7 +1808,9 @@ export default {
     // pending removal so the chip disappears from `visibleLabels` /
     // `visibleAlbums` until the user clicks Undo or auto-commit runs.
     onChipDelete(field, item) {
-      if (!item || !this.isEditable) return;
+      if (!item || !this.isEditable) {
+        return;
+      }
       const key = field === "labels" ? item?.Label?.ID : item.UID;
       this.togglePendingChipRemoval(field, key);
     },
@@ -1689,15 +1821,21 @@ export default {
     // rejection the caller sees a $notify.error and the chip never appears.
     // Returns true when a save was triggered (caller clears the input).
     addLabelImmediate(rawName) {
-      if (!this.photo) return false;
+      if (!this.photo) {
+        return false;
+      }
       const name = (rawName || "").trim();
-      if (!name) return false;
+      if (!name) {
+        return false;
+      }
       if (name.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
       }
       const norm = this.$util.normalizeTitle(name);
-      if (!norm) return false;
+      if (!norm) {
+        return false;
+      }
       // Re-typing a × clicked chip un-stages the removal locally so the
       // re-add doesn't race the deferred DELETE on auto-commit.
       const pending = this.labels.find((l) => this.isChipPendingRemoval("labels", l?.Label?.ID) && this.$util.normalizeTitle(l?.Label?.Name) === norm);
@@ -1706,7 +1844,9 @@ export default {
         return true;
       }
       // Already on the photo (and not pending removal)? Skip the API call.
-      if (this.visibleLabels.some((l) => this.$util.normalizeTitle(l?.Label?.Name) === norm)) return false;
+      if (this.visibleLabels.some((l) => this.$util.normalizeTitle(l?.Label?.Name) === norm)) {
+        return false;
+      }
       // Match against the system-wide label list — if a normalized match
       // exists, send the canonical existing-label name so the backend
       // doesn't create a near-duplicate (e.g. typed `Hello Cat` reuses an
@@ -1719,7 +1859,9 @@ export default {
       return true;
     },
     albumTitleConflicts(norm) {
-      if (!norm) return true;
+      if (!norm) {
+        return true;
+      }
       return this.albums.some((a) => this.$util.normalizeTitle(a?.Title) === norm);
     },
     // Validates `album` and, when valid, fires `Photo.addToAlbum(uid)`
@@ -1728,10 +1870,16 @@ export default {
     // saved state — no transient pending-add chip. Caller in onAlbumEnter
     // wraps brand-new albums in `Album.save()` first so a UID exists.
     addAlbumImmediate(album) {
-      if (!this.photo) return false;
-      if (!album || typeof album !== "object" || !album.UID) return false;
+      if (!this.photo) {
+        return false;
+      }
+      if (!album || typeof album !== "object" || !album.UID) {
+        return false;
+      }
       const title = (album.Title || "").trim();
-      if (!title) return false;
+      if (!title) {
+        return false;
+      }
       if (title.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
         return false;
@@ -1741,16 +1889,22 @@ export default {
         this.togglePendingChipRemoval("albums", album.UID);
         return true;
       }
-      if (this.albums.some((a) => a.UID === album.UID)) return false;
+      if (this.albums.some((a) => a.UID === album.UID)) {
+        return false;
+      }
       const norm = this.$util.normalizeTitle(title);
-      if (this.albumTitleConflicts(norm)) return false;
+      if (this.albumTitleConflicts(norm)) {
+        return false;
+      }
       this.photo.addToAlbum(album.UID).catch(() => {
         this.$notify.error(this.$gettext("Failed to save changes"));
       });
       return true;
     },
     onLabelSelected(value) {
-      if (!value || typeof value !== "object" || !value.Name) return;
+      if (!value || typeof value !== "object" || !value.Name) {
+        return;
+      }
       this.addLabelImmediate(value.Name);
       this.clearChipInput("labels");
     },
@@ -1759,7 +1913,9 @@ export default {
     // keystroke we handle, which would otherwise drop the pending addition.
     pendingChipName(field, ev) {
       const search = this.chipState[field]?.search;
-      if (search) return search;
+      if (search) {
+        return search;
+      }
       const target = ev && ev.target ? ev.target : null;
       return target && typeof target.value === "string" ? target.value : "";
     },
@@ -1774,7 +1930,9 @@ export default {
     // which felt unresolved compared to the Albums combobox.
     onLabelEnter(ev) {
       const search = this.pendingChipName("labels", ev).trim();
-      if (!search) return;
+      if (!search) {
+        return;
+      }
 
       if (search.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
@@ -1787,7 +1945,9 @@ export default {
     // Confirms pending REMOVALS via Photo.removeLabel — additions take the
     // instant-save path (addLabelImmediate) and never reach this method.
     confirmLabels() {
-      if (!this.photo) return;
+      if (!this.photo) {
+        return;
+      }
 
       const state = this.chipState.labels;
       const removals = state.removals.slice();
@@ -1811,7 +1971,9 @@ export default {
     // Confirms pending REMOVALS via Photo.removeFromAlbum — additions take
     // the instant-save path (addAlbumImmediate) and never reach this method.
     confirmAlbums() {
-      if (!this.photo) return;
+      if (!this.photo) {
+        return;
+      }
 
       const state = this.chipState.albums;
       const removals = state.removals.slice();
@@ -1836,13 +1998,17 @@ export default {
       // bump chipState.albums.key, force-remount the v-combobox, and
       // kill focus mid-keystroke. Free-text Enter is committed via
       // onAlbumEnter, which owns the canonical clear path.
-      if (!value || typeof value !== "object" || !value.UID) return;
+      if (!value || typeof value !== "object" || !value.UID) {
+        return;
+      }
       this.addAlbumImmediate(value);
       this.clearChipInput("albums");
     },
     onAlbumEnter(ev) {
       const search = this.pendingChipName("albums", ev).trim();
-      if (!search) return;
+      if (!search) {
+        return;
+      }
 
       if (search.length > this.$config.get("clip")) {
         this.$notify.error(this.$gettext("Name too long"));
@@ -1897,7 +2063,9 @@ export default {
       this.dateTimeDialog = false;
 
       const photo = this.view?.photo;
-      if (!photo || !photo.UID || !this.canEdit) return;
+      if (!photo || !photo.UID || !this.canEdit) {
+        return;
+      }
 
       photo.Day = data.Day;
       photo.Month = data.Month;
@@ -1905,7 +2073,9 @@ export default {
       photo.TimeZone = data.TimeZone;
 
       const localDate = photo.localDate(data.time);
-      if (!localDate.isValid) return;
+      if (!localDate.isValid) {
+        return;
+      }
 
       const isoTime =
         localDate.toISO({
@@ -1935,7 +2105,9 @@ export default {
       this.cameraDialog = false;
 
       const photo = this.view?.photo;
-      if (!photo || !photo.UID || !this.canEdit) return;
+      if (!photo || !photo.UID || !this.canEdit) {
+        return;
+      }
 
       photo.CameraID = data.CameraID;
       photo.LensID = data.LensID;
@@ -1956,7 +2128,9 @@ export default {
       this.locationDialog = false;
 
       const photo = this.view?.photo;
-      if (!photo || !photo.UID || !this.canEdit) return;
+      if (!photo || !photo.UID || !this.canEdit) {
+        return;
+      }
 
       photo.Lat = data.lat;
       photo.Lng = data.lng;
@@ -1969,7 +2143,9 @@ export default {
       photo
         .update()
         .then(() => {
-          if (!this.view?.model) return;
+          if (!this.view?.model) {
+            return;
+          }
           this.view.model.Lat = photo.Lat;
           this.view.model.Lng = photo.Lng;
         })
