@@ -50,7 +50,7 @@ describe("PMetaCameraDialog component", () => {
     expect(onClose).toHaveBeenCalledOnce();
   });
 
-  it("should emit confirm with edited values", () => {
+  it("should emit confirm with edited values", async () => {
     const onConfirm = vi.fn();
     const w = mount(PMetaCameraDialog, {
       props: { visible: false, photo: mockPhoto, onConfirm },
@@ -65,7 +65,7 @@ describe("PMetaCameraDialog component", () => {
     w.vm.fNumber = "1.4";
     w.vm.focalLength = "35";
 
-    w.vm.confirm();
+    await w.vm.confirm();
 
     expect(onConfirm).toHaveBeenCalledOnce();
     expect(onConfirm).toHaveBeenCalledWith({
@@ -76,6 +76,46 @@ describe("PMetaCameraDialog component", () => {
       FNumber: "1.4",
       FocalLength: "35",
     });
+  });
+
+  // Regression: confirm() previously emitted the form values without
+  // running the v-form rules, so an out-of-range ISO/FNumber or an
+  // overlength Exposure bypassed the inline rules and reached the
+  // parent's save handler. The new $refs.form.validate() gate blocks
+  // the emit when any rule fails.
+  it("blocks confirm and notifies when form validation fails", async () => {
+    const onConfirm = vi.fn();
+    const notifyError = vi.fn();
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto, onConfirm },
+      global: { mocks: { $notify: { error: notifyError } } },
+    });
+
+    w.vm.loadFromPhoto();
+
+    // Inject a failing validate() onto the internal instance's $refs.
+    const validate = vi.fn().mockResolvedValue({ valid: false });
+    w.vm.$.refs.form = { validate };
+
+    await w.vm.confirm();
+
+    expect(validate).toHaveBeenCalled();
+    expect(onConfirm).not.toHaveBeenCalled();
+    expect(notifyError).toHaveBeenCalledWith("Changes could not be saved");
+  });
+
+  // Save button is :disabled="!valid"; flipping the v-form-backed
+  // `valid` flag toggles the button so the user gets a visual cue
+  // before clicking. Mirrors the datetime dialog's :disabled
+  // ="invalidDate" pattern. valid starts true so a freshly opened
+  // dialog on valid data doesn't flash disabled.
+  it("starts with valid=true so the Save button is enabled by default", () => {
+    const w = mount(PMetaCameraDialog, {
+      props: { visible: false, photo: mockPhoto },
+    });
+
+    // The button is :disabled="!valid"; valid: true → button enabled.
+    expect(w.vm.valid).toBe(true);
   });
 
   it("should use defaults for missing photo fields", () => {

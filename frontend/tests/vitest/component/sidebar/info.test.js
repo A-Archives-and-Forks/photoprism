@@ -307,6 +307,26 @@ describe("PSidebarInfo component", () => {
     expect(formattedTime).toBe("Unknown");
   });
 
+  // Regression: formatTime() used to derive Day=1 / Jan 1 for every
+  // Year/Month/Day=-1 (Unknown) photo because it formatted the padded
+  // TakenAtLocal directly. The Thumb model from viewer.Result carries
+  // no Year/Month/Day, so the right fix is to delegate to the full
+  // Photo's getDateString() — which already handles the Unknown
+  // fallback — whenever the full Photo is loaded.
+  it("delegates to photo.getDateString(true) when the full Photo is loaded", () => {
+    const getDateString = vi.fn().mockReturnValue("June 2024");
+    const photo = { ...mockPhoto, getDateString };
+    const w = mountSidebar({
+      props: { modelValue: mockModel, photo, context: contexts.Photos },
+      global: { stubs: { PMap: true } },
+    });
+
+    const result = w.vm.formatTime(mockModel);
+
+    expect(getDateString).toHaveBeenCalledWith(true);
+    expect(result).toBe("June 2024");
+  });
+
   // Camera, lens, and EXIF info
   it("should display camera info from photo prop", () => {
     expect(wrapper.vm.cameraInfo).toBe("Canon EOS R5");

@@ -86,6 +86,7 @@
           <v-col cols="6">
             <v-text-field
               v-model="time"
+              :error="invalidDate"
               :label="timeLabel"
               prepend-inner-icon="mdi-clock-time-eight-outline"
               autocomplete="off"
@@ -118,8 +119,8 @@
         <v-btn variant="flat" color="button" class="action-cancel" min-width="100" @click.stop="close">
           {{ $gettext("Cancel") }}
         </v-btn>
-        <v-btn variant="flat" color="highlight" class="action-confirm" min-width="100" :disabled="invalidDate" @click="confirm">
-          {{ $gettext("Confirm") }}
+        <v-btn variant="flat" color="highlight" class="action-confirm" min-width="100" :disabled="invalidDate" :aria-label="$gettext('Save changes')" @click="confirm">
+          {{ $gettext("Save") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -260,9 +261,15 @@ export default {
       }
     },
     setTime() {
-      if (rules.isTime(this.time)) {
-        this.updateLocalDate();
+      // Always reflect time validity in invalidDate — the previous
+      // `if (isTime) updateLocalDate()` shape skipped the update on bad
+      // input, leaving invalidDate stale and the Confirm button enabled
+      // against a malformed time string.
+      if (!rules.isTime(this.time)) {
+        this.invalidDate = true;
+        return;
       }
+      this.updateLocalDate();
     },
     syncTime() {
       this.updateLocalDate();

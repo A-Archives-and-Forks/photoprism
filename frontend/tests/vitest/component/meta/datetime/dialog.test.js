@@ -105,6 +105,34 @@ describe("PMetaDatetimeDialog component", () => {
     expect(onConfirm).not.toHaveBeenCalled();
   });
 
+  // Regression: setTime() previously short-circuited on malformed input
+  // (skipping updateLocalDate), leaving invalidDate stale. Without this
+  // branch the Confirm button stayed enabled against bad time strings
+  // and the parent received "25:99:99" as the new time.
+  it("should mark the date invalid when the time field contains a malformed value", () => {
+    const onConfirm = vi.fn();
+    const w = mount(PMetaDatetimeDialog, {
+      props: { visible: false, photo: mockPhoto(), onConfirm },
+    });
+
+    w.vm.loadFromPhoto();
+    expect(w.vm.invalidDate).toBe(false);
+
+    // Malformed time → setTime flips invalidDate and bails before update.
+    w.vm.time = "25:99:99";
+    w.vm.setTime();
+    expect(w.vm.invalidDate).toBe(true);
+
+    // confirm() then refuses to emit.
+    w.vm.confirm();
+    expect(onConfirm).not.toHaveBeenCalled();
+
+    // Recovering to a valid time clears invalidDate via updateLocalDate.
+    w.vm.time = "09:15:00";
+    w.vm.setTime();
+    expect(w.vm.invalidDate).toBe(false);
+  });
+
   it("should show UTC label when photo time is UTC", () => {
     const photo = mockPhoto({
       timeIsUTC() {

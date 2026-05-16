@@ -1784,6 +1784,19 @@ export default {
       this.confirmField();
     },
     formatTime(model) {
+      // Prefer the full Photo's getDateString() — it has the Year /
+      // Month / Day Unknown-fallback baked in (Unknown / year-only /
+      // month + year) and is the single source of truth for that
+      // formatting. The Thumb model from viewer.Result
+      // (`internal/entity/search/viewer/result.go`) carries
+      // TakenAtLocal / TimeZone but no Year / Month / Day, so we can't
+      // detect Unknown components on the Thumb alone; we fall back to
+      // a plain TakenAtLocal format for the brief window before the
+      // full photo loads.
+      if (this.photo && typeof this.photo.getDateString === "function") {
+        return this.photo.getDateString(true);
+      }
+
       if (!model || !model.TakenAtLocal) {
         return this.$gettext("Unknown");
       }

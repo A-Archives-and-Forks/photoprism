@@ -22,6 +22,7 @@
         </v-btn>
       </v-toolbar>
       <v-card-text class="dense">
+        <v-form ref="form" v-model="valid" validate-on="invalid-input" @submit.prevent="confirm">
         <v-row dense class="py-2">
           <v-col cols="12">
             <v-select
@@ -110,13 +111,14 @@
             ></v-text-field>
           </v-col>
         </v-row>
+        </v-form>
       </v-card-text>
       <v-card-actions class="action-buttons">
         <v-btn variant="flat" color="button" class="action-cancel" min-width="100" @click.stop="close">
           {{ $gettext("Cancel") }}
         </v-btn>
-        <v-btn variant="flat" color="highlight" class="action-confirm" min-width="100" @click="confirm">
-          {{ $gettext("Confirm") }}
+        <v-btn variant="flat" color="highlight" class="action-confirm" min-width="100" :disabled="!valid" :aria-label="$gettext('Save changes')" @click="confirm">
+          {{ $gettext("Save") }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -144,6 +146,13 @@ export default {
     return {
       rules,
       PhotoMaxLength,
+      // Reflects the v-form's aggregate validity via v-model="valid".
+      // Drives the Save button's `:disabled` state so the user gets a
+      // visual cue before clicking — mirrors the datetime dialog's
+      // `:disabled="invalidDate"` pattern. Starts true so a freshly
+      // opened dialog on valid data doesn't flash disabled; afterEnter()
+      // seeds validate() to set the real state on mount.
+      valid: true,
       cameraID: 0,
       lensID: 0,
       iso: "",
@@ -170,6 +179,9 @@ export default {
   methods: {
     afterEnter() {
       this.$view.enter(this);
+      // Seed validation so rules are active from the first render.
+      // Mirrors the canonical pattern in page/settings/account.vue.
+      this.$nextTick(() => this.$refs.form?.validate?.());
     },
     afterLeave() {
       this.$view.leave(this);
@@ -190,13 +202,26 @@ export default {
       this.$emit("close");
     },
     confirm() {
-      this.$emit("confirm", {
-        CameraID: this.cameraID,
-        LensID: this.lensID,
-        Iso: this.iso,
-        Exposure: this.exposure,
-        FNumber: this.fNumber,
-        FocalLength: this.focalLength,
+      // Gate the emit on form validation so an out-of-range ISO /
+      // FNumber / FocalLength or an overlength Exposure cannot bypass
+      // the inline rules and reach the parent's save handler. Falls
+      // back to permissive when no v-form ref is mounted (test stub).
+      const form = this.$refs.form;
+      const validate = typeof form?.validate === "function" ? form.validate() : Promise.resolve({ valid: true });
+
+      return Promise.resolve(validate).then((result) => {
+        if (result && result.valid === false) {
+          this.$notify.error(this.$gettext("Changes could not be saved"));
+          return;
+        }
+        this.$emit("confirm", {
+          CameraID: this.cameraID,
+          LensID: this.lensID,
+          Iso: this.iso,
+          Exposure: this.exposure,
+          FNumber: this.fNumber,
+          FocalLength: this.focalLength,
+        });
       });
     },
   },
