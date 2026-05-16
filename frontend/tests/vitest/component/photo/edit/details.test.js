@@ -506,6 +506,7 @@ describe("component/photo/edit/details", () => {
         License: 1024,
         Keywords: 2048,
         Notes: 2048,
+        Exposure: 64,
       });
 
       const cases = [

@@ -58,7 +58,6 @@
           <v-col cols="6">
             <v-text-field
               v-model="iso"
-              hide-details
               autocomplete="off"
               autocorrect="off"
               autocapitalize="none"
@@ -66,14 +65,13 @@
               placeholder=""
               density="comfortable"
               validate-on="input"
-              :rules="rules.number(false, 0, 1048576)"
+              :rules="rules.number(false, 0, 128000)"
               class="input-iso"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
             <v-text-field
               v-model="exposure"
-              hide-details
               autocomplete="off"
               autocorrect="off"
               autocapitalize="none"
@@ -81,14 +79,13 @@
               placeholder=""
               density="comfortable"
               validate-on="input"
-              :rules="rules.text(false, 0, 64)"
+              :rules="rules.text(false, 0, PhotoMaxLength.Exposure, $gettext('Exposure'))"
               class="input-exposure"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
             <v-text-field
               v-model="fNumber"
-              hide-details
               autocomplete="off"
               autocorrect="off"
               autocapitalize="none"
@@ -96,20 +93,19 @@
               placeholder=""
               density="comfortable"
               validate-on="input"
-              :rules="rules.number(false, 0, 1048576)"
+              :rules="rules.number(false, 0, 256)"
               class="input-fnumber"
             ></v-text-field>
           </v-col>
           <v-col cols="6">
             <v-text-field
               v-model="focalLength"
-              hide-details
               autocomplete="off"
               :label="$gettext('Focal Length')"
               placeholder=""
               density="comfortable"
               validate-on="input"
-              :rules="rules.number(false, 0, 1048576)"
+              :rules="rules.number(false, 0, 128000)"
               class="input-focal-length"
             ></v-text-field>
           </v-col>
@@ -128,6 +124,7 @@
 </template>
 
 <script>
+import { MaxLength as PhotoMaxLength } from "model/photo";
 import { rules } from "common/form";
 
 export default {
@@ -146,6 +143,7 @@ export default {
   data() {
     return {
       rules,
+      PhotoMaxLength,
       cameraID: 0,
       lensID: 0,
       iso: "",

@@ -35,6 +35,7 @@ export const MaxLength = Object.freeze({
   License: 1024,
   Keywords: 2048,
   Notes: 2048,
+  Exposure: 64,
 });
 
 // Photo models core metadata for images and videos shown in the UI.

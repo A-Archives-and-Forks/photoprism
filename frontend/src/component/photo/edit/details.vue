@@ -157,7 +157,6 @@
                 :disabled="disabled"
                 :readonly="!!(view.model.Lat || view.model.Lng)"
                 :label="$gettext('Country')"
-                hide-details
                 hide-no-data
                 autocomplete="off"
                 item-value="Code"
@@ -174,7 +173,6 @@
               <v-text-field
                 v-model="view.model.Altitude"
                 :disabled="disabled"
-                hide-details
                 flat
                 autocomplete="off"
                 autocorrect="off"
@@ -211,7 +209,6 @@
               <v-text-field
                 v-model="view.model.Iso"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -219,7 +216,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 128000)"
                 class="input-iso"
               ></v-text-field>
             </v-col>
@@ -227,7 +224,6 @@
               <v-text-field
                 v-model="view.model.Exposure"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -235,7 +231,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.text(false, 0, 64)"
+                :rules="rules.text(false, 0, PhotoMaxLength.Exposure, $gettext('Exposure'))"
                 class="input-exposure"
               ></v-text-field>
             </v-col>
@@ -261,7 +257,6 @@
               <v-text-field
                 v-model="view.model.FNumber"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 autocorrect="off"
                 autocapitalize="none"
@@ -269,7 +264,7 @@
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 256)"
                 class="input-fnumber"
               ></v-text-field>
             </v-col>
@@ -277,13 +272,12 @@
               <v-text-field
                 v-model="view.model.FocalLength"
                 :disabled="disabled"
-                hide-details
                 autocomplete="off"
                 :label="$gettext('Focal Length')"
                 placeholder=""
                 density="comfortable"
                 validate-on="input"
-                :rules="rules.number(false, 0, 1048576)"
+                :rules="rules.number(false, 0, 128000)"
                 class="input-focal-length"
               ></v-text-field>
             </v-col>

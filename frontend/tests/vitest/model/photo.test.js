@@ -22,6 +22,7 @@ describe("model/photo", () => {
       License: 1024,
       Keywords: 2048,
       Notes: 2048,
+      Exposure: 64,
     });
     // Frozen so consumers can't accidentally mutate per-field caps.
     expect(Object.isFrozen(MaxLength)).toBe(true);
