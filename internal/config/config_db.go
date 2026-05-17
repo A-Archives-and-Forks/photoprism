@@ -52,15 +52,14 @@ func (c *Config) DatabaseDriver() string {
 	return c.options.DatabaseDriver
 }
 
-// DatabaseDriverName returns the formatted database driver name.
+// DatabaseDriverName returns the formatted database driver name. Input is
+// always canonical after DatabaseDriver(); the default arm is defensive.
 func (c *Config) DatabaseDriverName() string {
 	switch c.DatabaseDriver() {
-	case dsn.DriverMySQL, dsn.DriverMariaDB:
+	case dsn.DriverMySQL:
 		return "MariaDB"
-	case dsn.DriverSQLite3, "sqlite", "test", "file", "":
+	case dsn.DriverSQLite3:
 		return "SQLite"
-	case "tidb":
-		return "TiDB"
 	default:
 		return "unsupported database"
 	}

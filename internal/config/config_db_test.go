@@ -44,10 +44,38 @@ func TestConfig_DatabaseDriver(t *testing.T) {
 }
 
 func TestConfig_DatabaseDriverName(t *testing.T) {
-	c := NewConfig(CliTestContext())
-	resetDatabaseOptions(c)
-	driver := c.DatabaseDriverName()
-	assert.Equal(t, "SQLite", driver)
+	t.Run("DefaultsToSQLite", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
+	t.Run("MySQLReportsAsMariaDB", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverMySQL
+		assert.Equal(t, "MariaDB", c.DatabaseDriverName())
+	})
+	t.Run("MariaDBAliasReportsAsMariaDB", func(t *testing.T) {
+		// "mariadb" collapses onto DriverMySQL in ParseDriver; format stays "MariaDB".
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = dsn.DriverMariaDB
+		assert.Equal(t, "MariaDB", c.DatabaseDriverName())
+	})
+	t.Run("DeprecatedTiDBReportsAsSQLite", func(t *testing.T) {
+		// DatabaseDriver() warns and rewrites "tidb" to SQLite3 before this runs.
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = "tidb"
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
+	t.Run("UnknownDriverReportsAsSQLite", func(t *testing.T) {
+		// DatabaseDriver() coerces unknown drivers to SQLite3 before this runs.
+		c := NewConfig(CliTestContext())
+		resetDatabaseOptions(c)
+		c.options.DatabaseDriver = "oracle"
+		assert.Equal(t, "SQLite", c.DatabaseDriverName())
+	})
 }
 
 func TestConfig_DatabaseVersion(t *testing.T) {
