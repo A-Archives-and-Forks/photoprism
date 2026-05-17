@@ -90,26 +90,31 @@ Title Case rules (Chicago-style, with code- and path-aware normalization):
 - Frontend: Vue 3 plus Vuetify 3 under `frontend/`.
 - Local dev and CI use Docker Compose; Traefik provides local TLS via `*.localssl.dev`.
 - Code in `pkg/*` must not import from `internal/*`. If you need config, entity, or DB access, add code under `internal/`.
-- Shared Go filesystem rules:
+- Shared Go rules:
+  - After Go edits, run `make fmt-go` and keep `gofmt` tab indentation.
+  - Every added/modified Go function, including unexported helpers, must have focused test coverage in the corresponding `*_test.go` files; update existing tests or add new ones as needed.
+  - Every Go package must contain a root `<package>.go` file with the standard license header and a short package description comment.
   - Use `pkg/fs` permission constants: `fs.ModeDir`, `fs.ModeFile`, `fs.ModeConfigFile`, `fs.ModeSecretFile`, and `fs.ModeBackupFile`.
   - When importing the stdlib `io/fs`, alias it to avoid collisions, for example `iofs "io/fs"` or `gofs "io/fs"`.
   - Do not pass stdlib `io/fs` mode flags where permission bits are expected.
   - Prefer `filepath.Join` for filesystem paths and `path.Join` only for URL paths.
   - Normalize slash-based logical paths stored in DB, config, or API payloads with `clean.SlashPath(...)`.
-- Shared Go style rules:
-  - After Go edits, run `make fmt-go` and keep `gofmt` tab indentation.
-  - Doc comments for packages and exported identifiers must be complete sentences that begin with the described name and end with a period.
-  - Every new function (including unexported helpers) needs a doc comment — but keep it compact: default to ONE `// Name does X.` line. Add 1–2 short follow-up lines only when the WHY is non-obvious (hidden invariant, subtle workaround, contract a reader can't infer from the body).
-  - Every new Go function, including unexported helpers, must have focused test coverage in the corresponding `*_test.go` files; update existing tests or add new ones as needed.
-  - For short examples in comments, indent code instead of using backticks.
-  - Every Go package must contain a root `<package>.go` file with the standard license header and a short package description comment.
-- Shared JS/Vue style rules:
-  - Every new JS function and every non-trivial Vue `methods:` / `computed:` / watcher entry needs a doc comment. Same compact default as Go: ONE `// Name does X.` line; 1–2 short follow-up lines only for non-obvious WHY. Trivial getters (e.g. `isOpen: () => this.open`) can skip the comment.
-- Shared JS/Vue testing rules:
-  - New JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
-  - New Vue components should have component-test coverage, and existing component tests should be updated as needed when behavior changes.
-- Do not include in any code comment (Go or JS): issue / PR numbers, "previously…" history, alternatives considered, what the function used to do, references to old commits or reviewers, or any narrative that names the change instead of the steady-state behavior. That context belongs in the commit message, the spec, or a handover note — never in source.
+- Shared JS/Vue rules:
+  - Added/modified JavaScript functions, including helpers, should be tested whenever practical; update existing tests or add new ones as needed.
+  - Added/modified Vue components should have component-test coverage, and existing component tests should be updated as needed when behavior changes.
 - When adding a metadata source such as `SrcOllama` or `SrcOpenAI`, update both `internal/entity/src.go` and `frontend/src/common/util.js` so backend and UI stay aligned.
+
+### JS/Go Code Comments
+
+Doc comments for packages and exported identifiers must be complete sentences that begin with the name of the thing being described and end with a period.
+
+A doc comment is **required** for every function (including unexported helpers), as well as for every non-trivial Vue `methods:` / `computed:` / watcher:
+- Keep comments **compact** and default to one line for WHAT in the format `// Name does X.`. Skip trivial getters (`isOpen: () => this.open`).
+- Add up to three follow-up lines (`// …`) only when the WHY is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code.
+- For short examples in comments, indent code instead of using backticks.
+- If readers can derive the WHY from the function body or a nearby line, leave it out. Multi-paragraph comments belong in specifications, package README files, or issue descriptions — never in the source itself.
+
+> **Don't include in code comments:** Issue / PR numbers, "previously…" history, alternatives considered, what the function used to do, references to old commits, names of subsequent reviewers, or any narrative that names the change rather than the steady-state behavior. That context belongs in commit messages, specs, or handover notes.
 
 ## Agent Runtime
 

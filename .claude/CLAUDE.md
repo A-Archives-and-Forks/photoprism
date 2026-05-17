@@ -140,7 +140,8 @@ Before promoting a claim from `CLAUDE.md`, `AGENTS.md`, a memory entry, or anoth
 
 Topic-specific conventions live under `.claude/rules/` and are loaded alongside this file:
 
-- `go-code-style.md`, `go-testing.md` — Go style, doc comments, package boundaries, test patterns, fixtures.
+- `code-comments.md` — shared JS/Go doc comment rules (length cap, what to omit); referenced by both style files.
+- `go-code-style.md`, `go-testing.md` — Go style, package boundaries, test patterns, fixtures.
 - `frontend-rules.md` — JS/Vue code style, formatting, dependencies, tests, Playwright, translations.
 - `commit-and-docs-style.md` — commit-message format, GitHub issue templates, spec heading style.
 - `safety-and-security.md` — Git/data safety, destructive commands, file I/O and archive-extraction policies, HTTP download helpers.

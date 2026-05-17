@@ -1,13 +1,10 @@
 ## Frontend Code Style & Test Coverage
 
-- **Doc comments are required, but compact.** Every new JS function and every non-trivial Vue `methods:` / `computed:` / watcher entry needs a doc comment — but the default is ONE `// Name does X.` line (see `src/options/themes.js`, `src/common/util.js`). Skip trivial getters (`isOpen: () => this.open`).
-- **Length cap.** One line for WHAT. Add 1–2 short lines (`// …`) only when the WHY is non-obvious: a hidden invariant, a workaround that would otherwise be undone by a future cleanup, a contract a reader can't infer from the code. If the next reader can derive it from the function body or a nearby line, leave it out. Multi-paragraph comments belong in specs or PR descriptions, never in source.
-- **Don't include in code comments:** issue / PR numbers, "previously…" history, alternatives considered, what the function used to do, references to old commits, names of subsequent reviewers, or any narrative that names the change rather than the steady-state behavior. Those belong in commit messages, specs, or handover notes.
-- Vue Single-File Components: one-line doc comment above the default export and a one-liner above each non-trivial method, computed property, or watcher. Same length cap as above.
-- Test new JS functions (including helpers) and new Vue components whenever practical; update existing tests when behavior changes. When a unit test is impractical (DOM-heavy flows, third-party widget integration), the doc comment is still mandatory — it's the minimum bar.
-- **JavaScript only — do not introduce TypeScript.** The frontend is a pure JS + Vue SFC codebase: no `.ts` files, no `tsconfig.json`, no `<script lang="ts">` blocks. JSDoc type annotations in comments are fine; full TS migrations are out of scope.
-- Use the Options API in Vue components (consistent with the rest of the codebase); do not introduce Composition API or `<script setup>`.
-- **State management:** shared state lives in reactive singleton modules under `src/common/` and `src/app/` (e.g., `app/session.js`, `common/config.js`, `common/clipboard.js`, `common/log.js`) that export a `reactive()` / `ref()` object directly; components access them via `import` or via the globally-installed `$config` / `$session` plugins. Do not introduce Vuex, Pinia, or new ad-hoc stores — extend an existing singleton or add a new one alongside its peers in `common/` or `app/`.
+- **Comments:** Follow the code comment rules in `code-comments.md`.
+- **Tests:** Test new JS functions (including helpers) and new Vue components whenever practical; update existing tests when behavior changes. When a unit test is impractical (DOM-heavy flows, third-party widget integration), the doc comment is still mandatory — it's the minimum bar.
+- **State:** Shared state lives in reactive singleton modules under `src/common/` and `src/app/` (e.g., `app/session.js`, `common/config.js`, `common/clipboard.js`, `common/log.js`) that export a `reactive()` / `ref()` object directly; components access them via `import` or via the globally-installed `$config` / `$session` plugins. Do not introduce Vuex, Pinia, or new ad-hoc stores — extend an existing singleton or add a new one alongside its peers in `common/` or `app/`.
+- **Vue/Vuetify:** Use the Options API in Vue components (consistent with the rest of the codebase); do not introduce Composition API or `<script setup>`.
+- **TypeScript:** Do not introduce TypeScript. The frontend is a pure JS + Vue SFC codebase: no `.ts` files, no `tsconfig.json`, no `<script lang="ts">` blocks. JSDoc type annotations in comments are fine; full TS migrations are out of scope.
 
 ## Frontend Formatting
 
