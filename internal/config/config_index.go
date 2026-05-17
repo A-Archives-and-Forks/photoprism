@@ -8,6 +8,8 @@ import (
 	"time"
 
 	"github.com/dustin/go-humanize/english"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 // indexWorkersLogOnce gates the per-process startup log emitted by IndexWorkers,
@@ -53,7 +55,7 @@ func (c *Config) indexWorkers() (n int, reason string) {
 	configured := parseIndexWorkers(c.options.IndexWorkers)
 
 	// SQLite serializes writes, so we cap workers to avoid lock contention.
-	if c.DatabaseDriver() == SQLite3 {
+	if c.DatabaseDriver() == dsn.DriverSQLite3 {
 		switch {
 		case configured > 4:
 			return 4, "sqlite-cap"

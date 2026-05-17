@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/pkg/dsn"
 )
 
 func TestConfig_IndexWorkers(t *testing.T) {
@@ -70,7 +72,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 		TotalMem = RecommendedMem - 1
 		t.Cleanup(func() { TotalMem = originalMem })
 
-		c.options.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = dsn.DriverMySQL
 		c.options.IndexWorkers = "16"
 
 		got, reason := c.indexWorkers()
@@ -83,7 +85,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 			t.Skipf("requires at least 8 CPUs (have %d)", cpus)
 		}
 		TotalMem = originalMem
-		c.options.DatabaseDriver = SQLite3
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.IndexWorkers = IndexWorkersAuto
 
 		got, reason := c.indexWorkers()
@@ -93,7 +95,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("SqliteOverrideAboveCap", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = SQLite3
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.IndexWorkers = "12"
 
 		got, reason := c.indexWorkers()
@@ -103,7 +105,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("SqliteOverrideAtOrBelowCap", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = SQLite3
+		c.options.DatabaseDriver = dsn.DriverSQLite3
 		c.options.IndexWorkers = "3"
 
 		got, reason := c.indexWorkers()
@@ -113,7 +115,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("MysqlAuto", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = dsn.DriverMySQL
 		c.options.IndexWorkers = IndexWorkersAuto
 
 		got, reason := c.indexWorkers()
@@ -129,7 +131,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("MysqlConfiguredWithinBudget", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = dsn.DriverMySQL
 		c.options.IndexWorkers = "2"
 
 		got, reason := c.indexWorkers()
@@ -139,7 +141,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("MysqlConfiguredAboveCpus", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = dsn.DriverMySQL
 		c.options.IndexWorkers = "9999"
 
 		got, reason := c.indexWorkers()
@@ -149,7 +151,7 @@ func TestConfig_IndexWorkersReason(t *testing.T) {
 
 	t.Run("ReportGetterMatchesHelper", func(t *testing.T) {
 		TotalMem = originalMem
-		c.options.DatabaseDriver = MySQL
+		c.options.DatabaseDriver = dsn.DriverMySQL
 		c.options.IndexWorkers = IndexWorkersAuto
 
 		want, wantReason := c.indexWorkers()
