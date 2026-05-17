@@ -51,6 +51,7 @@ Optional nested repositories such as `plus/`, `pro/`, `portal/`, and `specs/` ma
 
 - Titles must be concise, imperative, and start with one capitalized prefix plus `: `, for example `Search: Add filter for RAW image formats`.
 - Descriptions must begin with a one-sentence bold user story: `**As a <role>, I want <goal>, so that <outcome>.**`
+- Use level-4 Markdown headings for sections within issue descriptions, for example `#### Acceptance Criteria`.
 - Follow with behavior, rationale, technical considerations, and constraints.
 - End with `- [ ]` checklist items for the acceptance criteria, each using `MUST`, `SHOULD`, or `MAY`.
 - Agents may create, edit, close, reopen, relabel, or otherwise modify GitHub issues only when explicitly requested by the user.
