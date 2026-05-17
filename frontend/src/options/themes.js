@@ -74,10 +74,10 @@ let themes = {
       "surface": "#151515", // Default container surface (sidebar, dropdown menus, dialog v-card); one step above `background`.
       "on-surface": "#ffffff", // Body text and icon color on `surface`, `surface-bright`, `surface-light`, and `card`.
       "surface-bright": "#171717", // Lifted variant of `surface`; raised tiles, hover backgrounds (matches `card` currently).
-      "surface-variant": "#bdbdbd", // Light-grey tone used by Vuetify defaults for active dropdown rows, focus rings, etc.
+      "surface-variant": "#bdbdbd", // Light-gray tone used by Vuetify defaults for active dropdown rows, focus rings, etc.
       "on-surface-variant": "#1c1c1c", // Inverse pair of `surface-variant`; also painted as the tooltip background.
       "card": "#171717", // Dedicated card-container background; raised dialog v-cards inherit this via the VCard default.
-      "selected": "#3d3f40", // Active list-item background; one step above `highlight` for a distinct, neutral grey.
+      "selected": "#3d3f40", // Active list-item background; one step above `highlight` for a distinct, neutral gray.
       "table": "#242424", // VDataTable row and header background.
       "button": "#232425", // Secondary button color (e.g. dialog "Cancel"); the neutral companion to `highlight`.
       "highlight": "#383838", // Primary button color (Save / Confirm); softened from #3d3f40 on May 13 to keep the action calm.
