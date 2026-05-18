@@ -7,20 +7,17 @@ body:
   - type: markdown
     attributes:
       value: |
-        PLEASE PROCEED ONLY IF YOU ARE SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR POSSIBLY A PROBLEM WITH SOME OTHER SOFTWARE YOU ARE USING.
-        CHECK OUR PUBLIC ROADMAP AND TRY TO FIND EXISTING FEATURE REQUESTS FIRST:
-
+        Please proceed only if you are sure that this is not a technical support incident and/or a problem with some other software you are using.
+        Before submitting a request, check our public roadmap to see if an existing feature request matches your needs:
         - https://link.photoprism.app/roadmap
         - https://github.com/photoprism/photoprism/issues
-
-        THANK YOU! 💎
   - type: checkboxes
     id: request-prep
     attributes:
       label: Before You Continue
       description: Make sure you completed these steps before opening a new request.
       options:
-        - label: This is not a support request, and I checked the roadmap and existing issues
+        - label: This is not a support request, and I verified that no similar issues exist
           required: true
   - type: textarea
     id: user-story

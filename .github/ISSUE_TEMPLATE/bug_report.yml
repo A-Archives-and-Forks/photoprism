@@ -7,21 +7,18 @@ body:
   - type: markdown
     attributes:
       value: |
-        PLEASE PROCEED ONLY IF YOU ARE SURE THAT THIS IS NOT A TECHNICAL SUPPORT INCIDENT AND/OR POSSIBLY A PROBLEM WITH SOME OTHER SOFTWARE YOU ARE USING:
-
+        Please proceed only if you are sure that this is not a technical support incident and/or a problem with some other software you are using:
         1. Thoroughly review our [Getting Started](https://docs.photoprism.app/getting-started/) and [User Guides](https://docs.photoprism.app/user-guide/).
         2. Work through the [Troubleshooting Checklists](https://docs.photoprism.app/getting-started/troubleshooting/) we provide.
         3. Do not report [known issues](https://docs.photoprism.app/known-issues/) or [missing features](https://github.com/photoprism/photoprism/issues) as bugs.
         4. Use [GitHub Discussions](https://github.com/photoprism/photoprism/discussions) for community help, and visit our [Support Guide](https://www.photoprism.app/kb/getting-support) to learn more about support options.
-
-        THANK YOU! 💎
   - type: checkboxes
     id: prerequisites
     attributes:
       label: Before You Continue
       description: Confirm that you reviewed the guidance above.
       options:
-        - label: This is a new, confirmed bug that has not yet been reported or documented, and I reviewed the guidance above
+        - label: This is a new, confirmed bug that has not yet been reported or documented
           required: true
   - type: textarea
     id: documented-behavior
