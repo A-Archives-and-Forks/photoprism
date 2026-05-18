@@ -17,7 +17,7 @@ Do not add `Co-Authored-By: Claude …` trailers (or any other AI-authorship tra
 Issue titles MUST be concise, use the imperative mood, and start with a single capitalized prefix followed by a colon and a space, e.g. `Search: Add filter for RAW image formats`.
 
 Issue descriptions MUST begin with a one-sentence **User Story** in the format: `**As a <role>, I want <goal>, so that <outcome>.**`
-Use level-4 Markdown headings for sections within issue descriptions, for example `#### Acceptance Criteria`.
+Use level-3 Markdown headings for sections within issue descriptions, for example `### Acceptance Criteria`.
 Follow the User Story with a clear summary of the expected behavior, rationale, technical considerations, and constraints.
 
 Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
