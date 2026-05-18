@@ -44,7 +44,7 @@
         }"
       >
         <div ref="lightbox" tabindex="-1" class="p-lightbox__pswp no-transition"></div>
-        <p-face-marker-overlay
+        <p-meta-face-markers
           v-if="featPeople && faceMarkers.active && pswp()"
           ref="faceMarkerOverlay"
           :mode="faceMarkers.mode"
@@ -55,7 +55,7 @@
           @create="onCreateFaceMarker"
           @cancel="exitFaceMarkerMode"
           @remove="onRemoveFaceMarker"
-        ></p-face-marker-overlay>
+        ></p-meta-face-markers>
         <div v-show="video.controls && controlsShown !== 0" ref="controls" tabindex="-1" class="p-lightbox__controls" @click.stop.prevent>
           <div :title="video.error" class="video-control video-control--play">
             <v-icon v-if="video.error || video.errorCode > 0" icon="mdi-alert"></v-icon>

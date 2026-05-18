@@ -24,11 +24,11 @@ export default class Page {
     this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
     this.markerAddButton = Selector(".meta-faces-edit", { timeout: 15000 });
     this.markerRemoveButton = Selector(".meta-marker-remove", { timeout: 5000 });
-    this.faceMarkerOverlay = Selector("div.p-face-markers", { timeout: 15000 });
-    this.faceMarkerRect = Selector("rect.p-face-markers__rect", { timeout: 15000 });
-    this.faceMarkerDraft = Selector("rect.p-face-markers__rect--draft", { timeout: 15000 });
-    this.faceMarkerConfirmButton = Selector("button.p-face-markers__btn--confirm", { timeout: 15000 });
-    this.faceMarkerCancelButton = Selector("button.p-face-markers__btn--cancel", { timeout: 15000 });
+    this.faceMarkerOverlay = Selector("div.p-meta-face-markers", { timeout: 15000 });
+    this.faceMarkerRect = Selector("rect.p-meta-face-markers__rect", { timeout: 15000 });
+    this.faceMarkerDraft = Selector("rect.p-meta-face-markers__rect--draft", { timeout: 15000 });
+    this.faceMarkerConfirmButton = Selector("button.p-meta-face-markers__btn--confirm", { timeout: 15000 });
+    this.faceMarkerCancelButton = Selector("button.p-meta-face-markers__btn--cancel", { timeout: 15000 });
     this.personRow = Selector(".metadata__person-row", { timeout: 15000 });
     // Inline edit affordances in the sidebar. Pencils share the same
     // `meta-inline-pencil` class across all rows, so tests that need a

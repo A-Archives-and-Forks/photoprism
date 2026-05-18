@@ -631,7 +631,7 @@ describe("PLightboxSidebar component", () => {
   // the combobox's #append-inner slot) was retired: it looked like a
   // "clear input" affordance but rejected the marker on the backend
   // without confirmation. Removal now lives on the face-marker overlay
-  // — see tests/vitest/component/photo/face-marker-overlay.test.js for
+  // — see tests/vitest/component/meta/face/markers.test.js for
   // the click-to-remove + confirm-pill flow.
   it("should not render a per-row remove icon on any person row", () => {
     const w = mountSidebar({
