@@ -23,7 +23,7 @@ Follow the User Story with a clear summary of the expected behavior, rationale, 
 Descriptions MUST conclude with a checklist of **Acceptance Criteria**:
 - Use GitHub checklist formatting: `- [ ]`
 - Criteria MUST be clear, testable, and unambiguous.
-- Each item MUST use one of the following priority keywords:
+- Each item MUST use one of the following requirement-level keywords:
   - `MUST`   — required for the issue to be considered complete
   - `SHOULD` — strongly recommended but not strictly required
   - `MAY`    — optional enhancement
