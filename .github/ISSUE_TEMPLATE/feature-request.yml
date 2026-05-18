@@ -7,10 +7,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        Before submitting a request, check our public roadmap to see if an existing feature request matches your needs:
+        Before submitting a request, please check our GitHub roadmap and issues to see if an existing request matches your needs:
         - https://link.photoprism.app/roadmap
         - https://github.com/photoprism/photoprism/issues
-        Thank you! 💎
   - type: checkboxes
     id: request-prep
     attributes:
