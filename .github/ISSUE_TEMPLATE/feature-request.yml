@@ -23,8 +23,7 @@ body:
     attributes:
       label: User Story
       description: |
-        All issue descriptions MUST begin with one sentence in the format `As a <role>, I want <goal>, so that <outcome>.`
-        Follow the user story with information about the problem the feature solves, the alternatives you considered, and any other relevant details in the sections below.
+        Feature requests MUST begin with a one sentence user story in the format `**As a <role>, I want <goal>, so that <outcome>.**`
       placeholder: "**As a <role>, I want <goal>, so that <outcome>.**"
     validations:
       required: true
