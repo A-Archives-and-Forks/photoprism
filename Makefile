@@ -105,6 +105,7 @@ show-build:
 	@echo "$(BUILD_TAG)"
 test-all: test acceptance-run-chromium
 fmt: fmt-js fmt-go fmt-swag
+format: format-tables fmt-go fmt-swag
 format-tables: # Format Markdown tables in README.md, AGENTS.md, and CODEMAP.md files.
 	@set -eu; \
 	tmp="$$(mktemp)"; \
