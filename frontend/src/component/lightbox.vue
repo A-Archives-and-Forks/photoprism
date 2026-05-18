@@ -31,7 +31,7 @@
         class="p-lightbox__content no-transition"
         :class="{
           'hide-caption': hideCaption,
-          'sidebar-visible': info,
+          'sidebar-visible': sidebarVisible,
           'face-marker-mode': faceMarkers.active,
           'slideshow-active': slideshow.active,
           'is-fullscreen': isFullscreen(),
@@ -90,11 +90,11 @@
           </div>
         </div>
       </div>
-      <div v-if="info" ref="sidebar" tabindex="-1" class="p-lightbox__sidebar bg-background">
+      <div v-if="sidebarVisible" tabindex="-1" class="p-lightbox__sidebar bg-background">
         <p-lightbox-sidebar
-          ref="sidebarInfo"
+          ref="sidebar"
           :uid="model.UID"
-          @close="hideInfo"
+          @close="hideSidebar"
           @toggle-face-marker-mode="toggleFaceMarkerMode"
           @toggle-face-marker-edit="toggleFaceMarkerEdit"
           @eject-marker="onEjectFaceMarker"
@@ -159,12 +159,12 @@ const appStorage = getAppStorage();
 const appSessionStorage = getAppSessionStorage();
 const viewportPadding = { top: 0, bottom: 0, left: 0, right: 0 };
 
-// shouldShowInfo returns the persisted sidebar-visible flag.
-const shouldShowInfo = () => {
-  return appStorage.getItem("lightbox.info") === "true";
+// shouldShowSidebar returns the persisted sidebar visibility flag.
+const shouldShowSidebar = () => {
+  return appStorage.getItem("lightbox.sidebar") === "true";
 };
 
-// shouldHideCaption returns the persisted Ctrl+H caption-hidden flag;
+// shouldHideCaption returns the persisted Ctrl+H caption visibility flag;
 // a missing key resolves to visible so first-time users see the caption.
 const shouldHideCaption = () => {
   return appStorage.getItem("lightbox.caption") === "false";
@@ -182,11 +182,11 @@ export default {
     return {
       debug,
       trace,
-      visible: false,
       busy: false,
       closing: false,
-      info: shouldShowInfo(),
-      hideCaption: shouldHideCaption() || shouldShowInfo(),
+      visible: false,
+      sidebarVisible: shouldShowSidebar(),
+      hideCaption: shouldHideCaption() || shouldShowSidebar(),
       menuElement: null,
       menuBgColor: "#252525",
       menuVisible: false,
@@ -351,8 +351,8 @@ export default {
       this.closing = false;
       this.visible = true;
       this.wasFullscreen = $fullscreen.isEnabled();
-      this.info = shouldShowInfo();
-      this.hideCaption = shouldHideCaption() || this.info;
+      this.sidebarVisible = shouldShowSidebar();
+      this.hideCaption = shouldHideCaption() || this.sidebarVisible;
 
       // Publish init event.
       this.$event.publish("lightbox.init");
@@ -364,7 +364,7 @@ export default {
       this.resetFaceMarkers();
 
       // Hide sidebar.
-      this.info = false;
+      this.sidebarVisible = false;
 
       // Remove lightbox focus and hide lightbox.
       if (this.visible) {
@@ -420,10 +420,10 @@ export default {
 
       return this.$refs.lightbox;
     },
-    // Returns the metadata sidebar element.
-    getSidebarElement() {
+    // Returns the sidebar Vue component proxy.
+    getSidebar() {
       if (!this.$refs.sidebar) {
-        this.log("sidebar element is not visible");
+        this.log("sidebar component is not visible");
         return null;
       }
 
@@ -1309,7 +1309,7 @@ export default {
             }),
         });
 
-        // Add information toggle button.
+        // Add sidebar toggle control.
         if (window.innerWidth > this.mobileBreakpoint) {
           lightbox.pswp.ui.registerElement({
             name: "sidebar-button",
@@ -1325,7 +1325,7 @@ export default {
               outlineID: "pswp__icn-info", // Add this to the <path> in the inner property.
               size: 24, // Depends on the original SVG viewBox, e.g. use 24 for viewBox="0 0 24 24".
             },
-            onClick: (ev) => this.onControlClick(ev, this.toggleInfo),
+            onClick: (ev) => this.onControlClick(ev, this.toggleSidebar),
           });
         }
 
@@ -1529,7 +1529,7 @@ export default {
           icon: "mdi-text-box-outline",
           text: this.$gettext("Show Caption"),
           shortcut: "Ctrl-H",
-          visible: !this.info && this.hideCaption,
+          visible: !this.sidebarVisible && this.hideCaption,
           click: () => {
             this.toggleCaption();
             this.$refs.menu?.hide();
@@ -1540,7 +1540,7 @@ export default {
           icon: "mdi-text-box-remove-outline",
           text: this.$gettext("Hide Caption"),
           shortcut: "Ctrl-H",
-          visible: !this.info && !this.hideCaption,
+          visible: !this.sidebarVisible && !this.hideCaption,
           click: () => {
             this.toggleCaption();
             this.$refs.menu?.hide();
@@ -1747,8 +1747,8 @@ export default {
       // still sees the dirty old photo. On cancel, revert via pswp.goTo().
       if (this._suppressNavCheck) {
         this._suppressNavCheck = false;
-      } else if (newIndex !== oldIndex && this.info && newIndex >= 0 && oldIndex >= 0) {
-        const sidebar = this.$refs.sidebarInfo;
+      } else if (newIndex !== oldIndex && this.sidebarVisible && newIndex >= 0 && oldIndex >= 0) {
+        const sidebar = this.getSidebar();
         if (sidebar && typeof sidebar.hasPendingEdit === "function" && sidebar.hasPendingEdit()) {
           const rollbackIndex = oldIndex;
           this.$nextTick(() => {
@@ -1784,7 +1784,7 @@ export default {
       }
 
       // Fetch full photo metadata for the sidebar if it is visible.
-      if (this.info) {
+      if (this.sidebarVisible) {
         this.fetchPhoto(this.model.UID);
         this.preloadNextPhoto();
       }
@@ -1834,7 +1834,7 @@ export default {
         this.$nextTick(() => overlay.scheduleUpdate());
       }
     },
-    // Fully exits face-marker UI. Eye-toggle / Escape / hideInfo all
+    // Fully exits face-marker UI. Eye-toggle / Escape / hideSidebar all
     // route through here.
     exitFaceMarkerMode() {
       this.faceMarkers.exit();
@@ -1875,10 +1875,10 @@ export default {
     },
     // Asks the sidebar (if mounted) whether it has unsaved edits, returning
     // a Promise that resolves true to proceed and false to cancel. Used by
-    // every gesture that would tear the sidebar down (hideInfo, slide nav,
+    // every gesture that would tear the sidebar down (hideSidebar, slide nav,
     // close) so the user is prompted before their in-flight changes disappear.
     confirmDiscardSidebar() {
-      const sidebar = this.$refs.sidebarInfo;
+      const sidebar = this.getSidebar();
       if (sidebar && typeof sidebar.confirmDiscardPending === "function") {
         return Promise.resolve(sidebar.confirmDiscardPending());
       }
@@ -2037,7 +2037,7 @@ export default {
     // so sessions without library access don't issue prefetch GETs for
     // long-form sidebar fields they aren't allowed to see anyway.
     preloadNextPhoto() {
-      if (!this.info || !this.models.length || this.$config.deny("photos", "access_library")) {
+      if (!this.sidebarVisible || !this.models.length || this.$config.deny("photos", "access_library")) {
         return;
       }
       Photo.prefetchAround(this.models, this.index, { before: 0, after: 1 });
@@ -2477,7 +2477,7 @@ export default {
           this.toggleCaption();
           return true;
         case "KeyI":
-          this.toggleInfo();
+          this.toggleSidebar();
           return true;
         case "KeyL":
           this.onShowMenu();
@@ -2499,7 +2499,7 @@ export default {
         return;
       }
 
-      if (this.info && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
+      if (this.sidebarVisible && (document.activeElement instanceof HTMLInputElement || document.activeElement instanceof HTMLTextAreaElement)) {
         return;
       }
 
@@ -2601,7 +2601,7 @@ export default {
     // typed into sidebar inputs. `preventDefault` makes `_onKeyDown`
     // bail before its switch statement.
     onPswpKeyDown(ev) {
-      if (!ev || !this.info) {
+      if (!ev || !this.sidebarVisible) {
         return;
       }
       const active = document.activeElement;
@@ -2709,7 +2709,7 @@ export default {
     // reads the flushed `.hide-caption` class — see H8 in best-practices.
     // No-op when the lightbox is hidden or the sidebar is open.
     toggleCaption() {
-      if (!this.visible || this.info) {
+      if (!this.visible || this.sidebarVisible) {
         return;
       }
 
@@ -2982,28 +2982,28 @@ export default {
         }
       }
     },
-    toggleInfo() {
+    toggleSidebar() {
       if (!this.visible) {
         return;
       }
 
-      if (this.info) {
-        this.hideInfo();
+      if (this.sidebarVisible) {
+        this.hideSidebar();
       } else {
-        this.showInfo();
+        this.showSidebar();
       }
     },
     // Shows the lightbox sidebar, if hidden.
-    showInfo() {
-      if (!this.visible || this.info) {
+    showSidebar() {
+      if (!this.visible || this.sidebarVisible) {
         return;
       }
 
-      this.info = true;
+      this.sidebarVisible = true;
       // Sidebar renders the caption itself; suppress the overlay so it
-      // doesn't reserve viewport padding. hideInfo() restores the choice.
+      // doesn't reserve viewport padding. hideSidebar() restores the choice.
       this.hideCaption = true;
-      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      appStorage.setItem("lightbox.sidebar", `${this.sidebarVisible.toString()}`);
 
       // Fetch full photo metadata when sidebar is opened.
       this.fetchPhoto(this.model?.UID);
@@ -3019,8 +3019,8 @@ export default {
     // UI when active — the eye and pencil controls live in the sidebar,
     // so a closed sidebar would otherwise leave the overlay mounted with
     // no UI to disable it (see P1-10).
-    async hideInfo() {
-      if (!this.visible || !this.info) {
+    async hideSidebar() {
+      if (!this.visible || !this.sidebarVisible) {
         return;
       }
 
@@ -3029,14 +3029,14 @@ export default {
         return;
       }
 
-      this.info = false;
+      this.sidebarVisible = false;
       // Restore the user's persisted Ctrl+H caption preference (#5580).
       this.hideCaption = shouldHideCaption();
       if (this.faceMarkers.active) {
         this.exitFaceMarkerMode();
       }
 
-      appStorage.setItem("lightbox.info", `${this.info.toString()}`);
+      appStorage.setItem("lightbox.sidebar", `${this.sidebarVisible.toString()}`);
 
       // Resize and focus content element.
       this.$nextTick(() => {

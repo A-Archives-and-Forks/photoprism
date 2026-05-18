@@ -15,7 +15,7 @@ async function openSidebarOnFirstPhoto(t) {
   await t.click(toolbar.cardsViewAction);
   const uid = await photo.getNthPhotoUid("image", 0);
   await photoviewer.openPhotoViewer("uid", uid);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   return uid;
 }
 
@@ -41,7 +41,7 @@ test.meta("testID", "face-markers-002").meta({ mode: "public" })(
     await t.click(toolbar.cardsViewAction);
     const uid = await photo.getNthPhotoUid("image", 0);
     await photoviewer.openPhotoViewer("uid", uid);
-    await photoviewer.openInfoSidebar();
+    await photoviewer.openSidebar();
     await t.expect(Selector("div.text-subtitle-2").withText("People").exists).ok();
     await t.expect(photoviewer.markersVisibilityToggle.exists).ok();
     await t.expect(photoviewer.markerAddButton.exists).ok();
@@ -114,7 +114,7 @@ test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named 
   // named row we just assert the structural rule on the rendered DOM.
   const uid = await photo.getNthPhotoUid("image", 0);
   await photoviewer.openPhotoViewer("uid", uid);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
 
   const namedRows = photoviewer.personRow.filter((node) => node.querySelector(".meta-marker-remove") === null);
   const count = await namedRows.count;

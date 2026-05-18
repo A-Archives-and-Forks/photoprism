@@ -290,7 +290,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   // that rewrote the sidebar gated both on $config.feature("people"),
   // so this assertion fails if the feature flag no longer propagates.
   await photoviewer.openPhotoViewer("nth", 0);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).ok();
   await t.expect(photoviewer.markersVisibilityToggle.exists).ok();
   await photoviewer.triggerPhotoViewerAction("close-button");
@@ -317,7 +317,7 @@ test.meta("testID", "settings-general-004").meta({ type: "short", mode: "auth" }
   // People section and the face-marker toggle/add controls, even for
   // an admin on a photo that has markers in the fixtures.
   await photoviewer.openPhotoViewer("nth", 0);
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(Selector(".p-lightbox-sidebar .text-subtitle-2").withText("People").exists).notOk();
   await t.expect(photoviewer.markersVisibilityToggle.exists).notOk();
   await t.expect(photoviewer.markerAddButton.exists).notOk();
@@ -458,7 +458,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
 
   // Baseline sidebar assertion: with Edit enabled, the lightbox
   // sidebar exposes pencil icons for inline editing.
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(photoviewer.inlinePencils.exists).ok();
 
   await photoviewer.triggerPhotoViewerAction("close-button");
@@ -555,7 +555,7 @@ test.meta("testID", "settings-general-006").meta({ type: "short", mode: "auth" }
   // With Edit disabled, the sidebar must drop every inline edit
   // affordance: no pencil icons, no add-prompt placeholders, and no
   // active inline edit inputs.
-  await photoviewer.openInfoSidebar();
+  await photoviewer.openSidebar();
   await t.expect(photoviewer.inlinePencils.exists).notOk();
   await t.expect(photoviewer.inlineAddPrompt.exists).notOk();
 

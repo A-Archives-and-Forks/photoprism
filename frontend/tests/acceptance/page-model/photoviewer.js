@@ -19,9 +19,8 @@ export default class Page {
     this.playButton = Selector('[class^="pswp__button pswp__button--slideshow-toggle pswp__"]', { timeout: 5000 });
     this.favoriteOnIcon = Selector("button.action-favorite i.icon-favorite", { timeout: 5000 });
     this.favoriteOffIcon = Selector("button.action-favorite i.icon-favorite-border", { timeout: 5000 });
-    // Sidebar info + face markers.
-    this.sidebar = Selector("div.p-lightbox__sidebar", { timeout: 15000 });
-    this.sidebarInfo = Selector("div.p-lightbox-sidebar", { timeout: 15000 });
+    // Sidebar + face markers.
+    this.sidebar = Selector("div.p-lightbox__sidebar div.p-lightbox-sidebar", { timeout: 15000 });
     this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
     this.markerAddButton = Selector(".meta-faces-edit", { timeout: 15000 });
     this.markerRemoveButton = Selector(".meta-marker-remove", { timeout: 5000 });
@@ -128,7 +127,7 @@ export default class Page {
     await t.click(toolbar.cardsViewAction);
     const uid = await photo.getNthPhotoUid("image", 0);
     await this.openPhotoViewer("uid", uid);
-    await this.openInfoSidebar();
+    await this.openSidebar();
     return uid;
   }
 
@@ -149,7 +148,7 @@ export default class Page {
     }
   }
 
-  async openInfoSidebar() {
+  async openSidebar() {
     if (!(await this.sidebar.exists)) {
       await t.click(Selector("button.pswp__button--info-button"));
     }
