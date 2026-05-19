@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-05-18
+Date generated: 2026-05-19
 
 ================================================================================
 
@@ -9638,7 +9638,6 @@ core-js                          MIT            Denis Pushkarev zloirock@zloiroc
 cross-env                        MIT            Kent C. Dodds <me@kentcdodds.com> (https://kentcdodds.com)
 css-loader                       MIT            Tobias Koppers @sokra
 cssnano                          MIT            Ben Briggs beneb.info@gmail.com http://beneb.info
-escape-string-regexp             MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
 eslint                           MIT            Nicholas C. Zakas <nicholas+npm@nczconsulting.com>
 eslint-config-prettier           MIT            Simon Lydell
 eslint-formatter-pretty          MIT            Sindre Sorhus sindresorhus@gmail.com https://sindresorhus.com
