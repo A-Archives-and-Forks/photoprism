@@ -6,7 +6,7 @@ import { style, colors, variables } from "ui";
 export const variations = {
   colors: ["primary", "highlight", "secondary", "surface", "surface-variant", "table", "navigation", "add", "remove"],
   lighten: 2,
-  darken: 1,
+  darken: 2,
 };
 
 /* User Interface Themes */
@@ -41,8 +41,8 @@ let themes = {
       "success": "#4db6ac", // Successful-outcome notification color (saved toast, completed-job indicator).
       "warning": "#bc9714", // Caution / recoverable-concern notification color (warning banners, paused indicators).
       "favorite": "#FFD600", // Favorite-star color.
-      "add": "#00897B",
-      "remove": "#aa504f", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
+      "add": "#00897B", // User-initiated "add to collection" action color (paired with `remove`; distinct from `download` and `success`).
+      "remove": "#d35150", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
       "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
       "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
       "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.
@@ -73,27 +73,27 @@ let themes = {
     colors: {
       "background": "#0c0d0d", // Page canvas; near-black so the photo dominates. Also painted onto `navigation` rows.
       "on-background": "#ffffff", // Text and icon color readable against `background`.
-      "surface": "#151515", // Default container surface (sidebar, dropdown menus, dialog v-card); one step above `background`.
+      "surface": "#181818", // Default container surface (sidebar, dropdown menus, dialog v-card); one step above `background`.
       "on-surface": "#f9fafb", // Body text and icon color on `surface`, `surface-bright`, `surface-light`, and `card`.
-      "surface-bright": "#171717", // Lifted variant of `surface`; raised tiles, hover backgrounds (matches `card` currently).
-      "surface-variant": "#1c1c1c", // Inverse pair of `surface-variant`; also painted as the tooltip background.
-      "on-surface-variant": "#bdbdbd", // Light-gray tone used by Vuetify defaults for active dropdown rows, focus rings, etc.
+      "surface-bright": "#1c1c1c", // Lifted variant of `surface`; raised tiles, hover backgrounds.
+      "surface-variant": "#A19D9F", // Mid-grey foreground consumed by Vuetify defaults for active dropdown rows, focus rings, and `color="surface-variant"` props.
+      "on-surface-variant": "#1c1c1c", // Text/icon color that contrasts with `surface-variant` when used as a background.
       "card": "#171717", // Dedicated card-container background; raised dialog v-cards inherit this via the VCard default.
-      "selected": "#3d3f40", // Active list-item background; one step above `highlight` for a distinct, neutral gray.
+      "selected": "#3d3f40", // Active list-item background; neutral grey one step above `highlight`.
       "table": "#242424", // VDataTable row and header background.
-      "button": "#232425", // Secondary button color (e.g. dialog "Cancel"); the neutral companion to `highlight`.
-      "highlight": "#424041", // Primary button color (Save / Confirm); softened from #3d3f40 on May 13 to keep the action calm.
+      "button": "#242424", // Secondary button color (e.g. dialog "Cancel"); the neutral companion to `highlight`.
+      "highlight": "#3c3c3c", // Primary button color (Save / Confirm); muted dark grey to keep the action calm.
       "switch": "#101112", // VSwitch track background when off.
-      "primary": "#F2F3F3", // Brand/identity accent; desaturated near-white to keep the lightbox grayscale (focus rings).
+      "primary": "#9E8FC9", // Brand/identity accent and base color for face-marker `__rect--named` / `__handle` strokes; muted purple chosen to match the lightbox aesthetic.
       "secondary": "#191919", // Background for secondary panels (tab strips, expansion-panel headers, nav drawer sections).
       "secondary-light": "#1e1e1e", // Lifted variant of `secondary`; backs `.meta-chip` and the chip-selector chips.
-      "accent": "#2D2E2E", // Small-decoration tint for hover/focus subtleties; not a primary action color.
+      "accent": "#BDAFE4", // Light-lavender accent; consumed by face-marker `__rect--draft` (drag-to-create state).
       "error": "#e57373", // Error state for banners, validation errors, and error toasts.
-      "info": "#9E7BEA", // Informational notification color; the only purple kept inside the lightbox tree (info toasts).
+      "info": "#9E7BEA", // Informational notification color (info toasts); purple matches the `primary` family.
       "success": "#8763d5", // Successful-outcome notification color (matches the `info` purple cast).
       "warning": "#ecc434", // Caution / recoverable-concern notification color.
       "favorite": "#FFD600", // Favorite-star color.
-      "remove": "#da4e4c", // Destructive "remove from collection" action color (distinct from `error`, which is a fault state).
+      "remove": "#cd4645", // Destructive "remove from collection" action color (also consumed by face-marker `__rect--removing` and the Remove pill; distinct from `error`, a fault state).
       "restore": "#00d48a", // Restore-from-trash / undo-remove action color.
       "album": "#ed9e00", // Album identity color (album icons, chips, thumbnail accents).
       "on-album": "#ffffff", // Text/icon color on album-tinted backgrounds.

@@ -1,4 +1,4 @@
-/* Media Viewer Styles */
+/* Lightbox Styles */
 
 .p-lightbox {
     position: fixed;
@@ -67,7 +67,14 @@
     z-index: 1;
 }
 
-/* Sidebar Info */
+/* Lightbox Tooltips */
+
+.v-tooltip.v-theme--lightbox > .v-overlay__content {
+    background: rgba(var(--v-theme-surface), var(--v-medium-emphasis-opacity));
+    color: rgb(var(--v-theme-on-surface));
+}
+
+/* Lightbox Sidebar */
 
 .p-lightbox__container > .p-lightbox__sidebar {
     position: relative;

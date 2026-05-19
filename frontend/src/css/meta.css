@@ -39,7 +39,7 @@
 }
 
 .p-meta-face-markers__rect {
-    fill: rgba(var(--v-theme-on-surface), 0.06);
+    fill: rgba(var(--v-theme-on-surface), 0.05);
     stroke: rgba(var(--v-theme-on-surface), 0.9);
     stroke-width: 2px;
     vector-effect: non-scaling-stroke;
@@ -47,15 +47,16 @@
 }
 
 .p-meta-face-markers__rect--named {
-    stroke: rgba(167, 139, 250, 0.98);
+    stroke: rgba(var(--v-theme-primary), 0.98); /* rgba(167, 139, 250, 0.98);*/
     cursor: default;
 }
 
 .p-meta-face-markers__rect--draft {
-    stroke: rgba(196, 167, 255, 1);
+    stroke: rgba(var(--v-theme-accent), 1);
     stroke-dasharray: 6 4;
-    fill: rgba(167, 139, 250, 0.14);
+    fill: rgba(var(--v-theme-accent), 0.1);
     pointer-events: none;
+    z-index: 3;
 }
 
 /* Visual emphasis on a marker that the user has clicked for removal —
@@ -70,15 +71,15 @@
 /* Hover highlight driven by sidebar People-row hover. Listed after --named
    so it overrides the named-marker stroke color too. */
 .p-meta-face-markers__rect--hovered {
-    stroke: rgba(196, 167, 255, 1);
+    stroke: rgba(var(--v-theme-primary-darken-1), 1);
     stroke-width: 4px;
-    fill: rgba(167, 139, 250, 0);
-    filter: drop-shadow(0 0 4px rgba(196, 167, 255, 0.7));
+    fill: none;
+    filter: drop-shadow(0 0 4px rgba(var(--v-theme-primary-darken-1), 0.5));
 }
 
 .p-meta-face-markers__handle {
-    fill: rgba(167, 139, 250, 1);
-    stroke: rgba(70, 40, 140, 0.95);
+    fill: rgba(var(--v-theme-primary-darken-1), 1); /* rgba(167, 139, 250, 1); */
+    stroke: rgba(var(--v-theme-primary), 0.95); /* rgba(70, 40, 140, 0.95); */
     stroke-width: 1.5px;
     vector-effect: non-scaling-stroke;
     pointer-events: none;
@@ -99,7 +100,7 @@
 .p-meta-face-markers__confirm,
 .p-meta-face-markers__remove-confirm {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     pointer-events: auto;
     z-index: 3;
 }
@@ -123,11 +124,11 @@
 }
 
 .p-meta-face-markers__btn--confirm {
-    background: rgba(126, 87, 230, 0.95);
+    background: rgba(var(--v-theme-primary-darken-2), 0.95);
 }
 
 .p-meta-face-markers__btn--cancel {
-    background: rgba(var(--v-theme-button), 0.95);
+    background: rgba(var(--v-theme-highlight-lighten-1), 0.95);
 }
 
 .p-meta-face-markers__btn--remove {
@@ -139,7 +140,7 @@
 .p-meta-face-markers__btn--back {
     position: absolute;
     top: 12px;
-    background: rgba(20, 20, 20, 0.7);
+    background: rgba(var(--v-theme-surface), 0.7);
     backdrop-filter: blur(4px);
     pointer-events: auto;
     z-index: 4;
@@ -154,7 +155,7 @@
 }
 
 .p-meta-face-markers__btn--back:hover {
-    background: rgba(40, 40, 40, 0.85);
+    background: rgba(var(--v-theme-surface), 0.85);
 }
 
 .p-meta-face-markers__btn.is-disabled,
