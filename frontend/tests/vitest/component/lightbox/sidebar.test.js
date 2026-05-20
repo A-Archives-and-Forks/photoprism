@@ -519,7 +519,11 @@ describe("PLightboxSidebar component", () => {
     });
     expect(w.html()).toContain("People");
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
-    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+    // `.meta-markers-toggle` is shared by both toggle variants (the eye
+    // for read-only display and the pencil for edit, since edit-mode also
+    // toggles visibility). `.meta-faces-display` is the eye-only
+    // discriminator that should be absent in editable contexts.
+    expect(w.find(".meta-faces-display").exists()).toBe(false);
   });
 
   it("should render the pencil toggle even when the photo has no face markers (so editable users can add the first one)", () => {
@@ -530,7 +534,7 @@ describe("PLightboxSidebar component", () => {
     });
     expect(w.html()).toContain("People");
     expect(w.find(".meta-faces-edit").exists()).toBe(true);
-    expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+    expect(w.find(".meta-faces-display").exists()).toBe(false);
   });
 
   it("should render only the eye toggle when not editable, on a photo with face markers", () => {
@@ -3786,9 +3790,11 @@ describe("PLightboxSidebar component", () => {
       it("renders inline pencils and only the Edit Faces toggle (no eye toggle for editable users)", () => {
         expect(w.findAll(".meta-inline-pencil").length).toBeGreaterThanOrEqual(10);
         expect(w.find(".meta-faces-edit").exists()).toBe(true);
-        // Editable users see only the pencil toggle — draw mode is a
-        // strict superset of display mode for them.
-        expect(w.find(".meta-markers-toggle").exists()).toBe(false);
+        // Editable users see only the pencil toggle — edit mode is a
+        // strict superset of display mode for them. The pencil and the eye
+        // share `.meta-markers-toggle` (the visibility-toggle role);
+        // `.meta-faces-display` is the eye-only discriminator.
+        expect(w.find(".meta-faces-display").exists()).toBe(false);
       });
     });
 

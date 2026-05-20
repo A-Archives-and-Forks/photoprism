@@ -20,10 +20,16 @@ export default class Page {
     this.favoriteOnIcon = Selector("button.action-favorite i.icon-favorite", { timeout: 5000 });
     this.favoriteOffIcon = Selector("button.action-favorite i.icon-favorite-border", { timeout: 5000 });
     this.sidebar = Selector("div.p-lightbox__sidebar div.p-lightbox-sidebar", { timeout: 15000 });
-    // People-section toggles render one of two buttons depending on role:
-    // .meta-markers-toggle (eye) for non-editable, .meta-faces-edit (pencil) for editable.
-    this.markersVisibilityToggle = Selector(".meta-markers-toggle", { timeout: 15000 });
-    this.markerAddButton = Selector(".meta-faces-edit", { timeout: 15000 });
+    // People-section toggles render one of two variants depending on role.
+    // Both carry the shared `.meta-markers-toggle` role class (since edit mode
+    // also toggles visibility), plus a dedicated discriminator:
+    // - eye (non-editable, read-only display): `.meta-faces-display`
+    // - pencil (editable, edit-mode superset of display): `.meta-faces-edit`
+    //
+    // `markersVisibilityToggle` matches the eye-only variant; `markersEditToggle`
+    // matches the pencil-only variant.
+    this.markersVisibilityToggle = Selector(".meta-faces-display", { timeout: 15000 });
+    this.markersEditToggle = Selector(".meta-faces-edit", { timeout: 15000 });
     this.faceMarkerOverlay = Selector("div.p-meta-face-markers", { timeout: 15000 });
     this.faceMarkerRect = Selector("rect.p-meta-face-markers__rect", { timeout: 15000 });
     this.faceMarkerUnnamedRect = Selector(
@@ -65,11 +71,11 @@ export default class Page {
 
   // ensureMarkersEdit toggles the People section into edit mode if it isn't already.
   // The pencil button (`.meta-faces-edit`) flips null ↔ FaceMarkerEdit; calling
-  // startAddingMarker unconditionally would silently EXIT edit mode for callers
+  // startMarkersEdit unconditionally would silently EXIT edit mode for callers
   // that are already in it, so probe `.is-active` (the `markersEdit` binding) first.
   async ensureMarkersEdit() {
-    if (!(await this.markerAddButton.hasClass("is-active"))) {
-      await this.startAddingMarker();
+    if (!(await this.markersEditToggle.hasClass("is-active"))) {
+      await this.startMarkersEdit();
     }
   }
 
@@ -236,8 +242,8 @@ export default class Page {
     await t.expect(this.sidebar.visible).ok();
   }
 
-  async startAddingMarker() {
-    await t.click(this.markerAddButton);
+  async startMarkersEdit() {
+    await t.click(this.markersEditToggle);
   }
 
   async cancelMarkerDraft() {
@@ -252,7 +258,7 @@ export default class Page {
   // Used by tests that draw a marker for setup and want to undo before exit so the fixture stays clean.
   async removeLastUnnamedMarker() {
     if (!(await this.faceMarkerOverlay.visible)) {
-      await this.startAddingMarker();
+      await this.startMarkersEdit();
       await t.expect(this.faceMarkerOverlay.visible).ok();
     }
     await t.click(this.faceMarkerUnnamedRect.nth(-1));

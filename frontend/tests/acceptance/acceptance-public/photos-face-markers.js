@@ -10,14 +10,14 @@ test.meta("testID", "face-markers-001").meta({ mode: "public" })("Common: Show/h
   await photoviewer.openSidebarOnFirstPhoto("faces:1");
 
   // Public mode = editable, so only the pencil renders.
-  await t.expect(photoviewer.markerAddButton.visible).ok();
+  await t.expect(photoviewer.markersEditToggle.visible).ok();
   await t.expect(photoviewer.faceMarkerOverlay.exists).notOk();
 
-  await t.click(photoviewer.markerAddButton);
+  await t.click(photoviewer.markersEditToggle);
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await t.expect(photoviewer.faceMarkerRect.count).gte(1);
 
-  await t.click(photoviewer.markerAddButton);
+  await t.click(photoviewer.markersEditToggle);
   await t.expect(photoviewer.faceMarkerOverlay.exists).notOk();
 });
 
@@ -27,7 +27,7 @@ test.meta("testID", "face-markers-002").meta({ mode: "public" })(
     // `faces:no` excludes photos with detected faces
     await photoviewer.openSidebarOnFirstPhoto("faces:no");
     await t.expect(photoviewer.peopleHeader.visible).ok();
-    await t.expect(photoviewer.markerAddButton.visible).ok();
+    await t.expect(photoviewer.markersEditToggle.visible).ok();
   }
 );
 
@@ -37,7 +37,7 @@ test.meta("testID", "face-markers-003").meta({ mode: "public" })("Common: Drawin
 
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -55,7 +55,7 @@ test.meta("testID", "face-markers-004").meta({ mode: "public" })("Common: Cancel
 
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerCancelButton.visible).ok();
@@ -70,7 +70,7 @@ test.meta("testID", "face-markers-005").meta({ mode: "public" })(
     await photoviewer.openSidebarOnFirstPhoto("faces:no");
 
     // Add an unnamed marker so the removal flow is deterministic and self-undoing.
-    await photoviewer.startAddingMarker();
+    await photoviewer.startMarkersEdit();
     await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
     await photoviewer.drawMarkerInCenter();
     await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -96,7 +96,7 @@ test.meta("testID", "face-markers-006").meta({ mode: "public" })("Common: Named 
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
 
   // Create a named marker we control so the assertion is non-vacuous.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -118,7 +118,7 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly 
   const uid = await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -126,7 +126,7 @@ test.meta("testID", "face-markers-007").meta({ mode: "public" })("Common: Newly 
   await t.expect(photoviewer.personRow.count).eql(beforeRows + 1);
 
   // Toggle add-mode off before closing — its full-viewer hit area otherwise blocks the close button.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await photoviewer.triggerPhotoViewerAction("close-button");
   await t.expect(photoviewer.viewer.visible).notOk();
 
@@ -142,7 +142,7 @@ test.meta("testID", "face-markers-008").meta({ mode: "public" })("Common: Naming
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   // Center-relative size keeps the draft inside the rendered photo across viewports.
   await photoviewer.drawMarkerInCenter();
@@ -168,7 +168,7 @@ test.meta("testID", "face-markers-010").meta({ mode: "public" })("Common: Blurri
   await photoviewer.openSidebarOnFirstPhoto("faces:no");
   const beforeRows = await photoviewer.getPersonRowCount();
 
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
@@ -198,7 +198,7 @@ test.meta("testID", "face-markers-009").meta({ mode: "public" })("Common: Unassi
   const beforeRows = await photoviewer.getPersonRowCount();
 
   // Draw + name a marker we control so the test is deterministic.
-  await photoviewer.startAddingMarker();
+  await photoviewer.startMarkersEdit();
   await t.expect(photoviewer.faceMarkerOverlay.visible).ok();
   await photoviewer.drawMarkerInCenter();
   await t.expect(photoviewer.faceMarkerConfirmButton.visible).ok();
