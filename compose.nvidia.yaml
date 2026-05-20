@@ -171,7 +171,7 @@ services:
   ollama:
     image: ollama/ollama:latest
     stop_grace_period: 15s
-    ## Only starts if the "all", "ollama", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: ["all", "ollama", "vision"]
     ## Insecurely exposes the Ollama service on port 11434

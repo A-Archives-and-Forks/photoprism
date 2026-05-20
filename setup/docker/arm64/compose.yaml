@@ -163,7 +163,7 @@ services:
     image: ollama/ollama:latest
     restart: unless-stopped
     stop_grace_period: 15s
-    ## Only starts if the "all", "ollama", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: ["all", "ollama", "vision"]
     ## Insecurely exposes the Ollama service on port 11434
@@ -198,7 +198,7 @@ services:
     image: ghcr.io/open-webui/open-webui:main
     restart: unless-stopped
     stop_grace_period: 5s
-    ## Only starts if the "all", "ollama", "open-webui", or "vision" profile is specified::
+    ## Only starts if the "all", "ollama", "open-webui", or "vision" profile is specified:
     ## docker compose --profile ollama up -d
     profiles: [ "all", "ollama", "open-webui", "vision" ]
     ## Exposes Open WebUI at http://localhost:8080 (use an HTTPS reverse proxy for remote access):
@@ -220,7 +220,7 @@ services:
   watchtower:
     image: nickfedor/watchtower
     restart: unless-stopped
-    ## Only starts if the "update" profile is specified::
+    ## Only starts if the "update" profile is specified:
     ## docker compose --profile update up -d
     profiles: [ "update" ]
     environment:
