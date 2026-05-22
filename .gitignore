@@ -58,6 +58,7 @@ frontend/coverage/
 /photos/import/*
 /storage/
 /build/
+/setup/Makefile
 /assets/docs/
 /assets/facenet/
 /assets/nasnet/

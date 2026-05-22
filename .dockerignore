@@ -14,6 +14,7 @@
 /assets/models/
 /storage/
 /build/
+/setup/Makefile
 /photoprism
 /photoprism-*
 /frontend/tests/acceptance/screenshots/
