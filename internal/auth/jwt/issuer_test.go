@@ -12,6 +12,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/photoprism/photoprism/internal/auth/acl"
 )
 
 // userTokenSetup spins up an in-memory key manager and issuer with a frozen
@@ -88,7 +90,7 @@ func TestIssueUser_Success(t *testing.T) {
 	assert.Equal(t, spec.AuthTime.Unix(), got.AuthTime)
 	assert.Equal(t, "admin", got.PortalRole)
 	assert.Equal(t, spec.NodeUUID, got.PortalNodeUUID)
-	assert.Equal(t, IssuerKindPortal, got.PortalIssuerKind)
+	assert.Equal(t, acl.RolePortal.String(), got.PortalIssuerKind)
 	require.NotNil(t, got.IssuedAt)
 	require.NotNil(t, got.ExpiresAt)
 	assert.Equal(t, TokenTTL, got.ExpiresAt.Sub(got.IssuedAt.Time))

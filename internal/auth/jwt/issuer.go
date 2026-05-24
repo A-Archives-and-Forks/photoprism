@@ -7,6 +7,7 @@ import (
 
 	gojwt "github.com/golang-jwt/jwt/v5"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -108,11 +109,6 @@ func (i *Issuer) Issue(spec ClaimsSpec) (string, error) {
 	}
 	return signed, nil
 }
-
-// IssuerKindPortal labels the Portal as the issuing party in the pp_issuer_kind
-// claim so instances can tell Portal-minted ID tokens apart from upstream-IdP
-// tokens when both modes are configured.
-const IssuerKindPortal = "portal"
 
 // UserClaimsSpec describes the claims to embed in a Portal OIDC ID/access
 // token. Callers populate only the OIDC profile fields permitted by the
@@ -223,7 +219,7 @@ func (i *Issuer) IssueUser(spec UserClaimsSpec) (string, error) {
 		Groups:            spec.Groups,
 		PortalRole:        spec.Role,
 		PortalNodeUUID:    spec.NodeUUID,
-		PortalIssuerKind:  IssuerKindPortal,
+		PortalIssuerKind:  acl.RolePortal.String(),
 		RegisteredClaims: gojwt.RegisteredClaims{
 			Issuer:    spec.Issuer,
 			Subject:   spec.Subject,
