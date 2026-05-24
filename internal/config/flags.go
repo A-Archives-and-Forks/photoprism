@@ -774,6 +774,29 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("JWT_LEEWAY"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-issuer",
+			Usage:   "Portal OIDC OP issuer `URL` advertised in discovery and ID tokens (defaults to site-url)",
+			EnvVars: EnvVars("PORTAL_OIDC_ISSUER"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-ttl",
+			Usage:   "Portal OIDC OP access/ID-token lifetime in `SECONDS` (default 300, max 900)",
+			Value:   300,
+			EnvVars: EnvVars("PORTAL_OIDC_TTL"),
+		}}, {
+		Flag: &cli.IntFlag{
+			Name:    "portal-oidc-code-ttl",
+			Usage:   "Portal OIDC OP authorization-code lifetime in `SECONDS` (default 60, max 300)",
+			Value:   60,
+			EnvVars: EnvVars("PORTAL_OIDC_CODE_TTL"),
+		}}, {
+		Flag: &cli.StringFlag{
+			Name:    "portal-oidc-default-policy",
+			Usage:   "Portal OIDC OP routing policy when a user has access to multiple instances (`chooser` or `direct`)",
+			Value:   "chooser",
+			EnvVars: EnvVars("PORTAL_OIDC_DEFAULT_POLICY"),
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "advertise-url",
 			Usage:   "advertised `URL` for intra-cluster calls (scheme://host[:port])",
 			Value:   "",

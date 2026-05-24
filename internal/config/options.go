@@ -164,6 +164,10 @@ type Options struct {
 	JWKSCacheTTL              int           `yaml:"JWKSCacheTTL" json:"-" flag:"jwks-cache-ttl"`
 	JWTScope                  string        `yaml:"JWTScope" json:"-" flag:"jwt-scope"`
 	JWTLeeway                 int           `yaml:"JWTLeeway" json:"-" flag:"jwt-leeway"`
+	PortalOIDCIssuer          string        `yaml:"PortalOIDCIssuer" json:"-" flag:"portal-oidc-issuer"`
+	PortalOIDCTTL             int           `yaml:"PortalOIDCTTL" json:"-" flag:"portal-oidc-ttl"`
+	PortalOIDCCodeTTL         int           `yaml:"PortalOIDCCodeTTL" json:"-" flag:"portal-oidc-code-ttl"`
+	PortalOIDCDefaultPolicy   string        `yaml:"PortalOIDCDefaultPolicy" json:"-" flag:"portal-oidc-default-policy"`
 	AdvertiseUrl              string        `yaml:"AdvertiseUrl" json:"-" flag:"advertise-url"`
 	HttpsProxy                string        `yaml:"HttpsProxy" json:"HttpsProxy" flag:"https-proxy"`
 	HttpsProxyInsecure        bool          `yaml:"HttpsProxyInsecure" json:"HttpsProxyInsecure" flag:"https-proxy-insecure"`

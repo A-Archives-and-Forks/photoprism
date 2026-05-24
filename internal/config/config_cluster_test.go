@@ -31,6 +31,72 @@ func TestConfig_PortalOIDCIssuer(t *testing.T) {
 		c.options.SiteUrl = "https://portal.example.com/"
 		assert.Equal(t, "https://portal.example.com/", c.PortalOIDCIssuer())
 	})
+
+	t.Run("ExplicitOverrideWins", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.SiteUrl = "https://site.example.com/"
+		c.options.PortalOIDCIssuer = "https://portal-issuer.example.com/"
+		assert.Equal(t, "https://portal-issuer.example.com/", c.PortalOIDCIssuer())
+	})
+}
+
+func TestConfig_PortalOIDCTTL(t *testing.T) {
+	t.Run("DefaultsToFiveMinutes", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 0
+		assert.Equal(t, 300*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("ClampsToMin", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 10
+		assert.Equal(t, 60*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("ClampsToMax", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 99999
+		assert.Equal(t, 900*time.Second, c.PortalOIDCTTL())
+	})
+	t.Run("HonorsExplicit", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCTTL = 600
+		assert.Equal(t, 600*time.Second, c.PortalOIDCTTL())
+	})
+}
+
+func TestConfig_PortalOIDCCodeTTL(t *testing.T) {
+	t.Run("DefaultsToSixtySeconds", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 0
+		assert.Equal(t, 60*time.Second, c.PortalOIDCCodeTTL())
+	})
+	t.Run("ClampsToMin", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 5
+		assert.Equal(t, 30*time.Second, c.PortalOIDCCodeTTL())
+	})
+	t.Run("ClampsToMax", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCCodeTTL = 1000
+		assert.Equal(t, 300*time.Second, c.PortalOIDCCodeTTL())
+	})
+}
+
+func TestConfig_PortalOIDCDefaultPolicyChooser(t *testing.T) {
+	t.Run("DefaultIsChooser", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = ""
+		assert.True(t, c.PortalOIDCDefaultPolicyChooser())
+	})
+	t.Run("Direct", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = "direct"
+		assert.False(t, c.PortalOIDCDefaultPolicyChooser())
+	})
+	t.Run("UnknownValueDefaultsToChooser", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.PortalOIDCDefaultPolicy = "garbage"
+		assert.True(t, c.PortalOIDCDefaultPolicyChooser())
+	})
 }
 
 func TestConfig_PortalUrl(t *testing.T) {
