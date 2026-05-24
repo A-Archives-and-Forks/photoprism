@@ -543,6 +543,65 @@ func validateSiteURL(u string) bool {
 	return false
 }
 
+// normalizeRedirectURIs validates each entry against the redirect-URI policy
+// (absolute URL, scheme http with loopback/cluster-internal-only or https,
+// no fragment, no whitespace) and returns the trimmed slice. Duplicates are
+// dropped to keep the persisted set tidy. Returns a non-nil empty slice
+// when the input was non-nil and contained only empty strings — callers
+// use the nil/non-nil distinction to mean "no change" vs "clear all".
+func normalizeRedirectURIs(in []string) ([]string, error) {
+	if in == nil {
+		return nil, nil
+	}
+
+	out := make([]string, 0, len(in))
+	seen := make(map[string]struct{}, len(in))
+
+	for _, raw := range in {
+		uri := strings.TrimSpace(raw)
+		if uri == "" {
+			continue
+		}
+		if !validateRedirectURI(uri) {
+			return nil, fmt.Errorf("invalid redirect uri: %s", clean.Log(uri))
+		}
+		if _, dup := seen[uri]; dup {
+			continue
+		}
+		seen[uri] = struct{}{}
+		out = append(out, uri)
+	}
+
+	return out, nil
+}
+
+// validateRedirectURI mirrors validateSiteURL's scheme policy (HTTPS always
+// allowed; HTTP only on loopback / cluster-internal hosts) plus the OAuth
+// 2.0 redirect-URI hardening: absolute URL with host, no fragment.
+func validateRedirectURI(u string) bool {
+	parsed, err := url.Parse(strings.TrimSpace(u))
+	if err != nil || parsed.Scheme == "" || parsed.Host == "" {
+		return false
+	}
+	if parsed.Fragment != "" {
+		return false
+	}
+
+	host := strings.ToLower(parsed.Hostname())
+
+	if parsed.Scheme == "https" {
+		return true
+	}
+
+	if parsed.Scheme == "http" {
+		if host == "localhost" || host == "127.0.0.1" || host == "::1" || isClusterServiceHost(host) {
+			return true
+		}
+	}
+
+	return false
+}
+
 // isClusterServiceHost reports whether the host refers to a cluster-internal
 // service DNS name so that HTTP can be permitted for intra-cluster traffic.
 func isClusterServiceHost(host string) bool {
