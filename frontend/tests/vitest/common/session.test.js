@@ -570,25 +570,25 @@ describe("common/session", () => {
     // ?return_to=/login URLs. Storing a login page as the deep-link target
     // would either no-op the post-login redirect (same-URL guard in
     // view.redirect) or re-trigger auto-OIDC forever.
-    it("rejects invalid post-login redirect URLs via isValidRedirectUrl", () => {
+    it("rejects invalid post-login redirect URLs via invalidRedirectUrl", () => {
       const rawStorage = new StorageShim();
       const namespaceKey = "ns-redirect-valid-guard";
       const storage = createNamespacedStorage(rawStorage, namespaceKey);
       const session = new Session(storage, createConfig("/library", namespaceKey));
 
-      // Direct helper checks: invalid inputs.
-      expect(session.isValidRedirectUrl(null)).toBe(false);
-      expect(session.isValidRedirectUrl(undefined)).toBe(false);
-      expect(session.isValidRedirectUrl("")).toBe(false);
-      expect(session.isValidRedirectUrl("   ")).toBe(false);
-      expect(session.isValidRedirectUrl(42)).toBe(false);
-      expect(session.isValidRedirectUrl("/portal/admin/login")).toBe(false);
-      expect(session.isValidRedirectUrl("/library/login?return_to=evil")).toBe(false);
-      expect(session.isValidRedirectUrl("/library/login/")).toBe(false);
+      // Direct helper checks: rejected inputs.
+      expect(session.invalidRedirectUrl(null)).toBe(true);
+      expect(session.invalidRedirectUrl(undefined)).toBe(true);
+      expect(session.invalidRedirectUrl("")).toBe(true);
+      expect(session.invalidRedirectUrl("   ")).toBe(true);
+      expect(session.invalidRedirectUrl(42)).toBe(true);
+      expect(session.invalidRedirectUrl("/portal/admin/login")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login?return_to=evil")).toBe(true);
+      expect(session.invalidRedirectUrl("/library/login/")).toBe(true);
 
-      // Direct helper checks: valid inputs.
-      expect(session.isValidRedirectUrl("/library/photos")).toBe(true);
-      expect(session.isValidRedirectUrl("/oauth/authorize?client_id=x")).toBe(true);
+      // Direct helper checks: accepted inputs.
+      expect(session.invalidRedirectUrl("/library/photos")).toBe(false);
+      expect(session.invalidRedirectUrl("/oauth/authorize?client_id=x")).toBe(false);
 
       // setLoginRedirectUrl gates on the helper.
       session.setLoginRedirectUrl("/portal/admin/login");

@@ -520,7 +520,7 @@ export default class Session {
 
   // Records the post-login target. Persisted so it survives the OIDC roundtrip.
   setLoginRedirectUrl(url) {
-    if (!this.isValidRedirectUrl(url)) {
+    if (this.invalidRedirectUrl(url)) {
       return this.clearLoginRedirectUrl();
     }
 
@@ -530,18 +530,18 @@ export default class Session {
     return this;
   }
 
-  // isValidRedirectUrl reports whether url is a non-blank string that is safe
-  // to record as the post-login deep-link target. Rejects null/undefined,
-  // non-string, whitespace-only, and login-page URLs (a recorded login URL
-  // would either no-op the post-login redirect or re-trigger auto-OIDC
-  // indefinitely on a crafted `?return_to=/login`).
-  isValidRedirectUrl(url) {
+  // invalidRedirectUrl reports whether url is unsafe to record as the
+  // post-login deep-link target. Rejects null/undefined, non-string,
+  // whitespace-only, and login-page URLs (a recorded login URL would either
+  // no-op the post-login redirect or re-trigger auto-OIDC indefinitely on a
+  // crafted `?return_to=/login`).
+  invalidRedirectUrl(url) {
     if (typeof url !== "string") {
-      return false;
+      return true;
     }
     const trimmed = url.trim();
     if (trimmed === "") {
-      return false;
+      return true;
     }
     let path = trimmed;
     try {
@@ -552,13 +552,13 @@ export default class Session {
     }
     path = path.replace(/\/+$/, "");
     if (!path) {
-      return false;
+      return true;
     }
     const loginUri = (this.config?.loginUri || "").replace(/\/+$/, "");
     if (loginUri && path === loginUri) {
-      return false;
+      return true;
     }
-    return !path.endsWith("/login");
+    return path.endsWith("/login");
   }
 
   // isUser returns true when the current session has a fully-loaded user record.
