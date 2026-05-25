@@ -566,24 +566,36 @@ describe("common/session", () => {
       expect(session.getLoginRedirectUrl(null)).toBeNull();
     });
 
-    // Defends against a crafted ?return_to=/login URL: storing the login
-    // page itself as the deep-link target would either no-op the post-login
-    // redirect (same-URL guard in view.redirect) or re-trigger auto-OIDC
-    // forever since hasLoginRedirectUrl() would still be true on every
-    // /login arrival.
-    it("ignores a login-page URL passed to setLoginRedirectUrl", () => {
+    // Defends against null/undefined/whitespace inputs and crafted
+    // ?return_to=/login URLs. Storing a login page as the deep-link target
+    // would either no-op the post-login redirect (same-URL guard in
+    // view.redirect) or re-trigger auto-OIDC forever.
+    it("rejects invalid post-login redirect URLs via isValidRedirectUrl", () => {
       const rawStorage = new StorageShim();
-      const namespaceKey = "ns-redirect-login-guard";
+      const namespaceKey = "ns-redirect-valid-guard";
       const storage = createNamespacedStorage(rawStorage, namespaceKey);
       const session = new Session(storage, createConfig("/library", namespaceKey));
 
+      // Direct helper checks: invalid inputs.
+      expect(session.isValidRedirectUrl(null)).toBe(false);
+      expect(session.isValidRedirectUrl(undefined)).toBe(false);
+      expect(session.isValidRedirectUrl("")).toBe(false);
+      expect(session.isValidRedirectUrl("   ")).toBe(false);
+      expect(session.isValidRedirectUrl(42)).toBe(false);
+      expect(session.isValidRedirectUrl("/portal/admin/login")).toBe(false);
+      expect(session.isValidRedirectUrl("/library/login?return_to=evil")).toBe(false);
+      expect(session.isValidRedirectUrl("/library/login/")).toBe(false);
+
+      // Direct helper checks: valid inputs.
+      expect(session.isValidRedirectUrl("/library/photos")).toBe(true);
+      expect(session.isValidRedirectUrl("/oauth/authorize?client_id=x")).toBe(true);
+
+      // setLoginRedirectUrl gates on the helper.
       session.setLoginRedirectUrl("/portal/admin/login");
       expect(session.hasLoginRedirectUrl()).toBe(false);
-
-      session.setLoginRedirectUrl("/library/login?return_to=evil");
+      session.setLoginRedirectUrl("   ");
       expect(session.hasLoginRedirectUrl()).toBe(false);
-
-      session.setLoginRedirectUrl("/library/login/");
+      session.setLoginRedirectUrl(null);
       expect(session.hasLoginRedirectUrl()).toBe(false);
 
       // Non-login deep links still record normally.

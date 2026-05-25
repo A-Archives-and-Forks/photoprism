@@ -519,11 +519,8 @@ export default class Session {
   }
 
   // Records the post-login target. Persisted so it survives the OIDC roundtrip.
-  // Rejects login-page URLs (a crafted `?return_to=/login` would otherwise
-  // re-trigger auto-OIDC indefinitely, since hasLoginRedirectUrl() would stay
-  // true even after a successful roundtrip).
   setLoginRedirectUrl(url) {
-    if (!url || this.isLoginUrl(url)) {
+    if (!this.isValidRedirectUrl(url)) {
       return this.clearLoginRedirectUrl();
     }
 
@@ -533,19 +530,25 @@ export default class Session {
     return this;
   }
 
-  // isLoginUrl reports whether the given absolute or path-relative URL points
-  // at a login page. Matches either the configured loginUri or any path whose
-  // last segment is exactly `login`.
-  isLoginUrl(url) {
-    if (typeof url !== "string" || url === "") {
+  // isValidRedirectUrl reports whether url is a non-blank string that is safe
+  // to record as the post-login deep-link target. Rejects null/undefined,
+  // non-string, whitespace-only, and login-page URLs (a recorded login URL
+  // would either no-op the post-login redirect or re-trigger auto-OIDC
+  // indefinitely on a crafted `?return_to=/login`).
+  isValidRedirectUrl(url) {
+    if (typeof url !== "string") {
       return false;
     }
-    let path = url;
+    const trimmed = url.trim();
+    if (trimmed === "") {
+      return false;
+    }
+    let path = trimmed;
     try {
       const origin = (typeof window !== "undefined" && window.location?.origin) || "http://localhost";
-      path = new URL(url, origin).pathname;
+      path = new URL(trimmed, origin).pathname;
     } catch {
-      path = url.split("?")[0].split("#")[0];
+      path = trimmed.split("?")[0].split("#")[0];
     }
     path = path.replace(/\/+$/, "");
     if (!path) {
@@ -553,9 +556,9 @@ export default class Session {
     }
     const loginUri = (this.config?.loginUri || "").replace(/\/+$/, "");
     if (loginUri && path === loginUri) {
-      return true;
+      return false;
     }
-    return path.endsWith("/login");
+    return !path.endsWith("/login");
   }
 
   // isUser returns true when the current session has a fully-loaded user record.
