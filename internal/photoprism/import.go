@@ -18,6 +18,8 @@ import (
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
+	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/media"
 )
 
@@ -51,6 +53,19 @@ func (imp *Import) thumbPath() string {
 	return imp.conf.ThumbCachePath()
 }
 
+// insufficientStorage reports whether the configured quota is reached or the
+// storage path is critically low on free disk space.
+// Emits a localized notification when that is the case.
+func (imp *Import) insufficientStorage() bool {
+	if !imp.conf.InsufficientStorage() {
+		return false
+	}
+
+	log.Errorf("import: insufficient storage in path %s", clean.Log(imp.conf.StoragePath()))
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	return true
+}
+
 // Start imports media files from a directory and converts/indexes them as needed.
 func (imp *Import) Start(opt ImportOptions) fs.Done {
 	defer func() {
@@ -72,6 +87,13 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 	// Check if the import folder exists.
 	if !fs.PathExists(importPath) {
 		event.Error(fmt.Sprintf("import: directory %s not found", importPath))
+		return done
+	}
+
+	// Reset the cached disk usage so a freshly freed disk is detected immediately.
+	disk.FlushFree()
+
+	if imp.insufficientStorage() {
 		return done
 	}
 

@@ -191,6 +191,19 @@ func (c *Config) StorageLow() (free uint64, low bool, err error) {
 	return disk.StorageLow(c.StoragePath(), StorageLowThresholdPct)
 }
 
+// InsufficientStorage reports whether the configured files quota has been
+// reached or the storage path is critically low on free disk space.
+// Use this to gate paths that accept new file writes (uploads, WebDAV PUT,
+// sync downloads); do not use it to gate indexing of files already on disk.
+func (c *Config) InsufficientStorage() bool {
+	if c.FilesQuotaReached() {
+		return true
+	}
+
+	_, low, _ := c.StorageLow()
+	return low
+}
+
 // UsersQuotaExceeded checks whether the number of user accounts specified in percent has been exceeded.
 func (c *Config) UsersQuotaExceeded(usedPct int, role acl.Role) bool {
 	if c.options.UsersQuota <= 0 {

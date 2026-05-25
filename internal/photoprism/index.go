@@ -177,6 +177,14 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 				return errors.New("canceled")
 			}
 
+			// Stop the walk if storage drops below the threshold mid-scan.
+			// The disk-free cache rate-limits this to one actual probe per CacheTTL;
+			// Cancel ensures the warning fires only once instead of once per file.
+			if ind.storageLow() {
+				ind.Cancel()
+				return errors.New("canceled")
+			}
+
 			isDir, _ := info.IsDirOrSymlinkToDir()
 			isSymlink := info.IsSymlink()
 			relName := fs.RelName(fileName, originalsPath)
