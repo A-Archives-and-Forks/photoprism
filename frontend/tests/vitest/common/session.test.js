@@ -566,6 +566,31 @@ describe("common/session", () => {
       expect(session.getLoginRedirectUrl(null)).toBeNull();
     });
 
+    // Defends against a crafted ?return_to=/login URL: storing the login
+    // page itself as the deep-link target would either no-op the post-login
+    // redirect (same-URL guard in view.redirect) or re-trigger auto-OIDC
+    // forever since hasLoginRedirectUrl() would still be true on every
+    // /login arrival.
+    it("ignores a login-page URL passed to setLoginRedirectUrl", () => {
+      const rawStorage = new StorageShim();
+      const namespaceKey = "ns-redirect-login-guard";
+      const storage = createNamespacedStorage(rawStorage, namespaceKey);
+      const session = new Session(storage, createConfig("/library", namespaceKey));
+
+      session.setLoginRedirectUrl("/portal/admin/login");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      session.setLoginRedirectUrl("/library/login?return_to=evil");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      session.setLoginRedirectUrl("/library/login/");
+      expect(session.hasLoginRedirectUrl()).toBe(false);
+
+      // Non-login deep links still record normally.
+      session.setLoginRedirectUrl("/library/photos");
+      expect(session.getLoginRedirectUrl(null)).toBe("/library/photos");
+    });
+
     it("clears any stale redirect on logout so a fresh session does not return to the previous deep link", () => {
       const rawStorage = new StorageShim();
       const namespaceKey = "ns-redirect-logout";
