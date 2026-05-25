@@ -153,7 +153,7 @@ func NewTestOptionsForPath(dbName, dataPath string) *Options {
 	opts := &Options{
 		Name:            "PhotoPrism",
 		Version:         "0.0.0",
-		Copyright:       "(c) 2018-2025 PhotoPrism UG. All rights reserved.",
+		Copyright:       "(c) 2018-2026 PhotoPrism UG. All rights reserved.",
 		Public:          true,
 		Sponsor:         true,
 		AuthMode:        "",
@@ -374,7 +374,7 @@ func NewTestContext(args []string) *cli.Context {
 	app := cli.NewApp()
 	app.Usage = "PhotoPrism®"
 	app.Version = "test"
-	app.Copyright = "(c) 2018-2025 PhotoPrism UG. All rights reserved."
+	app.Copyright = "(c) 2018-2026 PhotoPrism UG. All rights reserved."
 	app.EnableBashCompletion = true
 	app.Flags = Flags.Cli()
 	app.Metadata = Values{
