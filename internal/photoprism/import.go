@@ -292,9 +292,7 @@ func (imp *Import) Start(opt ImportOptions) fs.Done {
 		}
 	}
 
-	if err != nil {
-		log.Error(err.Error())
-	}
+	logWalkResult("import", err)
 
 	if filesImported > 0 {
 		// Run face recognition if enabled.

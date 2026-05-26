@@ -327,9 +327,7 @@ func (ind *Index) Start(o IndexOptions) (found fs.Done, updated int) {
 	close(jobs)
 	wg.Wait()
 
-	if err != nil {
-		log.Error(err.Error())
-	}
+	logWalkResult("index", err)
 
 	if o.Rescan && !o.FacesOnly {
 		if reconciled, reconcileErr := entity.ReconcileOriginalsFolderAlbums(o.Path); reconcileErr != nil {
