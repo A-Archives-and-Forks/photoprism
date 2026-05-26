@@ -48,3 +48,19 @@ func TestDatabase_InsufficientStorage(t *testing.T) {
 
 	assert.True(t, errors.Is(err, status.ErrInsufficientStorage), "expected status.ErrInsufficientStorage, got %v", err)
 }
+
+func TestDatabase_StdoutBypassesStorageGate(t *testing.T) {
+	conf := get.Config()
+	disk.FlushFree()
+	t.Cleanup(disk.FlushFree)
+	disk.SetFree(conf.StoragePath(), 1, 1000)
+
+	// Stdout dumps must not be blocked by the storage gate so an operator can
+	// still offload a backup (for example over ssh) when the local volume is
+	// full. The actual mariadb-dump invocation will fail in this minimal
+	// fixture, but the error must not be status.ErrInsufficientStorage.
+	err := Database("", "-", true, true, 0)
+
+	assert.False(t, errors.Is(err, status.ErrInsufficientStorage),
+		"stdout backups must bypass the storage gate, got %v", err)
+}

@@ -7,6 +7,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/i18n"
 )
 
@@ -27,5 +28,20 @@ func TestCancelIndex(t *testing.T) {
 		assert.Equal(t, i18n.Msg(i18n.MsgIndexingCanceled), resp.String())
 		assert.Equal(t, http.StatusOK, r.Code)
 		assert.Equal(t, http.StatusOK, resp.Code)
+	})
+}
+
+func TestStartIndexing(t *testing.T) {
+	t.Run("InsufficientStorage", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+
+		disk.FlushFree()
+		t.Cleanup(disk.FlushFree)
+		disk.SetFree(conf.StoragePath(), 1, 1000)
+
+		StartIndexing(router)
+		r := PerformRequestWithBody(app, "POST", "/api/v1/index", "{}")
+
+		assert.Equal(t, http.StatusInsufficientStorage, r.Code)
 	})
 }
