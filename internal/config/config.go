@@ -56,6 +56,7 @@ import (
 	"github.com/photoprism/photoprism/internal/config/customize"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/internal/photoprism/dl"
 	"github.com/photoprism/photoprism/internal/service/hub"
@@ -378,6 +379,9 @@ func (c *Config) Propagate() {
 	thumb.SamplesPath = c.SamplesPath()
 	thumb.IccProfilesPath = c.IccProfilesPath()
 	initThumbs()
+
+	// Configure FFmpeg package.
+	ffmpeg.Exclude = c.FFmpegExclude()
 
 	// Configure video download package.
 	dl.YtDlpBin = c.YtDlpBin()

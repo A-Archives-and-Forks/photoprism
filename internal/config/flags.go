@@ -9,6 +9,7 @@ import (
 	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/config/ttl"
 	"github.com/photoprism/photoprism/internal/entity"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/hub/places"
@@ -1070,6 +1071,12 @@ var Flags = CliFlags{
 			Value:   encode.DefaultMapAudio,
 			EnvVars: EnvVars("FFMPEG_MAP_AUDIO"),
 		}, DocDefault: fmt.Sprintf("`%s`", encode.DefaultMapAudio)}, {
+		Flag: &cli.StringFlag{
+			Name:    "ffmpeg-exclude",
+			Usage:   "container and codec `FORMATS` not to be processed by FFmpeg, separated by commas",
+			Value:   ffmpeg.DefaultExclude,
+			EnvVars: EnvVars("FFMPEG_EXCLUDE", "FFMPEG_BLACKLIST"),
+		}}, {
 		Flag: &cli.StringFlag{
 			Name:    "exiftool-bin",
 			Usage:   "ExifTool `COMMAND` for extracting metadata",

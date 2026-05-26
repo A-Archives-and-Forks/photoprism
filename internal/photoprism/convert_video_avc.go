@@ -35,6 +35,16 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 		return nil, fmt.Errorf("convert: %s is empty", logFileName)
 	}
 
+	// Skip files whose codec or container is on the FFmpeg exclude list.
+	if !w.FFmpegAllowed(f) {
+		format := clean.Log(f.MetaData().Codec)
+		if format == "" {
+			format = clean.Log(f.FileType().String())
+		}
+		log.Warnf("convert: skipping %s because format %s is on the FFmpeg exclude list", logFileName, format)
+		return nil, fmt.Errorf("convert: format %s is excluded from FFmpeg processing", format)
+	}
+
 	// AVC video filename.
 	var avcName string
 

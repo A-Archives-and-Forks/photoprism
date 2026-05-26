@@ -286,6 +286,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"ffmpeg-device", c.FFmpegDevice()},
 		{"ffmpeg-map-video", c.FFmpegMapVideo()},
 		{"ffmpeg-map-audio", c.FFmpegMapAudio()},
+		{"ffmpeg-exclude", c.FFmpegExclude().String()},
 		{"exiftool-bin", c.ExifToolBin()},
 		{"sips-bin", c.SipsBin()},
 		{"sips-exclude", c.SipsExclude()},

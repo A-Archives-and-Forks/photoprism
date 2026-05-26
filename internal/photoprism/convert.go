@@ -11,6 +11,7 @@ import (
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/event"
+	"github.com/photoprism/photoprism/internal/ffmpeg"
 	"github.com/photoprism/photoprism/internal/mutex"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
@@ -18,6 +19,7 @@ import (
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/list"
 	"github.com/photoprism/photoprism/pkg/log/status"
+	"github.com/photoprism/photoprism/pkg/media/video"
 )
 
 // Convert represents a file format conversion worker.
@@ -28,6 +30,7 @@ type Convert struct {
 	darktableExclude   fs.ExtList
 	rawTherapeeExclude fs.ExtList
 	imageMagickExclude fs.ExtList
+	ffmpegExclude      video.Formats
 }
 
 // NewConvert returns a new file format conversion worker.
@@ -38,9 +41,21 @@ func NewConvert(conf *config.Config) *Convert {
 		darktableExclude:   fs.NewExtList(conf.DarktableExclude()),
 		rawTherapeeExclude: fs.NewExtList(conf.RawTherapeeExclude()),
 		imageMagickExclude: fs.NewExtList(conf.ImageMagickExclude()),
+		ffmpegExclude:      ffmpeg.Exclude,
 	}
 
 	return c
+}
+
+// FFmpegAllowed reports whether the media file's codec and container are both
+// absent from the FFmpegExclude list and the file may therefore be handed to
+// FFmpeg. A file with unknown codec and unknown container passes through.
+func (w *Convert) FFmpegAllowed(f *MediaFile) bool {
+	if f == nil || len(w.ffmpegExclude) == 0 {
+		return true
+	}
+
+	return !w.ffmpegExclude.Contains(f.MetaData().Codec, f.FileType().String())
 }
 
 // Cancel stops the current conversion operation.
