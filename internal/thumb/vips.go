@@ -33,8 +33,10 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 	// Get thumb cache filename.
 	thumbName, err = FileName(hash, thumbPath, width, height, opts...)
 
+	logName := clean.Log(filepath.Base(imageName))
+
 	if err != nil {
-		log.Debugf("thumb: %s in %s (filename)", err, clean.Log(filepath.Base(imageName)))
+		log.Debugf("thumb: %s in %s (filename)", err, logName)
 		return "", nil, err
 	}
 
@@ -46,11 +48,11 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 
 	if len(imageBuffer) == 0 {
 		if img, err = vips.LoadImageFromFile(imageName, VipsImportParams()); err != nil {
-			log.Debugf("vips: %s in %s (load image from file)", err, clean.Log(filepath.Base(imageName)))
+			log.Debugf("vips: %s in %s (load image from file)", err, logName)
 			return "", nil, err
 		}
 	} else if img, err = vips.LoadImageFromBuffer(imageBuffer, VipsImportParams()); err != nil {
-		log.Debugf("vips: %s in %s (load image from buffer)", err, clean.Log(filepath.Base(imageName)))
+		log.Debugf("vips: %s in %s (load image from buffer)", err, logName)
 		return "", nil, err
 	}
 	defer img.Close()
@@ -81,27 +83,27 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 	}
 
 	// Embed an ICC profile when a JPEG declares its color space via the EXIF InteroperabilityIndex tag.
-	if err = vipsSetIccProfileForInteropIndex(img, clean.Log(filepath.Base(imageName))); err != nil {
-		log.Debugf("vips: %s in %s (set icc profile for interop index tag)", err, clean.Log(filepath.Base(imageName)))
+	if err = vipsSetIccProfileForInteropIndex(img, logName); err != nil {
+		log.Debugf("vips: %s in %s (set icc profile for interop index tag)", err, logName)
 	}
 
 	// Create thumbnail image.
 	if err = img.ThumbnailWithSize(width, height, crop, size); err != nil {
-		log.Debugf("vips: %s in %s (create thumbnail)", err, clean.Log(filepath.Base(imageName)))
+		log.Debugf("vips: %s in %s (create thumbnail)", err, logName)
 		return "", nil, err
 	}
 
 	// Guard against zero-dimension intermediates so callers see the real cause
 	// instead of an opaque libvips "unable to write to target" further downstream.
 	if w, h := img.Width(), img.Height(); w <= 0 || h <= 0 {
-		err = fmt.Errorf("vips: produced empty %dx%d image for %s", w, h, clean.Log(filepath.Base(imageName)))
+		err = fmt.Errorf("vips: produced empty %dx%d image for %s", w, h, logName)
 		log.Debugf("%s (create thumbnail)", err)
 		return "", nil, err
 	}
 
 	// Remove metadata from thumbnail.
 	if err = img.RemoveMetadata(); err != nil {
-		log.Debugf("vips: %s in %s (remove metadata)", err, clean.Log(filepath.Base(imageName)))
+		log.Debugf("vips: %s in %s (remove metadata)", err, logName)
 		return "", nil, err
 	}
 
@@ -111,14 +113,21 @@ func Vips(imageName string, imageBuffer []byte, hash, thumbPath string, width, h
 	case fs.ImagePng:
 		format = "png"
 		pngParams := VipsPngExportParams(width, height)
+		// If ResampleStripICC is set, remove the ICC profile.
+		if Options(opts).Contains(ResampleStripICC) && img.HasICCProfile() {
+			if iccErr := img.RemoveICCProfile(); iccErr != nil {
+				log.Debugf("vips: %s in %s (remove icc profile)", iccErr, logName)
+			}
+		}
+		// Try to export PNG thumbnail image.
 		thumbBuffer, _, err = img.ExportPng(pngParams)
-		// Retry without the ICC profile if libpng rejected the iCCP chunk
-		// (e.g. malformed profile length), so a broken color tag does not
-		// block thumbnail generation.
+		// If that fails, try again without the ICC profile, since libpng may reject an invalid ICCP chunk (e.g. malformed profile length).
 		if err != nil && img.HasICCProfile() {
-			log.Debugf("vips: %s in %s (export png with icc profile); retrying without profile", err, clean.Log(filepath.Base(imageName)))
-			if iccErr := img.RemoveICCProfile(); iccErr == nil {
-				thumbBuffer, _, err = img.ExportPng(pngParams)
+			log.Tracef("vips: %s in %s (export png with icc)", err, logName)
+			if iccErr := img.RemoveICCProfile(); iccErr != nil {
+				log.Debugf("vips: %s in %s (remove icc profile)", iccErr, logName)
+			} else if thumbBuffer, _, err = img.ExportPng(pngParams); err != nil {
+				log.Debugf("vips: %s in %s (export png without icc)", err, logName)
 			}
 		}
 	default:

@@ -27,10 +27,10 @@ func TestVips(t *testing.T) {
 		assert.FileExists(t, dst)
 	})
 	t.Run("ColorsBadIccProfile", func(t *testing.T) {
-		// Regression for #5612 / #5613: Samsung Galaxy JPEGs ship an ICC
-		// profile whose 4-byte size header is off by two bytes. libpng then
-		// aborts the PNG export with "Incorrect data in iCCP". The PNG path
-		// must retry without the broken profile so indexing still succeeds.
+		// Regression for #5612 / #5616: Samsung Galaxy JPEGs ship an ICC
+		// profile whose 4-byte size header is off by two bytes. SizeColors
+		// declares ResampleStripICC, so the broken profile is dropped before
+		// export and indexing succeeds.
 		colorThumb := Sizes[Colors]
 		src := "testdata/icc_profile_bad_length.jpg"
 		dst := "testdata/vips/1/4/4/144456789098765432_3x3_resize.png"
@@ -45,6 +45,61 @@ func TestVips(t *testing.T) {
 
 		assert.True(t, strings.HasSuffix(fileName, dst))
 		assert.FileExists(t, dst)
+
+		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
+		assert.NoError(t, err)
+		defer dstimg.Close()
+		assert.False(t, dstimg.HasICCProfile(), "SizeColors output must not embed an ICC profile")
+	})
+	t.Run("ColorsStripsValidIccProfile", func(t *testing.T) {
+		// Confirms ResampleStripICC strips the profile even when libpng would
+		// have accepted it: SizeColors is a temporary 3x3 cache consumed for
+		// raw-pixel sampling, so an ICC chunk is wasted bytes on every photo.
+		colorThumb := Sizes[Colors]
+		src := "testdata/interop_index_srgb_icc.jpg"
+		dst := "testdata/vips/1/5/5/155456789098765432_3x3_resize.png"
+
+		assert.FileExists(t, src)
+
+		srcimg, err := vips.LoadImageFromFile(src, vips.NewImportParams())
+		assert.NoError(t, err)
+		assert.True(t, srcimg.HasICCProfile(), "fixture sanity: input must carry an ICC profile")
+		srcimg.Close()
+
+		fileName, _, err := Vips(src, nil, "155456789098765432", "testdata/vips", colorThumb.Width, colorThumb.Height, colorThumb.Options...)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(fileName, dst))
+		assert.FileExists(t, dst)
+
+		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
+		assert.NoError(t, err)
+		defer dstimg.Close()
+		assert.False(t, dstimg.HasICCProfile(), "ResampleStripICC must drop the profile")
+	})
+	t.Run("PngWithoutStripICCKeepsValidProfile", func(t *testing.T) {
+		// Gates the new flag: a PNG export configured without ResampleStripICC
+		// must preserve a valid ICC profile end-to-end. Guards against a
+		// future regression that would generalize the strip to all PNGs.
+		src := "testdata/interop_index_srgb_icc.jpg"
+		dst := "testdata/vips/1/6/6/166456789098765432_3x3_resize.png"
+
+		fileName, _, err := Vips(src, nil, "166456789098765432", "testdata/vips", 3, 3, ResampleResize, ResampleNearestNeighbor, ResamplePng)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, strings.HasSuffix(fileName, dst))
+		assert.FileExists(t, dst)
+
+		dstimg, err := vips.LoadImageFromFile(dst, vips.NewImportParams())
+		assert.NoError(t, err)
+		defer dstimg.Close()
+		assert.True(t, dstimg.HasICCProfile(), "PNG without ResampleStripICC must preserve the profile")
 	})
 	t.Run("InteropIndexColors", func(t *testing.T) {
 		thumb := Sizes[Tile500]
