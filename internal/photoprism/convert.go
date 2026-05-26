@@ -41,7 +41,7 @@ func NewConvert(conf *config.Config) *Convert {
 		darktableExclude:   fs.NewExtList(conf.DarktableExclude()),
 		rawTherapeeExclude: fs.NewExtList(conf.RawTherapeeExclude()),
 		imageMagickExclude: fs.NewExtList(conf.ImageMagickExclude()),
-		ffmpegExclude:      ffmpeg.Exclude,
+		ffmpegExclude:      ffmpeg.Exclude(),
 	}
 
 	return c

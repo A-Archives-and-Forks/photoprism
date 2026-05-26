@@ -154,7 +154,7 @@ func videoBuildRemuxPlans(conf *config.Config, results []search.Photo, force boo
 			}
 		}
 
-		if ffmpeg.Exclude.Contains(videoFile.FileCodec, fs.FileType(srcPath).String()) {
+		if ffmpeg.Exclude().Contains(videoFile.FileCodec, fs.FileType(srcPath).String()) {
 			log.Warnf("remux: skipping %s because format %s is on the FFmpeg exclude list", clean.Log(videoFile.FileName), clean.Log(videoFile.FileCodec))
 			continue
 		}
@@ -207,7 +207,7 @@ func videoRemuxFile(conf *config.Config, convert *photoprism.Convert, plan video
 	opt := encode.NewRemuxOptions(conf.FFmpegBin(), fs.VideoMp4, true)
 	opt.Force = true
 
-	if ffmpeg.Exclude.Contains(fs.FileType(plan.SrcPath).String()) {
+	if ffmpeg.Exclude().Contains(fs.FileType(plan.SrcPath).String()) {
 		return fmt.Errorf("format %s is excluded from FFmpeg processing", clean.Log(fs.FileType(plan.SrcPath).String()))
 	}
 

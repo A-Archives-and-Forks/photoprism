@@ -381,7 +381,7 @@ func (c *Config) Propagate() {
 	initThumbs()
 
 	// Configure FFmpeg package.
-	ffmpeg.Exclude = c.FFmpegExclude()
+	ffmpeg.SetExclude(c.FFmpegExclude())
 
 	// Configure video download package.
 	dl.YtDlpBin = c.YtDlpBin()

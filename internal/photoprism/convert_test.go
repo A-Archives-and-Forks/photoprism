@@ -87,39 +87,32 @@ func TestConvert_FFmpegAllowed(t *testing.T) {
 	cnf := config.TestConfig()
 	convert := NewConvert(cnf)
 
-	// NewConvert captures the current ffmpeg.Exclude. Pin the field directly so
-	// the test stays deterministic regardless of what the global is set to.
+	// NewConvert captures the current ffmpeg.Exclude(). Pin the field directly
+	// so the test stays deterministic regardless of what the global is set to.
 	convert.ffmpegExclude = video.NewFormats("magicyuv, avi")
 
 	t.Run("NilFile", func(t *testing.T) {
 		assert.True(t, convert.FFmpegAllowed(nil))
 	})
-
 	t.Run("EmptyCodecAndType", func(t *testing.T) {
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("", "")))
 	})
-
 	t.Run("AllowedCodec", func(t *testing.T) {
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("avc1", "/tmp/clip.mp4")))
 	})
-
 	t.Run("ExcludedCodec", func(t *testing.T) {
 		assert.False(t, convert.FFmpegAllowed(fakeMediaFile("magicyuv", "/tmp/clip.mp4")))
 	})
-
 	t.Run("ExcludedCodecMixedCase", func(t *testing.T) {
 		assert.False(t, convert.FFmpegAllowed(fakeMediaFile("MagicYUV", "/tmp/clip.mp4")))
 	})
-
 	t.Run("ExcludedContainerOnly", func(t *testing.T) {
 		// Codec is unknown, but the container extension is on the list.
 		assert.False(t, convert.FFmpegAllowed(fakeMediaFile("", "/tmp/clip.avi")))
 	})
-
 	t.Run("AllowedContainer", func(t *testing.T) {
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("", "/tmp/clip.mp4")))
 	})
-
 	t.Run("EmptyExcludeList", func(t *testing.T) {
 		convert.ffmpegExclude = video.NewFormats("")
 		assert.True(t, convert.FFmpegAllowed(fakeMediaFile("magicyuv", "/tmp/clip.avi")))
@@ -127,11 +120,11 @@ func TestConvert_FFmpegAllowed(t *testing.T) {
 }
 
 func TestNewConvert_CapturesFFmpegExclude(t *testing.T) {
-	// Snapshot and restore the package variable so other tests aren't affected.
-	saved := ffmpeg.Exclude
-	t.Cleanup(func() { ffmpeg.Exclude = saved })
+	// Snapshot and restore the package state so other tests aren't affected.
+	saved := ffmpeg.Exclude()
+	t.Cleanup(func() { ffmpeg.SetExclude(saved) })
 
-	ffmpeg.Exclude = video.NewFormats("magicyuv")
+	ffmpeg.SetExclude(video.NewFormats("magicyuv"))
 
 	convert := NewConvert(config.TestConfig())
 	assert.False(t, convert.FFmpegAllowed(fakeMediaFile("magicyuv", "/tmp/clip.mp4")))
