@@ -76,6 +76,19 @@ func (w *Convert) insufficientStorage() bool {
 	return true
 }
 
+// cancelInsufficientStorage logs the insufficient-storage cause once and cancels the run so the
+// directory walk stops, instead of failing every remaining file when the disk filled mid-convert.
+// It is called from worker goroutines when a conversion leaf reports status.ErrInsufficientStorage.
+func (w *Convert) cancelInsufficientStorage() {
+	if mutex.IndexWorker.Canceled() {
+		return
+	}
+
+	log.Errorf("convert: aborting due to insufficient storage")
+	event.ErrorMsg(i18n.ErrInsufficientStorage)
+	w.Cancel()
+}
+
 // Start converts all files in the specified directory based on the current configuration.
 func (w *Convert) Start(dir string, ext []string, force bool) (err error) {
 	defer func() {

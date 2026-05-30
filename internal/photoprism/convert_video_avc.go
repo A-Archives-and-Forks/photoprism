@@ -15,6 +15,7 @@ import (
 	"github.com/photoprism/photoprism/internal/ffmpeg/encode"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/fs"
+	"github.com/photoprism/photoprism/pkg/fs/disk"
 	"github.com/photoprism/photoprism/pkg/log/status"
 )
 
@@ -168,10 +169,14 @@ func (w *Convert) ToAvc(f *MediaFile, encoder encode.Encoder, noMutex, force boo
 			return nil, fmt.Errorf("convert: failed to remove %s (%s)", clean.Log(RootRelName(avcName)), err)
 		}
 
-		// Try again using software encoder.
-		if encoder != encode.SoftwareAvc {
+		switch {
+		case disk.IsNoSpace(err):
+			// Do not retry on a full disk; surface the cause so the worker can abort the run.
+			return nil, disk.AsInsufficientStorage(err)
+		case encoder != encode.SoftwareAvc:
+			// Try again using software encoder.
 			return w.ToAvc(f, encode.SoftwareAvc, true, false)
-		} else {
+		default:
 			return nil, err
 		}
 	}
