@@ -26,7 +26,9 @@ func NewFormats(formats ...string) Formats {
 
 // Contains reports whether any of the given format names is in the list.
 // Empty values are skipped so callers can pass both a codec and a container
-// even when only one is known.
+// even when only one is known. Names are matched by their canonical codec
+// alias, so the original name (e.g. "m8ra") and its mapped name (e.g. "magy")
+// are treated as equivalent.
 func (b Formats) Contains(formats ...string) bool {
 	if len(b) == 0 || len(formats) == 0 {
 		return false
@@ -35,7 +37,7 @@ func (b Formats) Contains(formats ...string) bool {
 	for _, format := range formats {
 		if format = clean.Format(format); format == "" {
 			continue
-		} else if _, ok := b[format]; ok {
+		} else if _, ok := b[Canonical(format)]; ok {
 			return true
 		}
 	}
@@ -59,14 +61,15 @@ func (b Formats) Set(formats string) {
 	}
 }
 
-// Add adds a format name to the list after normalizing it.
+// Add adds a format name to the list after normalizing it to its canonical
+// codec alias, so different names for the same codec collapse to one entry.
 func (b Formats) Add(format string) {
 	format = clean.Format(format)
 	if format == "" {
 		return
 	}
 
-	b[format] = true
+	b[Canonical(format)] = true
 }
 
 // String returns the list as a comma-separated string in alphabetical order.
