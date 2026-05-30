@@ -175,6 +175,30 @@ func TestTranscodeCmd(t *testing.T) {
 			RunCommandTest(t, encode.NvidiaAvc, srcName, destName, cmd, true)
 		}
 	})
+	t.Run("Vulkan", func(t *testing.T) {
+		opt := encode.NewVideoOptions(ffmpegBin, encode.VulkanAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
+
+		srcName := fs.Abs("./testdata/25fps.vp9")
+		destName := fs.Abs("./testdata/25fps.vulkan.avc")
+
+		cmd, _, err := TranscodeCmd(srcName, destName, opt)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		cmdStr := cmd.String()
+		cmdStr = strings.Replace(cmdStr, srcName, "SRC", 1)
+		cmdStr = strings.Replace(cmdStr, destName, "DEST", 1)
+
+		assert.Equal(t, "/usr/bin/ffmpeg -hide_banner -y -strict -2 -init_hw_device vulkan=vk -filter_hw_device vk -i SRC -c:a aac -vf scale='if(gte(iw,ih), min(1500, iw), -2):if(gte(iw,ih), -2, min(1500, ih))',format=nv12,hwupload -c:v h264_vulkan -map 0:v:0 -map 0:a:0? -ignore_unknown -qp 25 -f mp4 -movflags use_metadata_tags+faststart -map_metadata 0 DEST", cmdStr)
+
+		// This transcoding test requires a Vulkan device that advertises the video encode
+		// extensions (VK_KHR_video_encode_queue/h264); select it with PHOTOPRISM_FFMPEG_DEVICE if needed:
+		if os.Getenv("PHOTOPRISM_FFMPEG_TEST_ENCODER") == "vulkan" {
+			RunCommandTest(t, encode.VulkanAvc, srcName, destName, cmd, true)
+		}
+	})
 	t.Run("Apple", func(t *testing.T) {
 		opt := encode.NewVideoOptions("", encode.AppleAvc, 1500, encode.DefaultQuality, encode.PresetFast, "", "", "")
 		r, _, err := TranscodeCmd("VID123.mov", "VID123.mov.avc", opt)
