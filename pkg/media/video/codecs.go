@@ -37,6 +37,7 @@ const (
 	CodecM2TS     Codec = "m2t"  // MPEG-2 Transport Stream
 	CodecWebm     Codec = "webm" // Google WebM
 	CodecMagicYUV Codec = "magy" // MagicYUV lossless video (FourCC)
+	CodecVFW      Codec = "vfw"  // Video for Windows wrapper; the actual codec is not exposed by metadata
 )
 
 // Codecs maps supported string identifiers to standard Codec types.
@@ -135,6 +136,9 @@ var Codecs = StandardCodecs{
 	"m8y4":             CodecMagicYUV, // YUV 4:4:4
 	"m8ya":             CodecMagicYUV, // YUVA 4:4:4:4
 	"m8g0":             CodecMagicYUV, // Grayscale
+	CodecVFW:           CodecVFW,
+	"v_ms":             CodecVFW,
+	"v_ms/vfw/fourcc":  CodecVFW, // Matroska wrapper for a Video for Windows FourCC codec
 }
 
 // Canonical returns the standard codec name for the given identifier, or the

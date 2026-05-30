@@ -25,6 +25,16 @@ func TestJSON(t *testing.T) {
 		assert.Equal(t, 160, data.Width)
 		assert.Equal(t, 120, data.Height)
 	})
+	t.Run("MkvVfwWrapper", func(t *testing.T) {
+		data, err := JSON("testdata/mkv-vfw.json", "")
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// The Matroska VFW wrapper codec ID normalizes to the canonical VFW name.
+		assert.Equal(t, video.CodecVFW, data.Codec)
+	})
 	t.Run("MovJson", func(t *testing.T) {
 		data, err := JSON("testdata/mov.json", "")
 

@@ -103,6 +103,13 @@ func TestFormats_Contains(t *testing.T) {
 		assert.True(t, excl.Contains("avc1"))
 		assert.True(t, excl.Contains("avc"))
 	})
+	t.Run("VFWWrapper", func(t *testing.T) {
+		// Excluding the VFW wrapper matches the Matroska codec ID reported for it.
+		excl := NewFormats("vfw")
+		assert.True(t, excl.Contains("V_MS/VFW/FOURCC"))
+		assert.True(t, excl.Contains("v_ms"))
+		assert.False(t, excl.Contains("avc1"))
+	})
 }
 
 func TestFormats_Allow(t *testing.T) {

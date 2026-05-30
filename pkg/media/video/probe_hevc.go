@@ -14,21 +14,21 @@ var HevcChunks = Chunks{
 	ChunkHEV1, ChunkHEV2, ChunkHEV3, ChunkDVHE,
 }
 
-// HevcHeadScanLimit caps how far HEVC chunk scans read into the file. The
-// HEVC sample entry sits in the stsd box inside moov; faststart videos place
+// CodecHeadScanLimit caps how far sample-entry chunk scans read into the file.
+// The sample entry sits in the stsd box inside moov; faststart videos place
 // moov at the head, and Motion Photos put it just past the JPEG (a few MB
 // at most), so 16 MiB comfortably covers both layouts.
-const HevcHeadScanLimit = 16 * 1024 * 1024
+const CodecHeadScanLimit = 16 * 1024 * 1024
 
 // IsHEVC reports whether the reader contains an HEVC video stream by scanning
-// the head of the file (up to HevcHeadScanLimit) for any HEVC sample entry
+// the head of the file (up to CodecHeadScanLimit) for any HEVC sample entry
 // code in a single pass. Returns false on read errors or empty input.
 func IsHEVC(file io.ReadSeeker) bool {
 	if file == nil {
 		return false
 	}
 
-	pos, _, err := HevcChunks.DataOffset(file, 0, HevcHeadScanLimit)
+	pos, _, err := HevcChunks.DataOffset(file, 0, CodecHeadScanLimit)
 
 	return err == nil && pos > 0
 }

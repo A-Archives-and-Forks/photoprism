@@ -49,13 +49,15 @@ func NewConvert(conf *config.Config) *Convert {
 
 // FFmpegAllowed reports whether the media file's codec and container are both
 // absent from the FFmpegExclude list and the file may therefore be handed to
-// FFmpeg. A file with unknown codec and unknown container passes through.
+// FFmpeg. The codec is taken from both the metadata and the built-in video
+// probe so either detector can match. A file with unknown codec and unknown
+// container passes through.
 func (w *Convert) FFmpegAllowed(f *MediaFile) bool {
 	if f == nil || len(w.ffmpegExclude) == 0 {
 		return true
 	}
 
-	return !w.ffmpegExclude.Contains(f.MetaData().Codec, f.FileType().String())
+	return !w.ffmpegExclude.Contains(f.MetaData().Codec, f.VideoInfo().VideoCodec, f.FileType().String())
 }
 
 // Cancel stops the current conversion operation.

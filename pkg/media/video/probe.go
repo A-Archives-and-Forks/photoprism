@@ -155,8 +155,16 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 	// A single-pass scan covers all 8 HEVC sample-entry codes at once; the Codecs lookup table
 	// normalizes HVC1/HVC2/HVC3/DVH1 → CodecHvc1 and HEV1/HEV2/HEV3/DVHE → CodecHev1.
 	if info.VideoCodec == "" {
-		if pos, hit, fileErr := HevcChunks.DataOffset(file, 0, HevcHeadScanLimit); pos > 0 && fileErr == nil {
+		if pos, hit, fileErr := HevcChunks.DataOffset(file, 0, CodecHeadScanLimit); pos > 0 && fileErr == nil {
 			info.VideoCodec = Codecs[hit.String()]
+		}
+	}
+
+	// If still unset, search the file head for a MagicYUV sample entry; all of its
+	// per-pixel-format codes map to the same codec, so a single hit is conclusive.
+	if info.VideoCodec == "" {
+		if pos, _, fileErr := MagicYuvChunks.DataOffset(file, 0, CodecHeadScanLimit); pos > 0 && fileErr == nil {
+			info.VideoCodec = CodecMagicYUV
 		}
 	}
 
