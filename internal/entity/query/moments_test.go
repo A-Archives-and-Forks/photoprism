@@ -1,6 +1,7 @@
 package query
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -11,6 +12,13 @@ import (
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// albumRowExists reports whether an album row with the given UID still exists.
+func albumRowExists(uid string) bool {
+	var n int64
+	UnscopedDb().Model(&entity.Album{}).Where("album_uid = ?", uid).Count(&n)
+	return n > 0
+}
 
 func TestMomentsTime(t *testing.T) {
 	t.Run("PublicOnly", func(t *testing.T) {
@@ -401,5 +409,73 @@ func TestRemoveDuplicateMoments(t *testing.T) {
 
 		assert.NotNil(t, entity.FindFolderAlbum(pathMirror), "mirror album should survive RemoveDuplicateMoments")
 		assert.NotNil(t, entity.FindFolderAlbum(pathPumpkin), "pumpkin album should survive RemoveDuplicateMoments")
+	})
+	t.Run("KeepsSlugCollidingLegacyFoldersWithoutPath", func(t *testing.T) {
+		// Regression for #5614: folder albums indexed before album_path was persisted have
+		// an empty path and a plain-truncated, collision-prone slug. Distinct deep folders
+		// that share that truncated slug must not be treated as duplicates of each other.
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		base := "pictures/" + strings.Repeat("ferie-2008-mellomeuropa/", 4) + "galleri-" + unique + "/"
+		pathA := base + "01 Praha, Dresden, Wroclaw"
+		pathB := base + "09 Praha"
+		sharedSlug := txt.Clip(txt.Slug(pathA), txt.ClipSlug)
+		assert.Equal(t, sharedSlug, txt.Clip(txt.Slug(pathB), txt.ClipSlug), "precondition: legacy slugs collide")
+
+		albumA := &entity.Album{AlbumType: entity.AlbumFolder, AlbumSlug: sharedSlug, AlbumPath: "", AlbumFilter: `path:"` + pathA + `" public:true`}
+		albumA.SetTitle("01 Praha, Dresden, Wroclaw")
+		if err := albumA.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = albumA.DeletePermanently() })
+
+		albumB := &entity.Album{AlbumType: entity.AlbumFolder, AlbumSlug: sharedSlug, AlbumPath: "", AlbumFilter: `path:"` + pathB + `" public:true`}
+		albumB.SetTitle("09 Praha")
+		if err := albumB.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = albumB.DeletePermanently() })
+
+		assert.Equal(t, albumA.AlbumSlug, albumB.AlbumSlug)
+		assert.NotEqual(t, albumA.AlbumFilter, albumB.AlbumFilter)
+
+		if _, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, albumRowExists(albumA.AlbumUID), "albumA should survive RemoveDuplicateMoments")
+		assert.True(t, albumRowExists(albumB.AlbumUID), "albumB should survive RemoveDuplicateMoments")
+	})
+	t.Run("RemovesDuplicateFolderWithSameFilter", func(t *testing.T) {
+		// A genuine duplicate folder album (identical serialized path) must still be removed.
+		unique := txt.Slug(time.Now().UTC().Format(time.RFC3339Nano))
+		path := "pictures/duplicate-folder-" + unique
+		filter := `path:"` + path + `" public:true`
+
+		first := &entity.Album{AlbumType: entity.AlbumFolder, AlbumSlug: txt.SlugUnique(path), AlbumPath: path, AlbumFilter: filter}
+		first.SetTitle("Duplicate Folder")
+		if err := first.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = first.DeletePermanently() })
+
+		second := &entity.Album{AlbumType: entity.AlbumFolder, AlbumSlug: txt.SlugUnique(path), AlbumPath: path, AlbumFilter: filter}
+		second.SetTitle("Duplicate Folder")
+		if err := second.Create(); err != nil {
+			t.Fatal(err)
+		}
+		t.Cleanup(func() { _ = second.DeletePermanently() })
+
+		if _, err := RemoveDuplicateMoments(); err != nil {
+			t.Fatal(err)
+		}
+
+		remaining := 0
+		if albumRowExists(first.AlbumUID) {
+			remaining++
+		}
+		if albumRowExists(second.AlbumUID) {
+			remaining++
+		}
+		assert.Equal(t, 1, remaining, "exactly one of the same-filter folder albums should remain")
 	})
 }
