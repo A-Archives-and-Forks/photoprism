@@ -8,14 +8,16 @@ import (
 )
 
 // IsHEVC reports whether the reader contains an HEVC video stream by scanning
-// the head of the file (up to HeadScanLimit) for any HEVC sample entry
-// code in a single pass. Returns false on read errors or empty input.
+// the head of the file (up to HeadScanLimit) for a valid HEVC sample entry in
+// a single pass. Candidates are validated as real visual sample entries so a
+// four-byte code colliding with random payload bytes is not mistaken for HEVC.
+// Returns false on read errors or empty input.
 func IsHEVC(file io.ReadSeeker) bool {
 	if file == nil {
 		return false
 	}
 
-	pos, _, err := HevcChunks.DataOffset(file, 0, HeadScanLimit)
+	pos, _, err := HevcChunks.SampleEntryOffset(file, HeadScanLimit)
 
 	return err == nil && pos > 0
 }

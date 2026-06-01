@@ -163,10 +163,12 @@ func Probe(file io.ReadSeeker) (info Info, err error) {
 
 	// If no AVC video was found, search the file head for other recognizable sample-entry
 	// codes (HEVC, see https://stackoverflow.com/questions/63468587, and MagicYUV) in a single
-	// pass. The Codecs lookup normalizes each hit, e.g. HVC1/HVC2/HVC3/DVH1 → CodecHvc1 and
+	// pass. Each hit is validated as a real visual sample entry so a four-byte code colliding
+	// with raw payload bytes (e.g. DV streams in a QuickTime container) is not misread as a
+	// codec. The Codecs lookup normalizes each hit, e.g. HVC1/HVC2/HVC3/DVH1 → CodecHvc1 and
 	// M8RG/M8Y2/… → CodecMagicYUV; the lookup is lowercased because MagicYUV codes are uppercase.
 	if info.VideoCodec == "" {
-		if pos, hit, fileErr := HeadScanChunks.DataOffset(file, 0, HeadScanLimit); pos > 0 && fileErr == nil {
+		if pos, hit, fileErr := HeadScanChunks.SampleEntryOffset(file, HeadScanLimit); pos > 0 && fileErr == nil {
 			info.VideoCodec = Codecs[strings.ToLower(hit.String())]
 		}
 	}
