@@ -180,7 +180,10 @@ func (c *Config) OIDCGroupRoles() map[string]acl.Role {
 		group := normalizeGroupID(entry[:sep])
 		role := acl.ParseRole(entry[sep+1:])
 
-		if group == "" || role == acl.RoleNone {
+		// Skip a mapping to a non-federatable role: the Portal operator role
+		// cluster_admin and the anonymous visitor role must not be assignable
+		// through the IdP group mechanism, even if the directory is compromised.
+		if group == "" || !acl.IsFederatedRole(role) {
 			continue
 		}
 
@@ -201,9 +204,10 @@ func (c *Config) OIDCRole() acl.Role {
 		return acl.RoleGuest
 	}
 
-	role := acl.UserRoles[clean.Role(c.options.OIDCRole)]
-
-	if role != acl.RoleNone {
+	// Ignore a configured default role that cannot be federated (cluster_admin /
+	// visitor): new OIDC accounts must never be provisioned as a Portal operator
+	// or an anonymous visitor.
+	if role := acl.UserRoles[clean.Role(c.options.OIDCRole)]; acl.IsFederatedRole(role) {
 		return role
 	}
 

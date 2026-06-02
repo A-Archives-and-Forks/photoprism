@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
@@ -260,8 +261,13 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			if hasMappedRole && !user.HasRole(mappedRole) {
-				user.SetRole(mappedRole.String())
+			// Apply a group-mapped role only when federation may set it: an
+			// existing cluster_admin/visitor account is never touched, and the IdP
+			// can never escalate to a non-federatable role.
+			if hasMappedRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), mappedRole); ok {
+					user.SetRole(role.String())
+				}
 			}
 
 			// Update Subject ID and Issuer URI.
@@ -341,8 +347,10 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set user role and permissions.
-			if hasMappedRole {
+			// Set user role and permissions. Use the group-mapped role only when
+			// federation may set it, else the configured default; both are
+			// already filtered to federatable roles (no cluster_admin/visitor).
+			if hasMappedRole && acl.IsFederatedRole(mappedRole) {
 				user.SetRole(mappedRole.String())
 			} else {
 				user.SetRole(defaultRole.String())

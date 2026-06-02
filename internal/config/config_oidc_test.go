@@ -160,12 +160,16 @@ func TestConfig_OIDCGroupRoles(t *testing.T) {
 		"def-456:guest",
 		"invalid",
 		"=none",
+		"ghi-789=visitor",
 	}
 
 	roles := c.OIDCGroupRoles()
 
 	assert.Equal(t, acl.RoleAdmin, roles["abc-123"])
 	assert.Equal(t, acl.RoleGuest, roles["def-456"])
+	// A mapping to a non-federatable role (visitor, like cluster_admin) is
+	// dropped so a compromised IdP cannot assign it via group membership.
+	assert.NotContains(t, roles, "ghi-789")
 	assert.Len(t, roles, 2)
 }
 
@@ -205,6 +209,12 @@ func TestConfig_OIDCRole(t *testing.T) {
 	c.options.OIDCRole = "admin"
 
 	assert.Equal(t, acl.RoleAdmin, c.OIDCRole())
+
+	// A non-federatable default role (visitor, like cluster_admin) is ignored so
+	// new OIDC accounts are never provisioned as an operator or anonymous role.
+	c.options.OIDCRole = "visitor"
+
+	assert.Equal(t, acl.RoleNone, c.OIDCRole())
 }
 
 func TestConfig_OIDCWebDAV(t *testing.T) {
