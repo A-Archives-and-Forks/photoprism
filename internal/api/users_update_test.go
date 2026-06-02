@@ -202,3 +202,26 @@ func TestUpdateUser(t *testing.T) {
 		assert.Equal(t, http.StatusRequestEntityTooLarge, r.Code)
 	})
 }
+
+func TestUpdateUser_Guards(t *testing.T) {
+	t.Run("SelfRoleChangeForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		body, _ := json.Marshal(form.User{UserName: "alice", UserRole: "user"})
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/uqxetse3cy5eo9z2", string(body), sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+	t.Run("SystemAccountForbidden", func(t *testing.T) {
+		app, router, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		defer conf.SetAuthMode(config.AuthModePublic)
+		UpdateUser(router)
+		sessId := AuthenticateUser(app, router, "alice", "Alice123!")
+		body, _ := json.Marshal(form.User{DisplayName: "Hacked"})
+		r := AuthenticatedRequestWithBody(app, "PUT", "/api/v1/users/"+entity.UnknownUser.UserUID, string(body), sessId)
+		assert.Equal(t, http.StatusForbidden, r.Code)
+	})
+}

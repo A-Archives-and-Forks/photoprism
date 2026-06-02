@@ -64,6 +64,13 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
+		// System accounts (Unknown id=-1, Visitor id=-2) must not be modified.
+		if m.ID < 0 {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", clean.Log(uid), "update", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
+
 		// Initialize form with model values.
 		f, err := m.Form()
 
@@ -97,6 +104,15 @@ func UpdateUser(router *gin.RouterGroup) {
 
 		// Get user from session.
 		u := s.GetUser()
+
+		// Prevent users from changing their own account role, which could lock
+		// an operator out of the admin UI (e.g. a cluster_admin demoting
+		// themselves). Other own-profile fields remain editable.
+		if u != nil && u.UserUID == m.UserUID && f.UserRole != "" && clean.Role(f.UserRole) != clean.Role(m.UserRole) {
+			event.AuditErr([]string{ClientIP(c), "session %s", "users", m.UserName, "update own role", status.Denied}, s.RefID)
+			AbortForbidden(c)
+			return
+		}
 
 		// Persist form values.
 		if err = m.SaveForm(f, u); err != nil {
