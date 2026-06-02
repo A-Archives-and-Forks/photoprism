@@ -45,8 +45,15 @@ func UpdateUser(router *gin.RouterGroup) {
 			return
 		}
 
+		// A verified Portal cluster JWT (GrantJwtBearer) with users-manage scope is
+		// a trusted service principal — the Portal syncing cluster user state — with
+		// no end-user identity, so authorize it for user management like an admin
+		// instead of applying the per-user owner check below (which a user-less
+		// service token can never satisfy).
+		isClusterJWT := s.GrantType == authn.GrantJwtBearer.String() && s.ValidateScope(acl.ResourceUsers, acl.Permissions{acl.ActionManage})
+
 		// Check whether the role can manage all user accounts.
-		isAdmin := acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
+		isAdmin := isClusterJWT || acl.Rules.AllowAll(acl.ResourceUsers, s.GetUserRole(), acl.Permissions{acl.AccessAll, acl.ActionManage})
 		uid := clean.UID(c.Param("uid"))
 
 		// Non-admin users may only update their own profile.
