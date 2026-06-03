@@ -59,6 +59,16 @@ func GetSession(router *gin.RouterGroup) {
 		// Get auth token from headers.
 		authToken := AuthToken(c)
 
+		// On the Portal (OIDC OP), refresh the narrowly-scoped session cookie so it
+		// tracks the session lifetime and stays available to /oauth/authorize.
+		if conf.Portal() && authToken != "" {
+			maxAge := int(s.ExpiresIn())
+			if maxAge <= 0 {
+				maxAge = int(conf.SessionMaxAge())
+			}
+			SetOIDCSessionCookie(c, authToken, maxAge, conf.SiteHttps())
+		}
+
 		// Update user information.
 		s.RefreshUser()
 
