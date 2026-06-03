@@ -26,6 +26,24 @@ func TestClip(t *testing.T) {
 	})
 }
 
+func TestClipBytes(t *testing.T) {
+	t.Run("ASCII", func(t *testing.T) {
+		assert.Equal(t, "ASCI", ClipBytes("ASCII", 4))
+	})
+	t.Run("ShortEnough", func(t *testing.T) {
+		assert.Equal(t, "I'm ä lazy fox!", ClipBytes("I'm ä lazy fox!", 128))
+	})
+	t.Run("MultiByteNotSplit", func(t *testing.T) {
+		// "ä" is 2 bytes; a 5-byte budget over "I'm ä lazy" keeps "I'm" (4 bytes)
+		// rather than half of "ä", and a 6-byte budget keeps the whole "I'm ä".
+		assert.Equal(t, "I'm", ClipBytes("I'm ä lazy", 5))
+		assert.Equal(t, "I'm ä", ClipBytes("I'm ä lazy", 6))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", ClipBytes("", 16))
+	})
+}
+
 func BenchmarkClipRunesASCII(b *testing.B) {
 	s := strings.Repeat("abc def ghi ", 20) // ASCII
 	b.ReportAllocs()

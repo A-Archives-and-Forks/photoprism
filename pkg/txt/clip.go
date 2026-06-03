@@ -64,6 +64,14 @@ func Clip(s string, size int) string {
 	return clip.Runes(s, size)
 }
 
+// ClipBytes limits a string to at most maxBytes bytes on a UTF-8 rune boundary
+// and removes all leading and trailing spaces. Use it for VARBINARY columns
+// whose limit is measured in bytes rather than characters, so a multi-byte
+// value cannot overflow the column and trigger a write error.
+func ClipBytes(s string, maxBytes int) string {
+	return clip.Bytes(s, maxBytes)
+}
+
 // Shorten limits a character string to the specified number of runes and adds a suffix if it has been shortened.
 func Shorten(s string, size int, suffix string) string {
 	return clip.Shorten(s, size, suffix)

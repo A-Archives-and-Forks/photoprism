@@ -28,6 +28,11 @@ const (
 	AlbumMoment = "moment"
 	AlbumMonth  = "month"
 	AlbumState  = "state"
+
+	// AlbumPathBytes is the storage limit of the album_path column in bytes,
+	// matching its VARBINARY(1024) definition. The value is byte-exact and may
+	// hold multi-byte UTF-8 folder paths, so writes must be clipped by bytes.
+	AlbumPathBytes = 1024
 )
 
 var (
@@ -236,6 +241,13 @@ func NewUserAlbum(albumTitle, albumType, sortOrder, userUid string) *Album {
 	return result
 }
 
+// clipAlbumPath limits a folder album path to the album_path column's byte
+// budget on a UTF-8 rune boundary, so a multi-byte path cannot overflow the
+// VARBINARY(1024) column and trigger a write error on save or restore.
+func clipAlbumPath(albumPath string) string {
+	return txt.ClipBytes(albumPath, AlbumPathBytes)
+}
+
 // NewFolderAlbum creates a new album representing a filesystem folder.
 func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 	albumSlug := txt.SlugUnique(albumPath)
@@ -250,7 +262,7 @@ func NewFolderAlbum(albumTitle, albumPath, albumFilter string) *Album {
 		AlbumOrder:  DefaultOrderFolder,
 		AlbumType:   AlbumFolder,
 		AlbumSlug:   txt.Clip(albumSlug, txt.ClipSlug),
-		AlbumPath:   txt.Clip(albumPath, txt.ClipPath),
+		AlbumPath:   clipAlbumPath(albumPath),
 		AlbumFilter: albumFilter,
 		CreatedAt:   now,
 		UpdatedAt:   now,
@@ -839,7 +851,7 @@ func (m *Album) UpdateFolder(albumPath, albumFilter, albumTitle string) error {
 		return fmt.Errorf("album does not exist")
 	}
 
-	albumPath = clean.SlashPath(albumPath)
+	albumPath = clipAlbumPath(clean.SlashPath(albumPath))
 	albumSlug := txt.SlugUnique(albumPath)
 	repairTitle := shouldRepairFolderAlbumTitle(m.AlbumTitle, albumTitle, albumPath, m.AlbumFilter)
 

@@ -5,6 +5,7 @@ import (
 	"sync"
 	"testing"
 	"time"
+	"unicode/utf8"
 
 	"github.com/stretchr/testify/assert"
 
@@ -12,6 +13,25 @@ import (
 	"github.com/photoprism/photoprism/internal/form"
 	"github.com/photoprism/photoprism/pkg/txt"
 )
+
+// TestClipAlbumPath verifies that folder album paths are limited to the
+// album_path column's byte budget without splitting a multi-byte rune.
+func TestClipAlbumPath(t *testing.T) {
+	t.Run("ShortPath", func(t *testing.T) {
+		assert.Equal(t, "2024/Vacation", clipAlbumPath("2024/Vacation"))
+	})
+	t.Run("Empty", func(t *testing.T) {
+		assert.Equal(t, "", clipAlbumPath(""))
+	})
+	t.Run("MultiByteOverflow", func(t *testing.T) {
+		// 400 four-byte emoji = 1600 bytes, over the 1024-byte budget.
+		path := strings.Repeat("😀", 400)
+		result := clipAlbumPath(path)
+		assert.LessOrEqual(t, len(result), AlbumPathBytes)
+		assert.True(t, utf8.ValidString(result))
+		assert.Equal(t, 256, utf8.RuneCountInString(result))
+	})
+}
 
 // TestUpdateAlbum exercises the related album behavior.
 func TestUpdateAlbum(t *testing.T) {
