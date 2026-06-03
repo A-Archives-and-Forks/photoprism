@@ -73,7 +73,12 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 		rp.WithHTTPClient(httpClient),
 		rp.WithCookieHandler(cookieHandler),
 		rp.WithVerifierOpts(
-			rp.WithIssuedAtOffset(5 * time.Second),
+			rp.WithIssuedAtOffset(5*time.Second),
+			// Accept EdDSA — the PhotoPrism Portal OIDC OP signs ID tokens with
+			// Ed25519 — alongside the default RS256 and the other common IdP
+			// algorithms; the verifier otherwise rejects EdDSA-signed ID tokens
+			// with "signature algorithm not supported".
+			rp.WithSupportedSigningAlgorithms("RS256", "RS384", "RS512", "ES256", "ES384", "ES512", "PS256", "PS384", "PS512", "EdDSA"),
 		),
 		rp.WithErrorHandler(func(w http.ResponseWriter, r *http.Request, errorType string, errorDesc string, state string) {
 			event.AuditErr([]string{"oidc", "%s", "%s (state %s)"}, errorType, errorDesc, state)
