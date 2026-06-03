@@ -17,8 +17,8 @@ func LogPanic(r any) {
 		return
 	}
 
-	// SystemError already prefixes messages with "system: ", so the wording
-	// avoids a leading "panic:" that would read as "system: panic:".
+	// The leading "panic" segment becomes the log prefix, so this reads as
+	// "panic: <value> › <stack>".
 	SystemError([]string{"panic", "%v", "%s"}, r, debug.Stack())
 }
 
