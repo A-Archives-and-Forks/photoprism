@@ -1,10 +1,12 @@
 <template>
   <v-menu
     v-model="open"
-    location="top"
+    location="end"
     offset="6"
     :min-width="240"
+    :z-index="2500"
     class="nav-user-menu"
+    content-class="nav-user-menu__content"
     @update:model-value="onToggle"
   >
     <template #activator="{ props }">
