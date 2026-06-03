@@ -55,6 +55,7 @@ var Metadata = map[string]any{
 func main() {
 	defer func() {
 		if r := recover(); r != nil {
+			event.LogPanic(r)
 			os.Exit(1)
 		}
 	}()
