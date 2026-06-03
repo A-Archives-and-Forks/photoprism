@@ -32,6 +32,7 @@ export default defineConfig({
       { find: "options/admin", replacement: path.resolve(__dirname, "../portal/frontend/options/admin.js") },
       { find: "model/chooser-instance", replacement: path.resolve(__dirname, "../portal/frontend/model/chooser-instance.js") },
       { find: "model/cluster-node", replacement: path.resolve(__dirname, "../portal/frontend/model/cluster-node.js") },
+      { find: "common/instance-grants", replacement: path.resolve(__dirname, "../portal/frontend/common/instance-grants.js") },
       { find: "app", replacement: path.resolve(__dirname, "./src/app") },
       { find: "common", replacement: path.resolve(__dirname, "./src/common") },
       { find: "component", replacement: path.resolve(__dirname, "./src/component") },
