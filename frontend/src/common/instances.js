@@ -39,6 +39,22 @@ export const InstanceIdentityKeys = [InstanceUrlKey, InstanceTitleKey];
 // safeWindow returns the browser window if available, else null.
 const safeWindow = () => (typeof window === "undefined" ? null : window);
 
+// isHttpUrl reports whether url is an absolute http(s) URL. Instance URLs are
+// read from shared same-origin storage written by peer instances, so the
+// switcher rejects any other scheme (javascript:, data:, …) before listing or
+// navigating to them.
+function isHttpUrl(url) {
+  if (!url || typeof url !== "string") {
+    return false;
+  }
+  try {
+    const protocol = new URL(url).protocol;
+    return protocol === "http:" || protocol === "https:";
+  } catch {
+    return false;
+  }
+}
+
 // instanceLabel derives a short, distinctive display name from a SiteUrl — the
 // last base-path segment (e.g. "pro-1" for ".../i/pro-1/"). The switcher can
 // only surface same-origin instances, which always differ by path, so the path
@@ -115,7 +131,7 @@ export function listReachableInstances(options) {
       }
 
       const url = store.getItem(prefix + InstanceUrlKey);
-      if (!url) {
+      if (!isHttpUrl(url)) {
         return;
       }
 

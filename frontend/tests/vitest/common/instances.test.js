@@ -99,6 +99,15 @@ describe("common/instances", () => {
       const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
       expect(result).toEqual([]);
     });
+    it("excludes peers whose stored url is not http(s)", () => {
+      // Instance URLs cross a shared same-origin-storage trust boundary, so a peer
+      // that recorded a javascript:/data: url must never become a switcher entry.
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://pro-1.example.com/" });
+      seedInstance(store, "ns-evil", { url: "javascript:alert(1)" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result).toHaveLength(0);
+    });
     it("de-duplicates a namespace seen more than once", () => {
       const store = new StorageShim();
       seedInstance(store, "ns-pro-1", { url: "https://pro-1.example.com/" });
