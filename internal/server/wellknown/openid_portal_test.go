@@ -24,7 +24,6 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, "http://localhost:2342/api/v1/oauth/userinfo", result.UserinfoEndpoint)
 		assert.Equal(t, "http://localhost:2342/.well-known/jwks.json", result.JwksUri)
 	})
-
 	t.Run("Capabilities", func(t *testing.T) {
 		result := NewPortalOpenIDConfiguration(conf)
 
@@ -38,7 +37,6 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, []string{"S256"}, result.CodeChallengeMethodsSupported)
 		assert.Equal(t, []string{"client_secret_basic", "client_secret_post"}, result.TokenEndpointAuthMethodsSupported)
 	})
-
 	t.Run("BasePathDeployment", func(t *testing.T) {
 		// For a sub-path Portal (SiteUrl carries a base path), every advertised
 		// URL must contain the base path exactly once — the issuer already carries
@@ -57,7 +55,6 @@ func TestPortalOpenIDConfiguration(t *testing.T) {
 		assert.Equal(t, "http://foo:2342/foo/api/v1/oauth/userinfo", result.UserinfoEndpoint)
 		assert.Equal(t, "http://foo:2342/foo/.well-known/jwks.json", result.JwksUri)
 	})
-
 	t.Run("IssuerWithTrailingSlashIsNormalized", func(t *testing.T) {
 		// The Portal-issuer accessor falls through to SiteUrl which already
 		// includes a trailing slash; the generator must not double it.
