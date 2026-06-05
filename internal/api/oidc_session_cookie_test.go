@@ -3,15 +3,19 @@ package api
 import (
 	"net/http"
 	"net/http/httptest"
+	"os"
+	"path/filepath"
 	"testing"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 
 	"github.com/photoprism/photoprism/internal/config"
 	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
+	"github.com/photoprism/photoprism/pkg/fs"
 	"github.com/photoprism/photoprism/pkg/rnd"
 )
 
@@ -74,7 +78,7 @@ func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("SignsSessionReferenceNotToken", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		sess := &entity.Session{ID: rnd.SessionID(rnd.AuthToken())}
+		sess := &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}
 		SetOIDCSessionCookie(c, sess, "/api/v1/oauth", true)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
@@ -92,7 +96,7 @@ func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("EmptyPathFallsBackToBareApiUri", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken())}, "", true)
+		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}, "", true)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
 			assert.Equal(t, config.ApiUri+"/oauth", ck.Path)
@@ -101,11 +105,19 @@ func TestSetOIDCSessionCookie(t *testing.T) {
 	t.Run("InsecureOmitsSecureFlag", func(t *testing.T) {
 		w := httptest.NewRecorder()
 		c, _ := gin.CreateTestContext(w)
-		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken())}, "/api/v1/oauth", false)
+		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken()), UserUID: "uqxetse3cy5eo9z2"}, "/api/v1/oauth", false)
 		ck := findCookie(w, OIDCSessionCookie)
 		if assert.NotNil(t, ck) {
 			assert.False(t, ck.Secure)
 		}
+	})
+	t.Run("UserlessSessionSetsNothing", func(t *testing.T) {
+		// Client/service sessions have no user; the OP cookie would only emit a
+		// signal the reader rejects via NoUser(), so none is written.
+		w := httptest.NewRecorder()
+		c, _ := gin.CreateTestContext(w)
+		SetOIDCSessionCookie(c, &entity.Session{ID: rnd.SessionID(rnd.AuthToken())}, "/api/v1/oauth", true)
+		assert.Nil(t, findCookie(w, OIDCSessionCookie))
 	})
 	t.Run("InvalidSessionSetsNothing", func(t *testing.T) {
 		w := httptest.NewRecorder()
@@ -170,5 +182,42 @@ func TestOIDCSessionCookieSession(t *testing.T) {
 	})
 	t.Run("NilContext", func(t *testing.T) {
 		assert.Nil(t, OIDCSessionCookieSession(nil))
+	})
+}
+
+func TestLoadOrCreateOIDCSessionKey(t *testing.T) {
+	// Use a DB-backed isolated config and restore the global afterwards, matching
+	// newPortalJWTFixture; a DB-less config would leave the global entity DB unusable
+	// for later tests in this package.
+	withTempConfig := func(t *testing.T, suffix string) *config.Config {
+		conf := config.NewMinimalTestConfigWithDb("oidc-session-key-"+suffix, t.TempDir())
+		orig := get.Config()
+		get.SetConfig(conf)
+		t.Cleanup(func() { get.SetConfig(orig) })
+		return conf
+	}
+	t.Run("PersistsAndReloads", func(t *testing.T) {
+		conf := withTempConfig(t, "persist")
+
+		k1 := loadOrCreateOIDCSessionKey()
+		require.Len(t, k1, oidcSessionKeyLen)
+
+		// A second call returns the same persisted key, kept at 0600.
+		k2 := loadOrCreateOIDCSessionKey()
+		assert.Equal(t, k1, k2, "the key must be stable across calls")
+
+		path := filepath.Join(conf.PortalConfigPath(), "keys", oidcSessionKeyFile)
+		info, err := os.Stat(path)
+		require.NoError(t, err)
+		assert.Equal(t, os.FileMode(0o600), info.Mode().Perm())
+	})
+	t.Run("UnwritableKeysDirReturnsNil", func(t *testing.T) {
+		conf := withTempConfig(t, "unwritable")
+
+		// Place a regular file where the keys directory must be created so the
+		// MkdirAll inside loadOrCreateOIDCSessionKey fails and it returns nil.
+		require.NoError(t, fs.MkdirAll(conf.PortalConfigPath()))
+		require.NoError(t, os.WriteFile(filepath.Join(conf.PortalConfigPath(), "keys"), []byte("x"), fs.ModeSecretFile))
+		assert.Nil(t, loadOrCreateOIDCSessionKey())
 	})
 }

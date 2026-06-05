@@ -68,6 +68,7 @@ func oidcSessionSignalKey() []byte {
 		key := make([]byte, oidcSessionKeyLen)
 		_, _ = rand.Read(key)
 		oidcSessionKey = key
+		log.Warnf("oidc: using a process-local session-signal key because the persistent key could not be loaded or stored; OP session cookies will not verify across restarts or replicas")
 	})
 	return oidcSessionKey
 }
@@ -153,7 +154,10 @@ func parseOIDCSession(value string) (sessionID string, ok bool) {
 // the token, a leaked cookie cannot authenticate any other API endpoint, and
 // the HMAC signature plus short TTL prevent forging or extending it.
 func SetOIDCSessionCookie(c *gin.Context, sess *entity.Session, cookiePath string, secure bool) {
-	if c == nil || sess == nil || !rnd.IsSessionID(sess.ID) {
+	// Only user sessions are eligible: the OP authorize endpoint resumes a user,
+	// and the reader rejects user-less (client/service) sessions via NoUser(), so
+	// setting the cookie for them would only emit a signal that can never resolve.
+	if c == nil || sess == nil || !rnd.IsSessionID(sess.ID) || sess.NoUser() {
 		return
 	}
 

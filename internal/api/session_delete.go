@@ -82,8 +82,10 @@ func DeleteSession(router *gin.RouterGroup) {
 			event.AuditDebug([]string{clientIp, "session %s", "deleted"}, s.RefID)
 		}
 
-		// On the Portal (OIDC OP), clear the narrowly-scoped session cookie on logout.
-		if conf := get.Config(); conf.Portal() {
+		// On the Portal (OIDC OP), clear the narrowly-scoped session cookie on the
+		// caller's own logout only. A session manager deleting another session by
+		// ref id must not wipe the OP cookie bound to its own browser.
+		if conf := get.Config(); conf.Portal() && !rnd.IsRefID(id) {
 			ClearOIDCSessionCookie(c, OIDCSessionCookiePath(conf), conf.SiteHttps())
 		}
 
