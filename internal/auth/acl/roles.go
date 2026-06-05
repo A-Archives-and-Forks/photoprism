@@ -45,13 +45,9 @@ func IsAdminRole(role Role) bool {
 }
 
 // IsFederatedRole reports whether role may be assigned to a user account through
-// an external identity provider (OIDC group/role claims or LDAP group/attribute
-// mapping). The Portal-only operator role cluster_admin and the anonymous
-// visitor role are never federated, and the empty role is rejected so a missing
-// mapping cannot clear an account's role. Federation therefore neither grants
-// nor revokes a non-federatable role: a compromised IdP/AD cannot escalate an
-// account to operator access (the Portal Admin UI), and an existing
-// cluster_admin/visitor account is never changed by a directory sync.
+// an external identity provider (OIDC/LDAP). cluster_admin, visitor, and the empty
+// role are never federatable, so a compromised IdP can neither escalate an account
+// to operator access nor clear its role.
 func IsFederatedRole(role Role) bool {
 	switch role {
 	case RoleNone, RoleClusterAdmin, RoleVisitor:
@@ -62,11 +58,9 @@ func IsFederatedRole(role Role) bool {
 }
 
 // FederatedRoleUpdate reports the account role an external identity provider may
-// apply to an existing user and whether to apply it. Federation neither grants
-// nor revokes a non-federatable role, so it returns ok=false when the current
-// role is non-federatable (cluster_admin/visitor must not be touched), when the
-// mapped role is non-federatable (no escalation to operator/visitor), or when
-// the role is unchanged. Both the OIDC and LDAP sync paths share this decision.
+// apply to an existing user, and whether to apply it. Returns ok=false when the
+// current or mapped role is non-federatable, or when the role is unchanged, so a
+// directory sync can neither escalate nor clear a non-federatable role.
 func FederatedRoleUpdate(current, mapped Role) (Role, bool) {
 	if !IsFederatedRole(current) || !IsFederatedRole(mapped) || current == mapped {
 		return RoleNone, false

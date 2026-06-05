@@ -143,6 +143,14 @@ func OIDCRedirect(router *gin.RouterGroup) {
 		mappedRole, hasMappedRole := oidc.MapGroupsToRole(groups, conf.OIDCGroupRoles())
 		defaultRole := conf.OIDCRole()
 
+		// A PhotoPrism Portal OP grants the instance login role via the pp_role
+		// claim (gated by pp_issuer_kind); prefer the verified ID token, then user
+		// info. It takes precedence over the group mapping below.
+		portalRole, hasPortalRole := oidc.PortalGrantedRole(idTokenClaims)
+		if !hasPortalRole {
+			portalRole, hasPortalRole = oidc.PortalGrantedRole(userInfo.Claims)
+		}
+
 		// Step 1: Create user account if it does not exist yet.
 		var user *entity.User
 		var err error
@@ -261,10 +269,15 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Apply a group-mapped role only when federation may set it: an
-			// existing cluster_admin/visitor account is never touched, and the IdP
-			// can never escalate to a non-federatable role.
-			if hasMappedRole {
+			// Apply a federated role only when federation may set it: an existing
+			// cluster_admin/visitor account is never touched, and the IdP can never
+			// escalate to a non-federatable role. A Portal-granted pp_role takes
+			// precedence over the group mapping.
+			if hasPortalRole {
+				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), portalRole); ok {
+					user.SetRole(role.String())
+				}
+			} else if hasMappedRole {
 				if role, ok := acl.FederatedRoleUpdate(user.AclRole(), mappedRole); ok {
 					user.SetRole(role.String())
 				}
@@ -347,10 +360,12 @@ func OIDCRedirect(router *gin.RouterGroup) {
 				user.VerifiedAt = entity.TimeStamp()
 			}
 
-			// Set user role and permissions. Use the group-mapped role only when
-			// federation may set it, else the configured default; both are
-			// already filtered to federatable roles (no cluster_admin/visitor).
-			if hasMappedRole && acl.IsFederatedRole(mappedRole) {
+			// Set user role and permissions. A Portal-granted pp_role wins, then a
+			// group-mapped role when federation may set it, else the configured
+			// default; all are filtered to federatable roles (no cluster_admin/visitor).
+			if hasPortalRole {
+				user.SetRole(portalRole.String())
+			} else if hasMappedRole && acl.IsFederatedRole(mappedRole) {
 				user.SetRole(mappedRole.String())
 			} else {
 				user.SetRole(defaultRole.String())
