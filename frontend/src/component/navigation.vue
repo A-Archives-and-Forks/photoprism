@@ -641,7 +641,7 @@
 
           <div v-show="auth && !isPublic && !disconnected" class="nav-info user-info">
             <div class="nav-info__underlay"></div>
-            <p-user-menu @settings="showAccountSettings" @logout="onLogout">
+            <p-user-menu @logout="onLogout">
               <div class="nav-user-avatar text-center my-1 mx-2">
                 <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
               </div>
@@ -930,13 +930,6 @@ export default {
 
       this.isMini = !this.isMini;
       appStorage.setItem("navigation.mode", `${this.isMini}`);
-    },
-    showAccountSettings() {
-      if (this.$config.feature("account")) {
-        this.$router.push({ name: "settings_account" });
-      } else {
-        this.$router.push({ name: "settings" });
-      }
     },
     showUsageInfo() {
       this.$router.push({ path: "/index/files" });

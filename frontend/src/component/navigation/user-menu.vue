@@ -15,9 +15,7 @@
       </div>
     </template>
     <v-list slim nav density="compact" bg-color="navigation" class="nav-user-menu__list">
-      <v-list-item prepend-icon="mdi-cog-outline" :title="$gettext('Settings')" class="action-settings" @click="$emit('settings')"></v-list-item>
       <template v-if="instances.length > 0">
-        <v-divider class="my-1"></v-divider>
         <v-list-subheader class="nav-user-menu__subheader">{{ $gettext("Switch Instance") }}</v-list-subheader>
         <v-list-item
           v-for="instance in instances"
@@ -28,8 +26,8 @@
           class="action-switch-instance"
           @click="onSwitch(instance)"
         ></v-list-item>
+        <v-divider class="my-1"></v-divider>
       </template>
-      <v-divider class="my-1"></v-divider>
       <v-list-item prepend-icon="mdi-power" :title="$gettext('Sign Out')" base-color="danger" class="action-logout" @click="$emit('logout')"></v-list-item>
     </v-list>
   </v-menu>
@@ -38,11 +36,12 @@
 <script>
 import { listReachableInstances } from "common/instances";
 
-// PUserMenu is the navigation avatar overlay menu: Settings, Sign Out, and — when
-// more than one instance is reachable on a shared domain — a Switch Instance list.
+// PUserMenu is the navigation avatar overlay menu: Sign Out and — when more than
+// one instance is reachable on a shared domain — a Switch Instance list. Settings
+// is reached via the sidebar, so it is intentionally not duplicated here.
 export default {
   name: "PUserMenu",
-  emits: ["settings", "logout"],
+  emits: ["logout"],
   data() {
     return {
       open: false,
