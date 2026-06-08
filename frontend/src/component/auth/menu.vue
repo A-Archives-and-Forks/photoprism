@@ -36,11 +36,11 @@
 <script>
 import { listReachableInstances } from "common/instances";
 
-// PUserMenu is the navigation avatar overlay menu: Sign Out and — when more than
+// PAuthMenu is the navigation avatar overlay menu: Sign Out and — when more than
 // one instance is reachable on a shared domain — a Switch Instance list. Settings
 // is reached via the sidebar, so it is intentionally not duplicated here.
 export default {
-  name: "PUserMenu",
+  name: "PAuthMenu",
   emits: ["logout"],
   data() {
     return {

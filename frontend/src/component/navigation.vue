@@ -641,15 +641,20 @@
 
           <div v-show="auth && !isPublic && !disconnected" class="nav-info user-info">
             <div class="nav-info__underlay"></div>
-            <p-user-menu @logout="onLogout">
+            <p-auth-menu @logout="onLogout">
               <div class="nav-user-avatar text-center my-1 mx-2">
                 <img :src="userAvatarURL" :alt="accountInfo" :title="accountInfo" class="rounded-circle" />
               </div>
-              <div v-if="!isMini" class="nav-user-text text-start mt-1 flex-grow-1">
-                <p class="text-body-2">{{ displayName }}</p>
-                <p class="text-caption opacity-70">{{ accountInfo }}</p>
-              </div>
-            </p-user-menu>
+              <template v-if="!isMini">
+                <div class="nav-user-text text-start mt-1 flex-grow-1">
+                  <p class="text-body-2">{{ displayName }}</p>
+                  <p class="text-caption opacity-70">{{ accountInfo }}</p>
+                </div>
+                <div class="text-center">
+                  <v-btn icon="mdi-dots-horizontal" variant="text" :elevation="0"></v-btn>
+                </div>
+              </template>
+            </p-auth-menu>
           </div>
         </div>
       </v-navigation-drawer>
@@ -767,14 +772,14 @@
 <script>
 import links from "common/links";
 import { getAppStorage } from "common/storage";
-import PUserMenu from "component/navigation/user-menu.vue";
+import PAuthMenu from "component/auth/menu.vue";
 
 const appStorage = getAppStorage();
 
 export default {
   name: "PNavigation",
   components: {
-    PUserMenu,
+    PAuthMenu,
   },
   data() {
     const appName = this.$config.getName();
