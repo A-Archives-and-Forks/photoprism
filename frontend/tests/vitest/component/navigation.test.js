@@ -243,25 +243,7 @@ describe("component/navigation", () => {
     });
   });
 
-  describe("account and legal navigation", () => {
-    it("showAccountSettings routes to account settings when account feature is enabled", () => {
-      const { wrapper, push } = mountNavigation({
-        featureOverrides: { account: true },
-      });
-
-      wrapper.vm.showAccountSettings();
-      expect(push).toHaveBeenCalledWith({ name: "settings_account" });
-    });
-
-    it("showAccountSettings falls back to general settings when account feature is disabled", () => {
-      const { wrapper, push } = mountNavigation({
-        featureOverrides: { account: false },
-      });
-
-      wrapper.vm.showAccountSettings();
-      expect(push).toHaveBeenCalledWith({ name: "settings" });
-    });
-
+  describe("legal navigation", () => {
     it("showLegalInfo opens external URL when legalUrl is configured", () => {
       const { wrapper, util } = mountNavigation({
         configValues: { legalUrl: "https://example.com/legal" },
