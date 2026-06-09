@@ -1482,7 +1482,10 @@ func TestUser_SaveForm(t *testing.T) {
 		m = FindUserByUID(Admin.UserUID)
 		assert.Equal(t, "New Name", m.DisplayName)
 	})
-	t.Run("PreventDisableLoginForInitialAdmin", func(t *testing.T) {
+	t.Run("AnotherSuperAdminCanDisableInitialAdminLogin", func(t *testing.T) {
+		// The seed admin is no longer special-cased: another super admin may
+		// disable its login (e.g. a cluster-managed instance that keeps no local
+		// super admin). The acting admin still cannot lock itself out.
 		m := FindUser(Admin)
 
 		if m == nil {
@@ -1499,10 +1502,56 @@ func TestUser_SaveForm(t *testing.T) {
 		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
 
 		assert.NoError(t, err)
-		assert.Equal(t, true, Admin.CanLogin)
+		assert.False(t, Admin.CanLogin)
 
 		m = FindUserByUID(Admin.UserUID)
-		assert.Equal(t, true, m.CanLogin)
+		assert.False(t, m.CanLogin)
+
+		// Restore the seed admin so later subtests see a login-capable account.
+		Admin.CanLogin = true
+		if err = Admin.Save(); err != nil {
+			t.Fatal(err)
+		}
+	})
+	t.Run("AnotherSuperAdminCanDemoteInitialAdmin", func(t *testing.T) {
+		// With the hard ID-1 lock removed, a second super admin can fully demote
+		// the seed admin (clear super admin, drop to a non-admin role, disable
+		// login). The form must request SuperAdmin=false so the role normalization
+		// does not re-promote it.
+		m := FindUser(Admin)
+
+		if m == nil {
+			t.Fatal("result must not be nil")
+		}
+
+		frm, err := m.Form()
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		frm.UserRole = acl.RoleGuest.String()
+		frm.SuperAdmin = false
+		frm.CanLogin = false
+		err = Admin.SaveForm(frm, UserFixtures.Pointer("alice"), true)
+
+		assert.NoError(t, err)
+		assert.False(t, Admin.SuperAdmin)
+		assert.Equal(t, acl.RoleGuest.String(), Admin.UserRole)
+		assert.False(t, Admin.CanLogin)
+
+		m = FindUserByUID(Admin.UserUID)
+		assert.False(t, m.SuperAdmin)
+		assert.Equal(t, acl.RoleGuest.String(), m.UserRole)
+		assert.False(t, m.CanLogin)
+
+		// Restore the seed admin so later subtests see a usable super admin.
+		Admin.SuperAdmin = true
+		Admin.CanLogin = true
+		Admin.SetRole(acl.RoleAdmin.String())
+		if err = Admin.Save(); err != nil {
+			t.Fatal(err)
+		}
 	})
 	t.Run("PreventInitialAdminFromDisablingOwnLogin", func(t *testing.T) {
 		m := FindUser(Admin)

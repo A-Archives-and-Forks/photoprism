@@ -1348,7 +1348,7 @@ func (m *User) PrivilegeLevelChange(frm form.User) bool {
 func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
 	if m.UserName == "" || m.ID <= 0 {
 		return fmt.Errorf("system users cannot be modified")
-	} else if (m.ID == 1 || frm.SuperAdmin) && !acl.IsAdminRole(acl.Role(frm.Role())) {
+	} else if frm.SuperAdmin && !acl.IsAdminRole(acl.Role(frm.Role())) {
 		// Super admins must keep an admin-level role. cluster_admin is the
 		// Portal operator role and counts as admin-level (it is unused on CE/Pro).
 		return fmt.Errorf("super admin must not have a non-admin role")
@@ -1433,16 +1433,6 @@ func (m *User) SaveForm(frm form.User, u *User, byAdmin bool) error {
 	// Portal).
 	if m.SuperAdmin && !acl.IsAdminRole(acl.Role(m.UserRole)) {
 		m.SetRole(Admin.UserRole)
-	}
-
-	// Make sure the initial admin user cannot lock itself out: it stays a super
-	// admin that can log in with an admin-level role.
-	if m.ID == Admin.ID {
-		m.SuperAdmin = true
-		m.CanLogin = true
-		if !acl.IsAdminRole(acl.Role(m.UserRole)) {
-			m.SetRole(Admin.UserRole)
-		}
 	}
 
 	return m.Save()
