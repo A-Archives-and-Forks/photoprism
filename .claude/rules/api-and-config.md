@@ -20,6 +20,7 @@
 ## API Shape Checklist
 
 When renaming or adding fields:
+- Field casing: **TitleCase** (`UUID`, `Name`, `SiteUrl`) for fields backed by a DB entity (mirror the entity/model), **camelCase** (`storageNamespace`, `redirectUri`) for generated/artificial payloads (client config, session, action/RPC bodies). A filtered/computed entity projection stays TitleCase; an action payload stays camelCase but MAY TitleCase its single entity-identity field (e.g. `UUID`). See `specs/common/field-casing.md`.
 - Update DTOs in `internal/service/cluster/response.go` and any mappers.
 - Update handlers and regenerate Swagger: `make fmt-go swag-fmt swag`.
 - Update tests (search/replace old field names) and examples in `specs/`.
