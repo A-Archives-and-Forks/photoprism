@@ -366,6 +366,9 @@
                 "Database": {
                     "$ref": "#/definitions/cluster.NodeDatabase"
                 },
+                "DisplayName": {
+                    "type": "string"
+                },
                 "Labels": {
                     "additionalProperties": {
                         "type": "string"
@@ -7025,7 +7028,7 @@
                         "type": "string"
                     },
                     {
-                        "description": "properties to update (Role, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
+                        "description": "properties to update (Role, DisplayName, Labels, AdvertiseUrl, SiteUrl, RedirectURIs)",
                         "in": "body",
                         "name": "node",
                         "required": true,

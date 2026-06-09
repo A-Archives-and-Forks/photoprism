@@ -305,6 +305,20 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		Theme:        clean.TypeUnicode(c.NodeThemeVersion()),
 	}
 
+	// Report a human-friendly DisplayName from the operator's configured branding,
+	// preferring AppName, then SiteTitle, then SiteCaption. Read the raw options so
+	// an unbranded instance reports nothing (the Portal then falls back to the node
+	// Name slug), and so the Pro edition's "Name = AppName" aliasing doesn't make a
+	// default look configured.
+	opt := c.Options()
+	if name := clean.TypeUnicode(opt.AppName); name != "" {
+		payload.DisplayName = name
+	} else if name = clean.TypeUnicode(opt.SiteTitle); name != "" {
+		payload.DisplayName = name
+	} else if name = clean.TypeUnicode(opt.SiteCaption); name != "" {
+		payload.DisplayName = name
+	}
+
 	// Auto-derive Advertise/Site URLs from node name and cluster domain when not configured.
 	if domain := strings.TrimSpace(defaultClusterDomain(c)); domain != "" {
 		if payload.NodeName == "" {

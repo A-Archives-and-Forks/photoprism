@@ -514,6 +514,45 @@ func TestDefaultNodeURL(t *testing.T) {
 	assert.Equal(t, "https://node-1.photoprism.example", defaultNodeURL("NODE_1", "photoprism.example"))
 }
 
+func TestBuildRegisterPayload_DisplayName(t *testing.T) {
+	c := newBootstrapTestConfig(t, "node-displayname")
+	reset := func() {
+		c.Options().AppName = ""
+		c.Options().SiteTitle = ""
+		c.Options().SiteCaption = ""
+		c.Options().Name = ""
+	}
+	t.Run("PrefersAppName", func(t *testing.T) {
+		reset()
+		c.Options().AppName = "Family Photos"
+		c.Options().SiteTitle = "Our Trip"
+		c.Options().SiteCaption = "Tagline"
+		assert.Equal(t, "Family Photos", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("FallsBackToSiteTitle", func(t *testing.T) {
+		reset()
+		c.Options().SiteTitle = "Our Trip"
+		assert.Equal(t, "Our Trip", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("FallsBackToSiteCaption", func(t *testing.T) {
+		reset()
+		c.Options().SiteCaption = "Browse Your Life"
+		assert.Equal(t, "Browse Your Life", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("EmptyWhenUnbranded", func(t *testing.T) {
+		reset()
+		assert.Equal(t, "", buildRegisterPayload(c).DisplayName)
+	})
+	t.Run("AppNameSurvivesNameAliasing", func(t *testing.T) {
+		// The Pro edition aliases Name to AppName; reading the raw AppName option
+		// means DisplayName still reports it instead of treating it as a default.
+		reset()
+		c.Options().AppName = "Studio One"
+		c.Options().Name = "Studio One"
+		assert.Equal(t, "Studio One", buildRegisterPayload(c).DisplayName)
+	})
+}
+
 func TestRegister_404_NoRetry(t *testing.T) {
 	var hits int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
