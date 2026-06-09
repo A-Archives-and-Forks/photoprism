@@ -77,14 +77,10 @@ func normalizeBaseURL(s string) string {
 	return u.String()
 }
 
-// OriginURL returns the scheme://host/ origin of s: the scheme and host with a
-// trailing slash, dropping the path, query, fragment, and userinfo. A
-// non-default port is preserved (servers may run on non-standard ports); the
-// scheme's default port (e.g. :443 for https) is stripped so the result matches
-// a NormalizeBaseURL'd issuer. Returns "" when s is empty or has no scheme/host.
-//
-// On a shared-domain cluster the Portal OP is served from this origin, so an
-// instance can derive its OIDC issuer from its own SiteUrl with OriginURL.
+// OriginURL returns the scheme://host/ origin of s (trailing slash; no path,
+// query, fragment, or userinfo). A non-default port is preserved; the scheme's
+// default port is stripped so the result matches a NormalizeBaseURL'd issuer.
+// Returns "" when s is empty or has no scheme/host.
 func OriginURL(s string) string {
 	u, err := url.Parse(strings.TrimSpace(s))
 	if err != nil || u.Scheme == "" || u.Host == "" {

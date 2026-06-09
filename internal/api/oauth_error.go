@@ -11,11 +11,9 @@ import (
 	"github.com/photoprism/photoprism/pkg/http/header"
 )
 
-// oauthWantsHTML reports whether an OAuth/OIDC error should be rendered as a
-// branded HTML page rather than the standard JSON body. A top-level browser
-// navigation to the authorize endpoint carries Sec-Fetch-Mode: navigate and an
-// Accept header that prefers text/html; programmatic API clients send
-// Accept: application/json (or no Accept) and keep receiving JSON.
+// oauthWantsHTML reports whether an OAuth/OIDC error should render as a branded
+// HTML page rather than JSON: true for a top-level browser navigation
+// (Sec-Fetch-Mode: navigate or Accept: text/html), false for API clients.
 func oauthWantsHTML(c *gin.Context) bool {
 	if c == nil || c.Request == nil {
 		return false
@@ -26,12 +24,10 @@ func oauthWantsHTML(c *gin.Context) bool {
 	return strings.Contains(strings.ToLower(c.GetHeader(header.Accept)), gin.MIMEHTML)
 }
 
-// RenderOAuthError responds to a non-redirectable OAuth/OIDC error: a branded
-// HTML page for a browser, or the standard JSON error body for an API client,
-// chosen by content negotiation. Use it only when there is no trusted
-// redirect_uri to send the user back to — RFC 6749 §4.1.2.1 forbids redirecting
-// to an unverified URI. The JSON shape and status code are preserved unchanged
-// for non-browser callers.
+// RenderOAuthError responds to a non-redirectable OAuth/OIDC error with a branded
+// HTML page for browsers or the standard JSON body for API clients. Use it only
+// when there is no trusted redirect_uri (RFC 6749 §4.1.2.1 forbids redirecting to
+// an unverified URI).
 func RenderOAuthError(c *gin.Context, statusCode int, errCode, errDescription string) {
 	if c == nil {
 		return
@@ -57,11 +53,9 @@ func RenderOAuthError(c *gin.Context, statusCode int, errCode, errDescription st
 }
 
 // RedirectOAuthError sends the browser back to a validated redirect_uri with the
-// standard error, error_description, and echoed state query parameters (RFC 6749
-// §4.1.2.1), so the instance RP renders the failure in its own branded UI.
-// Callers MUST have verified redirectURI against the client's registered URIs
-// first. Falls back to RenderOAuthError when redirectURI cannot be parsed, so a
-// malformed URI is never followed.
+// standard error, error_description, and echoed state (RFC 6749 §4.1.2.1). Callers
+// MUST have validated redirectURI first; an unparseable URI falls back to
+// RenderOAuthError rather than being followed.
 func RedirectOAuthError(c *gin.Context, redirectURI, state, errCode, errDescription string) {
 	if c == nil {
 		return

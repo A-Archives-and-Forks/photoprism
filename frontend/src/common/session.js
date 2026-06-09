@@ -886,19 +886,14 @@ export default class Session {
     }
   }
 
-  // logoutEverywhere performs a cluster-wide Sign-Out (Tier 2): it best-effort
-  // revokes every reachable peer instance's session server-side using the tokens
-  // in shared same-origin storage, drops those peers' keys from local storage,
-  // then signs out of the current instance — which clears its server session and,
-  // on any OIDC-against-Portal node, the Portal OP cookie that would otherwise
-  // allow silent re-SSO — and redirects. Same-origin (shared-domain proxy)
-  // clusters only; subdomain-isolated peers are left to expire. Always resolves.
+  // logoutEverywhere performs a cluster-wide Sign-Out (Tier 2): best-effort revokes
+  // every reachable peer instance's session server-side, drops their local tokens,
+  // then signs out the current instance (clearing the OP cookie) and redirects.
+  // Shared-domain (same-origin) clusters only; always resolves.
   logoutEverywhere(noRedirect) {
-    // Enumerate and clear from the same backends so a peer found is a peer cleared.
-    // this.localStorage / this.sessionStorage may be NamespacedStorage wrappers
-    // (getAppStorage), so unwrap to the raw underlying store — enumerating or
-    // clearing through a wrapper would double-prefix the peer keys (pp:a:pp:b:…)
-    // and miss the real ones.
+    // Unwrap to the raw underlying store: this.localStorage / this.sessionStorage
+    // are NamespacedStorage wrappers (getAppStorage), and enumerating or clearing a
+    // cross-namespace key through one double-prefixes it (pp:a:pp:b:…) and misses it.
     const rawStore = (s) => (s && s.storage ? s.storage : s);
     const stores = [rawStore(this.localStorage), rawStore(this.sessionStorage)];
 

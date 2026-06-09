@@ -27,10 +27,9 @@ const (
 	OidcRedirectUri = ApiUri + "/oidc/redirect"
 )
 
-// ClusterOIDC reports whether a cluster instance should use the Portal as its
-// OIDC login provider, deriving the OIDC RP credentials from the node client
-// credentials registered with the Portal (PHOTOPRISM_CLUSTER_OIDC). Explicit
-// PHOTOPRISM_OIDC_CLIENT / _SECRET still take precedence.
+// ClusterOIDC reports whether a cluster instance should use the Portal as its OIDC
+// login provider, deriving the OIDC RP credentials from the node client
+// (PHOTOPRISM_CLUSTER_OIDC). Explicit PHOTOPRISM_OIDC_CLIENT / _SECRET win.
 func (c *Config) ClusterOIDC() bool {
 	return c.options.ClusterOIDC
 }
@@ -114,12 +113,10 @@ func (c *Config) SetOIDCSecret(value string) {
 	c.options.OIDCSecret = value
 }
 
-// OIDCIssuerOnSiteDomain reports whether the configured OIDC issuer is served
-// from this node's own site host, i.e. a shared-domain Portal OP. The Portal OP
-// session cookie is host-only to that domain, so this is the condition under
-// which an instance can clear it on logout. It deliberately compares the site
-// host (not PortalUrl, which may be an intra-cluster loopback address that
-// differs from the browser-facing OIDC issuer).
+// OIDCIssuerOnSiteDomain reports whether the configured OIDC issuer is served from
+// this node's own site host (a shared-domain Portal OP). The OP session cookie is
+// host-only to that domain, so this gates whether an instance can clear it on
+// logout. It compares the site host, not PortalUrl (which may be a loopback).
 func (c *Config) OIDCIssuerOnSiteDomain() bool {
 	issuer := c.OIDCUri()
 	if issuer == nil || issuer.Hostname() == "" {

@@ -88,10 +88,8 @@ func OIDCRedirect(router *gin.RouterGroup) {
 			return
 		}
 
-		// The provider may redirect back with a standard OAuth error instead of a
-		// code (e.g. a Portal OP returning access_denied when the user has no access
-		// to this instance). Surface it in the instance's own branded UI rather than
-		// silently bouncing to the login page with no explanation.
+		// The provider may redirect back with an OAuth error instead of a code (e.g.
+		// access_denied). Surface it in the instance's branded UI, not a silent bounce.
 		if oauthErr := c.Query("error"); oauthErr != "" {
 			event.AuditWarn([]string{clientIp, "create session", "oidc", "provider returned error", clean.Log(oauthErr), clean.Log(c.Query("error_description"))})
 			c.HTML(http.StatusUnauthorized, "auth.gohtml", CreateSessionError(http.StatusUnauthorized, i18n.Error(oidcRedirectErrorMessage(oauthErr))))

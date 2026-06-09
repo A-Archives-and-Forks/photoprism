@@ -86,9 +86,7 @@ func InitConfig(c *config.Config) error {
 		activateNodeThemeIfPresent(c)
 	}
 
-	// Wire the OIDC RP to the Portal OP from the node credentials when opted in via
-	// PHOTOPRISM_CLUSTER_OIDC, so a fresh instance reaches a working browser OIDC
-	// login without a second pass to inject PHOTOPRISM_OIDC_CLIENT / _SECRET.
+	// Derive the OIDC RP credentials from the node client (PHOTOPRISM_CLUSTER_OIDC).
 	resolveNodeOIDCClient(c)
 
 	// Log cluster UUID.
@@ -99,16 +97,11 @@ func InitConfig(c *config.Config) error {
 	return nil
 }
 
-// resolveNodeOIDCClient derives the instance's OIDC RP credentials from its
-// persisted node client credentials when PHOTOPRISM_CLUSTER_OIDC is enabled, so a
-// Portal-fronted instance reaches a working browser OIDC login on first boot
-// without a second pass to inject PHOTOPRISM_OIDC_CLIENT / _SECRET. An explicit
-// OIDC client id is left untouched, so external IdPs and hand-issued clients still
-// win. The OIDC issuer defaults to the Portal URL when unset, so a single flag
-// suffices. It runs after registration has persisted the node credentials and
-// before the OIDC RP is initialized (the RP is lazy, so the early bootstrap stage
-// satisfies this), and reads the secret with the file-first precedence the node
-// bootstrap mandates, so a rotated client_secret propagates on the next start.
+// resolveNodeOIDCClient derives the instance's OIDC RP credentials from the node
+// client credentials when PHOTOPRISM_CLUSTER_OIDC is enabled, so a Portal-fronted
+// instance logs in on first boot without injecting PHOTOPRISM_OIDC_*. An explicit
+// OIDC client id wins; the issuer defaults to the instance's own origin when unset;
+// the secret is read file-first so a rotation propagates on the next start.
 func resolveNodeOIDCClient(c *config.Config) {
 	if c == nil || !c.ClusterOIDC() {
 		return

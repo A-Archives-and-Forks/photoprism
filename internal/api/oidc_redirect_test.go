@@ -84,10 +84,9 @@ func TestOIDCRedirectErrorMessage(t *testing.T) {
 	assert.Equal(t, i18n.ErrInvalidCredentials, oidcRedirectErrorMessage(""))
 }
 
-// TestOIDCRedirect_ProviderError covers the RP callback receiving a standard
-// OAuth error (no code) from the OP, e.g. access_denied from a Portal OP. It must
-// render the instance's own branded error page rather than silently bouncing to
-// the login form.
+// TestOIDCRedirect_ProviderError covers the RP callback receiving an OAuth error
+// (no code) from the OP — it must render the instance's branded error page, not
+// silently bounce to the login form.
 func TestOIDCRedirect_ProviderError(t *testing.T) {
 	_, _, conf := NewApiTest()
 	conf.SetAuthMode(config.AuthModePasswd)
