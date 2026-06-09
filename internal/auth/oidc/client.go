@@ -70,6 +70,10 @@ func NewClient(issuerUri *url.URL, oidcClient, oidcSecret, oidcScopes, siteUrl s
 	if insecure {
 		cookieOpts = append(cookieOpts, utils.WithUnsecure())
 	}
+	// Scope the cookies to the OIDC endpoints under the instance base path instead
+	// of the library default Path=/, so they survive to the callback without relying
+	// on a shared-domain reverse proxy rewriting the Set-Cookie path.
+	cookieOpts = append(cookieOpts, utils.WithPath(CookiePath(siteUrl)))
 	cookieHandler := utils.NewCookieHandler(hashKey, encryptKey, cookieOpts...)
 
 	// Create HTTP client.
