@@ -200,6 +200,28 @@ func FindUserByName(userName string) *User {
 	return FindUser(User{UserName: userName})
 }
 
+// UserEmailAvailable reports whether email is unused or only held by the account
+// with exceptUID. The email field is informational — not verified, and not unique
+// as an identity — so external (OIDC/LDAP) provisioning skips a colliding email
+// instead of letting Validate reject the account and block the login.
+func UserEmailAvailable(email, exceptUID string) bool {
+	if email = clean.Email(email); email == "" {
+		return false
+	}
+
+	found := FindUser(User{UserEmail: email})
+
+	return found == nil || found.UserUID == exceptUID
+}
+
+// EmailVerified reports whether the account's email address has been verified,
+// i.e. VerifiedAt is set to a non-zero time. PhotoPrism does not verify emails,
+// so this is false for operator-managed accounts and true only when an upstream
+// IdP asserted it.
+func (m *User) EmailVerified() bool {
+	return clean.TimeSet(m.VerifiedAt)
+}
+
 // FindLocalUser returns the matching local user or nil if it was not found.
 func FindLocalUser(userName string) *User {
 	name := clean.Username(userName)

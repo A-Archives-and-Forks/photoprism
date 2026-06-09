@@ -511,6 +511,39 @@ func TestFirstOrCreateUser(t *testing.T) {
 	})
 }
 
+func TestUserEmailAvailable(t *testing.T) {
+	alice := FindUserByName("alice")
+	require.NotNil(t, alice)
+	require.NotEmpty(t, alice.UserEmail)
+	t.Run("UnusedEmail", func(t *testing.T) {
+		assert.True(t, UserEmailAvailable("brand-new-unused-email@example.com", ""))
+	})
+	t.Run("TakenByOtherAccount", func(t *testing.T) {
+		assert.False(t, UserEmailAvailable(alice.UserEmail, ""))
+		assert.False(t, UserEmailAvailable(alice.UserEmail, "u00000000000other"))
+	})
+	t.Run("FreeForSameAccount", func(t *testing.T) {
+		assert.True(t, UserEmailAvailable(alice.UserEmail, alice.UserUID))
+	})
+	t.Run("EmptyEmail", func(t *testing.T) {
+		assert.False(t, UserEmailAvailable("", ""))
+		assert.False(t, UserEmailAvailable("   ", ""))
+	})
+}
+
+func TestUser_EmailVerified(t *testing.T) {
+	t.Run("NilVerifiedAt", func(t *testing.T) {
+		assert.False(t, (&User{}).EmailVerified())
+	})
+	t.Run("ZeroVerifiedAt", func(t *testing.T) {
+		zero := time.Time{}
+		assert.False(t, (&User{VerifiedAt: &zero}).EmailVerified())
+	})
+	t.Run("SetVerifiedAt", func(t *testing.T) {
+		assert.True(t, (&User{VerifiedAt: TimeStamp()}).EmailVerified())
+	})
+}
+
 func TestFindUser(t *testing.T) {
 	t.Run("ID", func(t *testing.T) {
 		m := FindUser(User{ID: 1})
