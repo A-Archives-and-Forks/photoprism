@@ -25,6 +25,13 @@ describe("component/auth/menu", () => {
       expect(listReachableInstances).toHaveBeenCalledWith({ currentNamespace: "ns-pro-1" });
       expect(ctx.instances).toEqual([{ ...peers[0], path: "/i/pro-2" }]);
     });
+    it("blanks the subtitle path for the Portal root", () => {
+      const peers = [{ namespace: "ns-portal", url: "https://app.example.com/", title: "Portal", icon: "/static/icons/logo.svg" }];
+      listReachableInstances.mockReturnValue(peers);
+      const ctx = { $config: { values: { storageNamespace: "ns-pro-1" } }, instances: [] };
+      AuthMenu.methods.refresh.call(ctx);
+      expect(ctx.instances[0].path).toBe("");
+    });
     it("defaults a missing instance icon to the logo", () => {
       const peers = [{ namespace: "ns-pro-3", url: "https://app.example.com/i/pro-3", title: "pro-3", icon: "" }];
       listReachableInstances.mockReturnValue(peers);

@@ -21,7 +21,7 @@
           v-for="instance in instances"
           :key="instance.namespace"
           :title="instance.title"
-          :subtitle="instance.path"
+          :subtitle="instance.path || undefined"
           :nav="true"
           class="action-menu__item"
           @click="onSwitch(instance)"
@@ -72,11 +72,16 @@ export default {
     // display path (the SiteUrl's base path) for the menu subtitle.
     refresh() {
       const namespace = this.$config?.values?.storageNamespace;
-      this.instances = listReachableInstances({ currentNamespace: namespace }).map((instance) => ({
-        ...instance,
-        path: instancePath(instance.url),
-        icon: instance.icon || defaultIcon,
-      }));
+      this.instances = listReachableInstances({ currentNamespace: namespace }).map((instance) => {
+        // Only proxied instances (e.g. "/i/pro-1") get a path subtitle; a root
+        // ("/") or empty path means the Portal itself, so leave it blank.
+        const path = instancePath(instance.url);
+        return {
+          ...instance,
+          path: path && path !== "/" ? path : "",
+          icon: instance.icon || defaultIcon,
+        };
+      });
     },
     // onToggle rescans peers each time the menu opens so the switcher stays current.
     onToggle(open) {
