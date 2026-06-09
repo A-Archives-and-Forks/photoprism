@@ -4,7 +4,7 @@ import { buildNamespace, createNamespacedStorage } from "common/storage";
 import { persistInstanceIdentity, listReachableInstances, InstanceIdentityKeys, instanceLabel, instancePath } from "common/instances";
 
 // seedInstance writes a peer instance's session token and identity into a shared store.
-const seedInstance = (store, namespace, { token = "tok", url, title, icon } = {}) => {
+const seedInstance = (store, namespace, { token = "tok", url, title, icon, route } = {}) => {
   const prefix = buildNamespace(namespace);
   if (token) {
     store.setItem(prefix + "session.token", token);
@@ -17,6 +17,9 @@ const seedInstance = (store, namespace, { token = "tok", url, title, icon } = {}
   }
   if (icon) {
     store.setItem(prefix + "instance.icon", icon);
+  }
+  if (route) {
+    store.setItem(prefix + "instance.route", route);
   }
 };
 
@@ -48,23 +51,25 @@ describe("common/instances", () => {
   });
 
   describe("persistInstanceIdentity", () => {
-    it("writes url, title, and icon under the namespace", () => {
+    it("writes url, title, icon, and route under the namespace", () => {
       const store = new StorageShim();
       const ns = createNamespacedStorage(store, "ns-pro-1");
-      persistInstanceIdentity(ns, { url: "https://pro-1.example.com/", title: "Pro One", icon: "/static/icons/logo.svg" });
+      persistInstanceIdentity(ns, { url: "https://pro-1.example.com/", route: "/i/pro-1/library", title: "Pro One", icon: "/static/icons/logo.svg" });
       const prefix = buildNamespace("ns-pro-1");
       expect(store.getItem(prefix + "instance.url")).toBe("https://pro-1.example.com/");
+      expect(store.getItem(prefix + "instance.route")).toBe("/i/pro-1/library");
       expect(store.getItem(prefix + "instance.title")).toBe("Pro One");
       expect(store.getItem(prefix + "instance.icon")).toBe("/static/icons/logo.svg");
     });
-    it("clears a stale title or icon when none is provided", () => {
+    it("clears a stale title, icon, or route when none is provided", () => {
       const store = new StorageShim();
       const ns = createNamespacedStorage(store, "ns-pro-1");
-      persistInstanceIdentity(ns, { url: "https://pro-1.example.com/", title: "Pro One", icon: "/static/icons/logo.svg" });
+      persistInstanceIdentity(ns, { url: "https://pro-1.example.com/", route: "/i/pro-1/library", title: "Pro One", icon: "/static/icons/logo.svg" });
       persistInstanceIdentity(ns, { url: "https://pro-1.example.com/" });
       const prefix = buildNamespace("ns-pro-1");
       expect(store.getItem(prefix + "instance.title")).toBeNull();
       expect(store.getItem(prefix + "instance.icon")).toBeNull();
+      expect(store.getItem(prefix + "instance.route")).toBeNull();
     });
     it("is a no-op without a url", () => {
       const store = new StorageShim();
@@ -79,6 +84,7 @@ describe("common/instances", () => {
       expect(InstanceIdentityKeys).toContain("instance.url");
       expect(InstanceIdentityKeys).toContain("instance.title");
       expect(InstanceIdentityKeys).toContain("instance.icon");
+      expect(InstanceIdentityKeys).toContain("instance.route");
     });
   });
 
@@ -90,6 +96,35 @@ describe("common/instances", () => {
       const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({ namespace: "ns-pro-2", url: "https://pro-2.example.com/", title: "Pro Two", icon: "/i/pro-2/static/icons/logo.svg" });
+    });
+    it("resolves the stored route to an app-entry URL at the SiteUrl origin", () => {
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/" });
+      // Proxied instance: route is the frontend URI under the proxy prefix.
+      seedInstance(store, "ns-pro-2", { url: "https://app.example.com/i/pro-2/", route: "/i/pro-2/library" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result[0].route).toBe("https://app.example.com/i/pro-2/library");
+    });
+    it("resolves a Portal route at the origin root", () => {
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/" });
+      seedInstance(store, "ns-portal", { url: "https://app.example.com/", route: "/portal/admin" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result[0].route).toBe("https://app.example.com/portal/admin");
+    });
+    it("defaults route to the SiteUrl when none is recorded", () => {
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/" });
+      seedInstance(store, "ns-pro-2", { url: "https://app.example.com/i/pro-2/" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result[0].route).toBe("https://app.example.com/i/pro-2/");
+    });
+    it("falls back to the SiteUrl when the stored route resolves to a non-http(s) scheme", () => {
+      const store = new StorageShim();
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/" });
+      seedInstance(store, "ns-pro-2", { url: "https://app.example.com/i/pro-2/", route: "javascript:alert(1)" });
+      const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
+      expect(result[0].route).toBe("https://app.example.com/i/pro-2/");
     });
     it("falls back to the url when no title is recorded", () => {
       const store = new StorageShim();

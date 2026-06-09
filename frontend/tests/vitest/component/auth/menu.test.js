@@ -61,12 +61,17 @@ describe("component/auth/menu", () => {
   });
 
   describe("onSwitch", () => {
-    it("navigates to the selected instance url", () => {
+    it("navigates to the instance app-entry route", () => {
+      const navigate = vi.fn();
+      AuthMenu.methods.onSwitch.call({ navigate }, { route: "https://pro-2.example.com/i/pro-2/library", url: "https://pro-2.example.com/i/pro-2/" });
+      expect(navigate).toHaveBeenCalledWith("https://pro-2.example.com/i/pro-2/library");
+    });
+    it("falls back to the site url when no route is present", () => {
       const navigate = vi.fn();
       AuthMenu.methods.onSwitch.call({ navigate }, { url: "https://pro-2.example.com/" });
       expect(navigate).toHaveBeenCalledWith("https://pro-2.example.com/");
     });
-    it("does nothing for an entry without a url", () => {
+    it("does nothing for an entry without a url or route", () => {
       const navigate = vi.fn();
       AuthMenu.methods.onSwitch.call({ navigate }, {});
       expect(navigate).not.toHaveBeenCalled();

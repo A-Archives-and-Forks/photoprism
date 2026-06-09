@@ -32,10 +32,11 @@ import { listAuthSessions, buildNamespace } from "common/storage";
 const InstanceUrlKey = "instance.url";
 const InstanceTitleKey = "instance.title";
 const InstanceIconKey = "instance.icon";
+const InstanceRouteKey = "instance.route";
 
 // InstanceIdentityKeys lists the suffix keys written by persistInstanceIdentity,
 // so callers (e.g. session logout) can clear them across storage backends.
-export const InstanceIdentityKeys = [InstanceUrlKey, InstanceTitleKey, InstanceIconKey];
+export const InstanceIdentityKeys = [InstanceUrlKey, InstanceTitleKey, InstanceIconKey, InstanceRouteKey];
 
 // safeWindow returns the browser window if available, else null.
 const safeWindow = () => (typeof window === "undefined" ? null : window);
@@ -89,9 +90,12 @@ export function instancePath(siteUrl) {
   }
 }
 
-// persistInstanceIdentity records this instance's SiteUrl, display title, and app
-// icon in the given (namespaced) store, so other instances on the same origin can
-// list it in the navigation instance switcher. No-op without a URL or usable store.
+// persistInstanceIdentity records this instance's SiteUrl, display title, app icon,
+// and frontend route in the given (namespaced) store, so other instances on the same
+// origin can list it in the navigation instance switcher and open it at its app entry
+// point. The route is the frontend URI (e.g. "/portal/admin" or "/i/pro-1/library");
+// the switcher opens it so a web-overlay landing page at the site root is bypassed.
+// No-op without a URL or usable store.
 export function persistInstanceIdentity(store, identity) {
   if (!store || typeof store.setItem !== "function" || !identity || !identity.url) {
     return;
@@ -109,6 +113,12 @@ export function persistInstanceIdentity(store, identity) {
     store.setItem(InstanceIconKey, identity.icon);
   } else {
     store.removeItem(InstanceIconKey);
+  }
+
+  if (identity.route) {
+    store.setItem(InstanceRouteKey, identity.route);
+  } else {
+    store.removeItem(InstanceRouteKey);
   }
 }
 
@@ -157,10 +167,27 @@ export function listReachableInstances(options) {
         return;
       }
 
+      // route is the app-entry URL to navigate to (the SiteUrl origin + the peer's
+      // frontend URI). Resolve the stored route against the SiteUrl and reject any
+      // non-http(s) result; fall back to the SiteUrl for legacy/empty entries.
+      const storedRoute = store.getItem(prefix + InstanceRouteKey);
+      let route = url;
+      if (storedRoute) {
+        try {
+          const resolved = new URL(storedRoute, url).href;
+          if (isHttpUrl(resolved)) {
+            route = resolved;
+          }
+        } catch {
+          // keep the SiteUrl when the stored route can't be resolved.
+        }
+      }
+
       seen.add(prefix);
       instances.push({
         namespace,
         url,
+        route,
         title: store.getItem(prefix + InstanceTitleKey) || url,
         icon: store.getItem(prefix + InstanceIconKey) || "",
       });

@@ -89,11 +89,14 @@ export default {
         this.refresh();
       }
     },
-    // onSwitch navigates the browser to the selected instance's site URL, whose
-    // own login completes the standard OIDC flow when a session is required.
+    // onSwitch navigates the browser to the selected instance's app entry point
+    // (its frontend route, e.g. /i/pro-1/library or /portal/admin) so the user lands
+    // in the app instead of a web-overlay landing page; its own login then completes
+    // the standard OIDC flow when a session is required. Falls back to the SiteUrl.
     onSwitch(instance) {
-      if (instance && instance.url) {
-        this.navigate(instance.url);
+      const target = instance && (instance.route || instance.url);
+      if (target) {
+        this.navigate(target);
       }
     },
     // navigate sends the browser to the given URL (a seam so onSwitch is testable).
