@@ -534,10 +534,12 @@ func TestBuildRegisterPayload_DisplayName(t *testing.T) {
 		c.Options().SiteTitle = "Our Trip"
 		assert.Equal(t, "Our Trip", buildRegisterPayload(c).DisplayName)
 	})
-	t.Run("FallsBackToSiteCaption", func(t *testing.T) {
+	t.Run("IgnoresSiteCaption", func(t *testing.T) {
+		// SiteCaption is excluded: Plus/Pro default it to the shared marketing
+		// description, so it is not a distinctive per-instance label.
 		reset()
 		c.Options().SiteCaption = "Browse Your Life"
-		assert.Equal(t, "Browse Your Life", buildRegisterPayload(c).DisplayName)
+		assert.Equal(t, "", buildRegisterPayload(c).DisplayName)
 	})
 	t.Run("EmptyWhenUnbranded", func(t *testing.T) {
 		reset()
