@@ -30,7 +30,7 @@ export default defineConfig({
       { find: "component/user/edit/dialog.vue", replacement: path.resolve(__dirname, "../portal/frontend/component/user/edit/dialog.vue") },
       { find: "component/user/remove/dialog.vue", replacement: path.resolve(__dirname, "../portal/frontend/component/user/remove/dialog.vue") },
       { find: "options/admin", replacement: path.resolve(__dirname, "../portal/frontend/options/admin.js") },
-      { find: "model/chooser-instance", replacement: path.resolve(__dirname, "../portal/frontend/model/chooser-instance.js") },
+      { find: "model/cluster-instance", replacement: path.resolve(__dirname, "../portal/frontend/model/cluster-instance.js") },
       { find: "model/cluster-node", replacement: path.resolve(__dirname, "../portal/frontend/model/cluster-node.js") },
       { find: "common/instance-grants", replacement: path.resolve(__dirname, "../portal/frontend/common/instance-grants.js") },
       { find: "common/user-format", replacement: path.resolve(__dirname, "../portal/frontend/common/user-format.js") },
