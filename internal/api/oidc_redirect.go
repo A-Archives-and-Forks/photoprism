@@ -33,6 +33,9 @@ func oidcRedirectErrorMessage(code string) i18n.Message {
 		return i18n.ErrForbidden
 	case "login_required":
 		return i18n.ErrUnauthorized
+	case "server_error", "temporarily_unavailable":
+		// Provider-side failures are operational, not credential problems.
+		return i18n.ErrUnexpected
 	default:
 		return i18n.ErrInvalidCredentials
 	}

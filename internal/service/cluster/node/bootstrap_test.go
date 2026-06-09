@@ -52,6 +52,45 @@ func TestInitConfig_ServiceRole(t *testing.T) {
 	assert.NoError(t, InitConfig(c))
 }
 
+func TestInitConfig_ClusterOIDCWithoutBootstrap(t *testing.T) {
+	// A registered instance must wire its OIDC RP from the persisted node credentials
+	// even when both bootstrap toggles are disabled, since OIDC derivation is not a
+	// bootstrap-policy concern.
+	origJoin, origTheme := cluster.BootstrapAutoJoinEnabled, cluster.BootstrapAutoThemeEnabled
+	cluster.BootstrapAutoJoinEnabled = false
+	cluster.BootstrapAutoThemeEnabled = false
+	t.Cleanup(func() {
+		cluster.BootstrapAutoJoinEnabled = origJoin
+		cluster.BootstrapAutoThemeEnabled = origTheme
+	})
+
+	c := newBootstrapTestConfig(t, "init-cluster-oidc")
+	c.Options().NodeRole = cluster.RoleInstance
+	c.Options().ClusterOIDC = true
+	c.Options().SiteUrl = "https://app.localssl.dev/i/pro-1/"
+	c.Options().NodeClientID = cluster.ExampleClientID
+	c.Options().NodeClientSecret = cluster.ExampleClientSecret
+
+	assert.NoError(t, InitConfig(c))
+	assert.Equal(t, cluster.ExampleClientID, c.OIDCClient())
+	assert.Equal(t, cluster.ExampleClientSecret, c.OIDCSecret())
+	assert.Equal(t, "https://app.localssl.dev/", c.OIDCUri().String())
+}
+
+func TestBootstrapClusterNode(t *testing.T) {
+	t.Run("NoConfig", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-node-noconfig")
+		// No Portal URL / join token configured → no-op, no panic.
+		assert.NotPanics(t, func() { bootstrapClusterNode(c) })
+	})
+	t.Run("InvalidPortalURL", func(t *testing.T) {
+		c := newBootstrapTestConfig(t, "bootstrap-node-badurl")
+		c.Options().PortalUrl = "://nope"
+		c.Options().JoinToken = cluster.ExampleJoinToken
+		assert.NotPanics(t, func() { bootstrapClusterNode(c) })
+	})
+}
+
 func TestRegister_PersistSecretAndDB(t *testing.T) {
 	// Fake Portal server.
 	var jwksURL string

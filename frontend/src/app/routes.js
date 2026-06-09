@@ -176,7 +176,8 @@ export default [
     beforeEnter: (to, from, next) => {
       // signOut() resets client state synchronously so /login sees an
       // unauthenticated user; the one-shot logout flag suppresses the next
-      // auto-OIDC bounce. Server DELETE runs best-effort in the background.
+      // auto-OIDC bounce. The cluster-wide DELETE fan-out (current + peers)
+      // runs best-effort in the background.
       $session.signOut();
       next({ name: loginRoute });
     },

@@ -80,7 +80,8 @@ func TestOIDCRedirect(t *testing.T) {
 func TestOIDCRedirectErrorMessage(t *testing.T) {
 	assert.Equal(t, i18n.ErrForbidden, oidcRedirectErrorMessage("access_denied"))
 	assert.Equal(t, i18n.ErrUnauthorized, oidcRedirectErrorMessage("login_required"))
-	assert.Equal(t, i18n.ErrInvalidCredentials, oidcRedirectErrorMessage("server_error"))
+	assert.Equal(t, i18n.ErrUnexpected, oidcRedirectErrorMessage("server_error"))
+	assert.Equal(t, i18n.ErrUnexpected, oidcRedirectErrorMessage("temporarily_unavailable"))
 	assert.Equal(t, i18n.ErrInvalidCredentials, oidcRedirectErrorMessage(""))
 }
 

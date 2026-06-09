@@ -886,14 +886,16 @@ export default class Session {
     }
   }
 
-  // logoutEverywhere performs a cluster-wide Sign-Out (Tier 2): best-effort revokes
-  // every reachable peer instance's session server-side, drops their local tokens,
-  // then signs out the current instance (clearing the OP cookie) and redirects.
-  // Shared-domain (same-origin) clusters only; always resolves.
-  logoutEverywhere(noRedirect) {
-    // Unwrap to the raw underlying store: this.localStorage / this.sessionStorage
-    // are NamespacedStorage wrappers (getAppStorage), and enumerating or clearing a
-    // cross-namespace key through one double-prefixes it (pp:a:pp:b:…) and misses it.
+  // revokePeerSessions best-effort revokes every reachable peer instance's session
+  // server-side and clears their namespaced keys from local storage. The peer keys
+  // are cleared synchronously (the DELETEs hold their own tokens), so a route guard
+  // can fire-and-forget while the async revocation settles. Returns the fan-out
+  // promise. Shared by logoutEverywhere (awaits) and signOut (fire-and-forget).
+  //
+  // Unwraps to the raw underlying store first: this.localStorage / this.sessionStorage
+  // are NamespacedStorage wrappers (getAppStorage), so enumerating or clearing a
+  // cross-namespace key through one double-prefixes it (pp:a:pp:b:…) and misses it.
+  revokePeerSessions() {
     const rawStore = (s) => (s && s.storage ? s.storage : s);
     const stores = [rawStore(this.localStorage), rawStore(this.sessionStorage)];
 
@@ -904,22 +906,28 @@ export default class Session {
       targets = [];
     }
 
-    return signOutInstances(targets)
-      .catch(() => {})
-      .then(() => {
-        clearInstanceStorage(
-          targets.map((t) => t.namespace),
-          stores
-        );
-      })
-      .catch(() => {})
-      .then(() => this.logout(noRedirect));
+    const revoked = signOutInstances(targets).catch(() => {});
+    clearInstanceStorage(
+      targets.map((t) => t.namespace),
+      stores
+    );
+    return revoked;
   }
 
-  // Synchronous logout for SPA route guards (/logout): fires server DELETE
-  // with the captured token first (avoiding a 401 echo that would re-raise
-  // the logout flag), then resets client state.
+  // logoutEverywhere performs a cluster-wide Sign-Out (Tier 2): best-effort revokes
+  // every reachable peer instance's session server-side, drops their local tokens,
+  // then signs out the current instance (clearing the OP cookie) and redirects.
+  // Shared-domain (same-origin) clusters only; always resolves.
+  logoutEverywhere(noRedirect) {
+    return this.revokePeerSessions().then(() => this.logout(noRedirect));
+  }
+
+  // Synchronous cluster-wide logout for SPA route guards (/logout): revokes every
+  // reachable peer session and the current one (best-effort, in the background),
+  // clears shared storage, then resets client state. Firing the current DELETE with
+  // the captured token avoids a 401 echo that would re-raise the logout flag.
   signOut() {
+    this.revokePeerSessions();
     const token = this.getAuthToken();
     if (token) {
       $api.delete("session", { headers: { [RequestHeader]: token } }).catch(() => {});

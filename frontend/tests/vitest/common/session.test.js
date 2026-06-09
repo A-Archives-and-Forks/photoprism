@@ -903,5 +903,37 @@ describe("common/session", () => {
       await session.logoutEverywhere();
       expect(logoutSpy).toHaveBeenCalledTimes(1);
     });
+
+    it("signOut revokes peers and clears their storage for the /logout route guard", () => {
+      // The /logout route guard calls signOut() synchronously; it must still fan
+      // out the cluster-wide revocation, not just drop the current session.
+      const raw = new StorageShim();
+      const appStorage = createNamespacedStorage(raw, "ns-current");
+      const session = new Session(appStorage, createConfig("/", "ns-current"));
+
+      const pro2 = buildNamespace("ns-pro-2");
+      raw.setItem(pro2 + "session.token", "tok2");
+      raw.setItem(pro2 + "instance.url", "https://app.example.com/i/pro-2/");
+
+      const fetchCalls = [];
+      const originalFetch = window.fetch;
+      window.fetch = (url, opts) => {
+        fetchCalls.push({ url, method: opts?.method, token: opts?.headers?.["X-Auth-Token"] });
+        return Promise.resolve({ ok: true });
+      };
+      const onLogoutSpy = vi.spyOn(session, "onLogout").mockReturnValue(Promise.resolve());
+
+      try {
+        // Synchronous: returns this so the route guard can proceed immediately.
+        expect(session.signOut()).toBe(session);
+      } finally {
+        window.fetch = originalFetch;
+      }
+
+      // The peer was revoked server-side and its storage cleared synchronously.
+      expect(fetchCalls).toEqual([{ url: "https://app.example.com/i/pro-2/api/v1/session", method: "DELETE", token: "tok2" }]);
+      expect(raw.getItem(pro2 + "session.token")).toBeNull();
+      expect(onLogoutSpy).toHaveBeenCalledWith(true);
+    });
   });
 });

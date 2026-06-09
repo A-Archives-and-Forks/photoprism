@@ -41,10 +41,6 @@ func init() {
 // InitConfig performs node bootstrap: optional registration with the Portal
 // and theme installation. Runs early during config.Init().
 func InitConfig(c *config.Config) error {
-	if !cluster.BootstrapAutoJoinEnabled && !cluster.BootstrapAutoThemeEnabled {
-		return nil
-	}
-
 	role := c.NodeRole()
 
 	// Skip on portal nodes and unknown node types.
@@ -53,12 +49,34 @@ func InitConfig(c *config.Config) error {
 		return nil
 	}
 
+	// Auto-join the cluster and sync the theme when enabled and configured.
+	if cluster.BootstrapAutoJoinEnabled || cluster.BootstrapAutoThemeEnabled {
+		bootstrapClusterNode(c)
+	}
+
+	// Derive the OIDC RP credentials from the node client (PHOTOPRISM_CLUSTER_OIDC),
+	// independent of the auto-join/theme toggles, so a registered instance re-wires
+	// the OIDC RP on every restart.
+	resolveNodeOIDCClient(c)
+
+	// Log cluster UUID.
+	if uuid := c.ClusterUUID(); uuid != "" {
+		log.Infof("cluster: UUID %s", clean.Log(uuid))
+	}
+
+	return nil
+}
+
+// bootstrapClusterNode registers the node with the configured Portal and installs
+// its theme, honoring the auto-join/theme toggles. All failures are non-fatal so
+// the node still boots; it is a no-op when no Portal URL or join token is set.
+func bootstrapClusterNode(c *config.Config) {
 	portalURL := strings.TrimSpace(c.PortalUrl())
 	joinToken := strings.TrimSpace(c.JoinToken())
 
 	if portalURL == "" || joinToken == "" {
 		log.Debugf("cluster: no bootstrap configuration found")
-		return nil
+		return
 	}
 
 	log.Debugf("config: attempting to join the configured cluster")
@@ -66,7 +84,7 @@ func InitConfig(c *config.Config) error {
 	u, err := url.Parse(portalURL)
 	if err != nil || u.Scheme == "" || u.Host == "" {
 		log.Warnf("cluster: invalid portal URL %s", clean.Log(portalURL))
-		return nil
+		return
 	}
 
 	// Register with retry policy.
@@ -85,16 +103,6 @@ func InitConfig(c *config.Config) error {
 		}
 		activateNodeThemeIfPresent(c)
 	}
-
-	// Derive the OIDC RP credentials from the node client (PHOTOPRISM_CLUSTER_OIDC).
-	resolveNodeOIDCClient(c)
-
-	// Log cluster UUID.
-	if uuid := c.ClusterUUID(); uuid != "" {
-		log.Infof("cluster: UUID %s", clean.Log(uuid))
-	}
-
-	return nil
 }
 
 // resolveNodeOIDCClient derives the instance's OIDC RP credentials from the node
