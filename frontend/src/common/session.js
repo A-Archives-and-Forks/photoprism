@@ -479,7 +479,7 @@ export default class Session {
 
     persistInstanceIdentity(this.storage, {
       url: values.siteUrl,
-      // Frontend URI (e.g. "/portal/admin" or "/i/pro-1/library") so peers open the
+      // Frontend URI (e.g. "/portal" or "/i/pro-1/library") so peers open the
       // app entry point rather than a web-overlay landing page at the site root.
       route: this.config?.frontendUri,
       title: instanceLabel(values.siteUrl) || values.siteTitle || values.name || values.siteUrl,

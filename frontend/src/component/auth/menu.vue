@@ -90,7 +90,7 @@ export default {
       }
     },
     // onSwitch navigates the browser to the selected instance's app entry point
-    // (its frontend route, e.g. /i/pro-1/library or /portal/admin) so the user lands
+    // (its frontend route, e.g. /i/pro-1/library or /portal) so the user lands
     // in the app instead of a web-overlay landing page; its own login then completes
     // the standard OIDC flow when a session is required. Falls back to the SiteUrl.
     onSwitch(instance) {
