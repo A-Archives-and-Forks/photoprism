@@ -33,10 +33,10 @@ func TestConfig_ClientConfig(t *testing.T) {
 	})
 	t.Run("SiteName", func(t *testing.T) {
 		c := NewConfig(CliTestContext())
-		c.options.SiteName = "Sharjah Media"
+		c.options.SiteName = "Acme Media"
 		cfg := c.ClientPublic()
 		assert.IsType(t, &ClientConfig{}, cfg)
-		assert.Equal(t, "Sharjah Media", cfg.SiteName)
+		assert.Equal(t, "Acme Media", cfg.SiteName)
 	})
 	t.Run("Values", func(t *testing.T) {
 		c := TestConfig()

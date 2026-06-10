@@ -625,10 +625,10 @@ func TestBuildRegisterPayload_DisplayName(t *testing.T) {
 	}
 	t.Run("PrefersSiteName", func(t *testing.T) {
 		reset()
-		c.Options().SiteName = "Sharjah Media"
+		c.Options().SiteName = "Acme Media"
 		c.Options().AppName = "Family Photos"
 		c.Options().SiteTitle = "Our Trip"
-		assert.Equal(t, "Sharjah Media", buildRegisterPayload(c).DisplayName)
+		assert.Equal(t, "Acme Media", buildRegisterPayload(c).DisplayName)
 	})
 	t.Run("PrefersAppName", func(t *testing.T) {
 		reset()
