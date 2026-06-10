@@ -51,8 +51,8 @@ describe("common/instances", () => {
   describe("instanceTitle", () => {
     it("prefers the configured site name over the base-path slug", () => {
       expect(
-        instanceTitle({ siteName: "SEWA", name: "PhotoPrism Pro", siteTitle: "SEWA", siteUrl: "https://app.example.com/i/sewa/" })
-      ).toBe("SEWA");
+        instanceTitle({ siteName: "ACME", name: "PhotoPrism Pro", siteTitle: "ACME", siteUrl: "https://app.example.com/i/acme/" })
+      ).toBe("ACME");
     });
     it("falls back to the base-path slug when no site name is configured", () => {
       expect(
@@ -129,6 +129,15 @@ describe("common/instances", () => {
       const result = listReachableInstances({ currentNamespace: "ns-pro-1", storage: store });
       expect(result).toHaveLength(1);
       expect(result[0]).toMatchObject({ namespace: "ns-pro-2", url: "https://pro-2.example.com/", title: "Pro Two", icon: "/i/pro-2/static/icons/logo.svg" });
+    });
+    it("lists the Portal (root path) first, then peers by ascending base-path", () => {
+      const store = new StorageShim();
+      // Seed in a scrambled order; the Portal lives at the origin root.
+      seedInstance(store, "ns-pro-2", { url: "https://app.example.com/i/pro-2/", title: "Los Angeles" });
+      seedInstance(store, "ns-portal", { url: "https://app.example.com/", title: "Portal" });
+      seedInstance(store, "ns-pro-1", { url: "https://app.example.com/i/pro-1/", title: "San Francisco" });
+      const result = listReachableInstances({ currentNamespace: "ns-current", storage: store });
+      expect(result.map((i) => i.title)).toEqual(["Portal", "San Francisco", "Los Angeles"]);
     });
     it("resolves the stored route to an app-entry URL at the SiteUrl origin", () => {
       const store = new StorageShim();
