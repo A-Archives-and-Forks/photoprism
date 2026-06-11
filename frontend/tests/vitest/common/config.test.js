@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import "../fixtures";
 import Config from "common/config";
 import StorageShim from "node-storage-shim";
@@ -344,37 +344,38 @@ describe("common/config", () => {
     expect(result3.UID).toBe("jr0jgyx2viicdn88");
   });
 
-  it("should create, update and delete people", () => {
+  it("should refetch on created/updated people and delete in place", () => {
     const storage = new StorageShim();
     const values = { Debug: true, siteTitle: "Foo", country: "Germany", city: "Hamburg" };
 
     const cfg = new Config(storage, values);
-    cfg.onPeople("people.created", { entities: {} });
-    expect(cfg.values.people).toEqual([]);
-    cfg.onPeople("people.created", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "Test Name",
-          Keywords: ["Test", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("Test Name");
-    cfg.onPeople("people.updated", {
-      entities: [
-        {
-          UID: "abc123",
-          Name: "New Name",
-          Keywords: ["New", "Name"],
-        },
-      ],
-    });
-    expect(cfg.values.people[0].Name).toBe("New Name");
-    cfg.onPeople("people.deleted", {
-      entities: ["abc123"],
-    });
-    expect(cfg.values.people).toEqual([]);
+    let updates = 0;
+    cfg.update = () => {
+      updates++;
+      return Promise.resolve(cfg);
+    };
+
+    vi.useFakeTimers();
+
+    try {
+      cfg.onPeople("people.created", { entities: {} });
+      expect(cfg.values.people).toEqual([]);
+      expect(cfg.peopleUpdateTimer).toBeNull();
+
+      // people.created and people.updated carry only UIDs; bursts must
+      // coalesce into a single client-config refetch.
+      cfg.onPeople("people.created", { entities: ["abc123"] });
+      cfg.onPeople("people.updated", { entities: ["abc123"] });
+      vi.runAllTimers();
+      expect(updates).toBe(1);
+      expect(cfg.peopleUpdateTimer).toBeNull();
+
+      cfg.values.people = [{ UID: "abc123", Name: "Test Name" }];
+      cfg.onPeople("people.deleted", { entities: ["abc123"] });
+      expect(cfg.values.people).toEqual([]);
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("should return language locale", () => {

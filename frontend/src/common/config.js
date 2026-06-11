@@ -63,6 +63,7 @@ export default class Config {
     this.previewToken = "";
     this.downloadToken = "";
     this.updating = false;
+    this.peopleUpdateTimer = null;
 
     this.$vuetify = null;
     this.translations = {};
@@ -234,6 +235,19 @@ export default class Config {
     }
   }
 
+  // schedulePeopleUpdate coalesces bursts of people.* events (e.g. while
+  // face recognition adds new people) into a single client-config refetch.
+  schedulePeopleUpdate() {
+    if (this.peopleUpdateTimer) {
+      clearTimeout(this.peopleUpdateTimer);
+    }
+
+    this.peopleUpdateTimer = setTimeout(() => {
+      this.peopleUpdateTimer = null;
+      this.update();
+    }, 500);
+  }
+
   onPeople(ev, data) {
     const type = ev.split(".")[1];
 
@@ -251,22 +265,10 @@ export default class Config {
 
     switch (type) {
       case ACTION_CREATED:
-        this.values.people.unshift(...data.entities);
-        break;
       case ACTION_UPDATED:
-        for (let i = 0; i < data.entities.length; i++) {
-          const values = data.entities[i];
-
-          this.values.people
-            .filter((m) => m.UID === values.UID)
-            .forEach((m) => {
-              for (let key in values) {
-                if (key !== "UID" && values.hasOwnProperty(key) && values[key] != null && typeof values[key] !== "object") {
-                  m[key] = values[key];
-                }
-              }
-            });
-        }
+        // people.created and people.updated carry only UIDs, so the people
+        // list must be reloaded through the scoped REST API.
+        this.schedulePeopleUpdate();
         break;
       case ACTION_DELETED:
         for (let i = 0; i < data.entities.length; i++) {
