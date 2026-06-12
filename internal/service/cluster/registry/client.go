@@ -72,6 +72,16 @@ func toNode(c *entity.Client) *Node {
 		if len(data.RedirectURIs) > 0 {
 			n.RedirectURIs = append([]string(nil), data.RedirectURIs...)
 		}
+		if len(data.AllowGroups) > 0 {
+			n.AllowGroups = append([]string(nil), data.AllowGroups...)
+		}
+		if len(data.AllowGroupRoles) > 0 {
+			n.AllowGroupRoles = maps.Clone(data.AllowGroupRoles)
+		}
+		if data.GroupsFullView {
+			v := true
+			n.GroupsFullView = &v
+		}
 	}
 
 	return n
@@ -168,6 +178,15 @@ func (r *ClientRegistry) Put(n *Node) error {
 	if n.RedirectURIs != nil {
 		data.RedirectURIs = append([]string(nil), n.RedirectURIs...)
 	}
+	if n.AllowGroups != nil {
+		data.AllowGroups = append([]string(nil), n.AllowGroups...)
+	}
+	if n.AllowGroupRoles != nil {
+		data.AllowGroupRoles = maps.Clone(n.AllowGroupRoles)
+	}
+	if n.GroupsFullView != nil {
+		data.GroupsFullView = *n.GroupsFullView
+	}
 
 	data.RotatedAt = n.RotatedAt
 
@@ -229,6 +248,22 @@ func (r *ClientRegistry) Put(n *Node) error {
 			n.RedirectURIs = append([]string(nil), d.RedirectURIs...)
 		} else {
 			n.RedirectURIs = nil
+		}
+		if len(d.AllowGroups) > 0 {
+			n.AllowGroups = append([]string(nil), d.AllowGroups...)
+		} else {
+			n.AllowGroups = nil
+		}
+		if len(d.AllowGroupRoles) > 0 {
+			n.AllowGroupRoles = maps.Clone(d.AllowGroupRoles)
+		} else {
+			n.AllowGroupRoles = nil
+		}
+		if d.GroupsFullView {
+			v := true
+			n.GroupsFullView = &v
+		} else {
+			n.GroupsFullView = nil
 		}
 	}
 

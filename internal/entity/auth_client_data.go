@@ -24,6 +24,7 @@ type ClientData struct {
 	ServiceFeatures []string          `json:"serviceFeatures,omitempty"`
 	AllowGroups     []string          `json:"allowGroups,omitempty"`
 	AllowGroupRoles map[string]string `json:"allowGroupRoles,omitempty"`
+	GroupsFullView  bool              `json:"groupsFullView,omitempty"`
 	RedirectURIs    []string          `json:"redirectUris,omitempty"`
 }
 

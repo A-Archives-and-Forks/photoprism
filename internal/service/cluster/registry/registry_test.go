@@ -112,11 +112,18 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	dbInfo.Name = "dbn"
 	dbInfo.User = "dbu"
 	dbInfo.RotatedAt = time.Now().UTC().Format(time.RFC3339)
+	fullView := true
+	n.AllowGroups = []string{"media-acme-admin"}
+	n.AllowGroupRoles = map[string]string{"media-acme-admin": "admin"}
+	n.GroupsFullView = &fullView
 
-	// Non-admin (default opts): redact advertise/database
+	// Non-admin (default opts): redact advertise/database and access rules
 	out := BuildClusterNode(n, NodeOpts{})
 	assert.Equal(t, "", out.AdvertiseUrl)
 	assert.Nil(t, out.Database)
+	assert.Nil(t, out.AllowGroups)
+	assert.Nil(t, out.AllowGroupRoles)
+	assert.Nil(t, out.GroupsFullView)
 
 	// Include advertise only
 	out2 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true})
@@ -128,6 +135,15 @@ func TestResponseBuilders_RedactionAndOpts(t *testing.T) {
 	if assert.NotNil(t, out3.Database) {
 		assert.Equal(t, "dbn", out3.Database.Name)
 		assert.Equal(t, "dbu", out3.Database.User)
+	}
+	assert.Nil(t, out3.AllowGroups, "access rules require IncludeAccessRules")
+
+	// Include access rules (full admin view)
+	out4 := BuildClusterNode(n, NodeOpts{IncludeAdvertiseUrl: true, IncludeDatabase: true, IncludeAccessRules: true})
+	assert.Equal(t, []string{"media-acme-admin"}, out4.AllowGroups)
+	assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, out4.AllowGroupRoles)
+	if assert.NotNil(t, out4.GroupsFullView) {
+		assert.True(t, *out4.GroupsFullView)
 	}
 
 	// BuildClusterNodes on empty input returns empty slice (not nil)
