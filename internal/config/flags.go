@@ -754,6 +754,12 @@ var Flags = CliFlags{
 			EnvVars: EnvVars("PORTAL_URL"),
 		}}, {
 		Flag: &cli.StringFlag{
+			Name:    "portal-login-url",
+			Usage:   "browser-facing `URL` of the Portal login page",
+			EnvVars: EnvVars("PORTAL_LOGIN_URL"),
+			Hidden:  true,
+		}}, {
+		Flag: &cli.StringFlag{
 			Name:    "join-token",
 			Usage:   "secret `TOKEN` required to join a cluster; min 24 chars",
 			EnvVars: EnvVars("JOIN_TOKEN"),

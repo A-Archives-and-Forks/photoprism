@@ -432,6 +432,15 @@ func persistRegistration(c *config.Config, r *cluster.RegisterResponse, wantRota
 		c.SetJWKSUrl(jwksUrl)
 	}
 
+	// Apply the validating setter first and persist only what it accepted, so
+	// a malformed URL from a misbehaving Portal is never written to options.yml.
+	if loginUrl := strings.TrimSpace(r.PortalLoginUrl); loginUrl != "" {
+		c.SetPortalLoginUrl(loginUrl)
+		if v := c.PortalLoginUrl(); v != "" {
+			updates.SetPortalLoginUrl(v)
+		}
+	}
+
 	// Persist NodeUUID from portal response if provided and not set locally.
 	if r.Node.UUID != "" && c.NodeUUID() == "" {
 		updates.SetNodeUUID(r.Node.UUID)

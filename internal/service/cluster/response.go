@@ -93,6 +93,7 @@ type RegisterResponse struct {
 	Database           RegisterDatabase `json:"Database"`
 	Secrets            *RegisterSecrets `json:"Secrets,omitempty"`
 	JWKSUrl            string           `json:"JWKSUrl,omitempty"`
+	PortalLoginUrl     string           `json:"PortalLoginUrl,omitempty"`
 	AlreadyRegistered  bool             `json:"AlreadyRegistered"`
 	AlreadyProvisioned bool             `json:"AlreadyProvisioned"`
 	Theme              string           `json:"Theme,omitempty"`

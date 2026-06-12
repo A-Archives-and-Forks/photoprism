@@ -487,6 +487,9 @@
                 "Node": {
                     "$ref": "#/definitions/cluster.Node"
                 },
+                "PortalLoginUrl": {
+                    "type": "string"
+                },
                 "Secrets": {
                     "$ref": "#/definitions/cluster.RegisterSecrets"
                 },

@@ -199,6 +199,7 @@ func (c *Config) Report() (rows [][]string, cols []string) {
 		{"cluster-allow-group-roles", reportGroupRoles(c.ClusterAllowGroupRoles())},
 		{"cluster-groups-full-view", fmt.Sprintf("%t", c.ClusterGroupsFullView())},
 		{"portal-url", clean.UriRedacted(c.PortalUrl())},
+		{"portal-login-url", clean.UriRedacted(c.PortalLoginUrl())},
 	}...)
 
 	if c.Portal() {

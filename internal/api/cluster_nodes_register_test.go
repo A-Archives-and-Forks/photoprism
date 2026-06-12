@@ -562,6 +562,36 @@ func oauthNodeAccessTokenWithScope(t testing.TB, app http.Handler, router *gin.R
 	return gjson.Get(w.Body.String(), "access_token").String()
 }
 
+// TestBuildPortalLoginURL covers the browser-facing Portal login URL reported
+// to nodes at registration: SiteUrl origin + login route, with an absolute
+// custom LoginUri returned as-is.
+func TestBuildPortalLoginURL(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		_, _, conf := NewApiTest()
+		prevSite, prevLogin := conf.Options().SiteUrl, conf.Options().LoginUri
+		t.Cleanup(func() { conf.Options().SiteUrl, conf.Options().LoginUri = prevSite, prevLogin })
+
+		conf.Options().SiteUrl = "https://app.example.com/"
+		conf.Options().LoginUri = ""
+		assert.Equal(t, "https://app.example.com"+conf.LoginUri(), buildPortalLoginURL(conf))
+	})
+	t.Run("AbsoluteLoginUri", func(t *testing.T) {
+		_, _, conf := NewApiTest()
+		conf.SetAuthMode(config.AuthModePasswd)
+		prevLogin := conf.Options().LoginUri
+		t.Cleanup(func() {
+			conf.Options().LoginUri = prevLogin
+			conf.SetAuthMode(config.AuthModePublic)
+		})
+
+		conf.Options().LoginUri = "https://sso.example.com/login"
+		assert.Equal(t, "https://sso.example.com/login", buildPortalLoginURL(conf))
+	})
+	t.Run("Nil", func(t *testing.T) {
+		assert.Equal(t, "", buildPortalLoginURL(nil))
+	})
+}
+
 // TestSanitizeAllowGroupRoles validates the lenient registration-time mapping
 // sanitizer: malformed keys and non-federatable roles are dropped, not errors.
 func TestSanitizeAllowGroupRoles(t *testing.T) {

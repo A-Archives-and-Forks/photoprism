@@ -23,6 +23,7 @@ import (
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
 	"github.com/photoprism/photoprism/pkg/http/header"
+	"github.com/photoprism/photoprism/pkg/http/scheme"
 	"github.com/photoprism/photoprism/pkg/i18n"
 	"github.com/photoprism/photoprism/pkg/log/status"
 	"github.com/photoprism/photoprism/pkg/rnd"
@@ -335,6 +336,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				Node:               reg.BuildClusterNode(*node, reg.NodeOptsForSession(nil)),
 				Secrets:            respSecret,
 				JWKSUrl:            buildJWKSURL(conf),
+				PortalLoginUrl:     buildPortalLoginURL(conf),
 				AlreadyRegistered:  true,
 				AlreadyProvisioned: node.Database != nil && node.Database.Name != "",
 			}
@@ -440,6 +442,7 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			Node:               reg.BuildClusterNode(*n, reg.NodeOptsForSession(nil)),
 			Secrets:            &cluster.RegisterSecrets{ClientSecret: n.ClientSecret, RotatedAt: n.RotatedAt},
 			JWKSUrl:            buildJWKSURL(conf),
+			PortalLoginUrl:     buildPortalLoginURL(conf),
 			AlreadyRegistered:  false,
 			AlreadyProvisioned: shouldProvisionDB,
 		}
@@ -608,6 +611,34 @@ func sanitizeAllowGroupRoles(in map[string]string) map[string]string {
 	}
 
 	return out
+}
+
+// buildPortalLoginURL returns the Portal's browser-facing login page URL
+// (SiteUrl origin + login route) reported to nodes at registration, so an
+// instance can land cluster sign-outs on the Portal login without pinning a
+// return_to. A custom absolute LoginUri is returned as-is.
+func buildPortalLoginURL(conf *config.Config) string {
+	if conf == nil {
+		return ""
+	}
+
+	path := conf.LoginUri()
+
+	if strings.Contains(path, "://") {
+		return path
+	}
+
+	origin := scheme.OriginURL(conf.SiteUrl())
+
+	if origin == "" {
+		return ""
+	}
+
+	if !strings.HasPrefix(path, "/") {
+		path = "/" + path
+	}
+
+	return strings.TrimRight(origin, "/") + path
 }
 
 // normalizeRedirectURIs validates each entry and returns a deduplicated slice.

@@ -72,6 +72,57 @@ func TestReportGroupRoles(t *testing.T) {
 	assert.Equal(t, "a=admin, b=guest", reportGroupRoles(map[string]string{"b": "guest", "a": "admin"}))
 }
 
+func TestConfig_PortalLoginUrl(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Equal(t, "", c.PortalLoginUrl())
+	})
+	t.Run("SetterValidates", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.SetPortalLoginUrl("  https://portal.example.com/portal/login  ")
+		assert.Equal(t, "https://portal.example.com/portal/login", c.PortalLoginUrl())
+		c.SetPortalLoginUrl("http://127.0.0.1:2342/portal/login")
+		assert.Equal(t, "http://127.0.0.1:2342/portal/login", c.PortalLoginUrl(), "http loopback must be allowed")
+		c.SetPortalLoginUrl("http://portal.example.com/portal/login")
+		assert.Equal(t, "http://127.0.0.1:2342/portal/login", c.PortalLoginUrl(), "http non-loopback must be rejected")
+		c.SetPortalLoginUrl("ftp://portal.example.com/login")
+		assert.Equal(t, "http://127.0.0.1:2342/portal/login", c.PortalLoginUrl(), "unsupported schemes must be rejected")
+		c.SetPortalLoginUrl("")
+		assert.Equal(t, "", c.PortalLoginUrl(), "an empty value must clear the URL")
+	})
+	t.Run("GetterRejectsStoredInvalidValues", func(t *testing.T) {
+		// Values can bypass the setter (env, flag, hand-edited options.yml, or a
+		// stale persisted entry) — the getter must never hand them to the browser.
+		c := NewConfig(CliTestContext())
+		for _, v := range []string{"javascript:alert(1)", "http://portal.example.com/login", "://nope", "ftp://x/login"} {
+			c.options.PortalLoginUrl = v
+			assert.Equal(t, "", c.PortalLoginUrl(), "stored value %q must be rejected on read", v)
+		}
+		c.options.PortalLoginUrl = "https://portal.example.com/portal/login"
+		assert.Equal(t, "https://portal.example.com/portal/login", c.PortalLoginUrl())
+	})
+}
+
+func TestValidClusterURL(t *testing.T) {
+	t.Run("Valid", func(t *testing.T) {
+		for _, v := range []string{"", "https://portal.example.com/login", "http://127.0.0.1:2342/login", "http://localhost/login"} {
+			_, ok := validClusterURL(v)
+			assert.True(t, ok, "%q must be valid", v)
+		}
+	})
+	t.Run("Invalid", func(t *testing.T) {
+		for _, v := range []string{"http://portal.example.com/login", "javascript:alert(1)", "://nope", "/relative/login"} {
+			_, ok := validClusterURL(v)
+			assert.False(t, ok, "%q must be invalid", v)
+		}
+	})
+	t.Run("Trims", func(t *testing.T) {
+		v, ok := validClusterURL("  https://a.example.com/  ")
+		assert.True(t, ok)
+		assert.Equal(t, "https://a.example.com/", v)
+	})
+}
+
 func TestConfig_PortalOIDCIssuer(t *testing.T) {
 	t.Run("DefaultsToSiteUrl", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

@@ -885,6 +885,11 @@ export default class Config {
     return this.values?.ext?.oidc?.loginUri || "";
   }
 
+  // portalLoginUri returns the cluster Portal's browser-facing login page, or "" when unknown.
+  portalLoginUri() {
+    return this.values?.ext?.oidc?.portalLoginUri || "";
+  }
+
   // isPro returns true if this is team version.
   isPro() {
     return !!this.values?.ext["pro"];

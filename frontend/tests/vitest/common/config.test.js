@@ -93,12 +93,12 @@ describe("common/config", () => {
     const values = {
       siteTitle: "Foo",
       baseUri: "/portal",
-      frontendUri: "/portal/admin/",
+      frontendUri: "/portal/",
     };
 
     const config = new Config(storage, values);
-    expect(config.frontendUri).toBe("/portal/admin");
-    expect(config.loginUri).toBe("/portal/admin/login");
+    expect(config.frontendUri).toBe("/portal");
+    expect(config.loginUri).toBe("/portal/login");
   });
 
   it("uses base uri fallback when frontend uri is missing", () => {
@@ -591,6 +591,12 @@ describe("common/config", () => {
       expect(make({ loginUri: "/library/api/v1/oidc/login" }).oidcLoginUri()).toBe("/library/api/v1/oidc/login");
       expect(make({}).oidcLoginUri()).toBe("");
       expect(new Config(new StorageShim(), null).oidcLoginUri()).toBe("");
+    });
+
+    it("portalLoginUri returns the ext.oidc.portalLoginUri or an empty string", () => {
+      expect(make({ portalLoginUri: "https://app.example.com/portal/login" }).portalLoginUri()).toBe("https://app.example.com/portal/login");
+      expect(make({}).portalLoginUri()).toBe("");
+      expect(new Config(new StorageShim(), null).portalLoginUri()).toBe("");
     });
   });
 

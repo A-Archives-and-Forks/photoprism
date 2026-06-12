@@ -51,6 +51,7 @@ func (c *Config) SaveClusterOptionsUpdate(update cluster.OptionsUpdate) (bool, e
 	setOptionString(patch, "ClusterCIDR", update.ClusterCIDR)
 	setOptionString(patch, "NodeClientID", update.NodeClientID)
 	setOptionString(patch, "JWKSUrl", update.JWKSUrl)
+	setOptionString(patch, "PortalLoginUrl", update.PortalLoginUrl)
 	setOptionString(patch, "NodeUUID", update.NodeUUID)
 	setOptionString(patch, "DatabaseDriver", update.DatabaseDriver)
 	setOptionString(patch, "DatabaseDSN", update.DatabaseDSN)
@@ -650,41 +651,75 @@ func (c *Config) JWKSUrl() string {
 	return strings.TrimSpace(c.options.JWKSUrl)
 }
 
-// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs.
+// validClusterURL returns the trimmed URL and true when it is an absolute
+// HTTPS URL, or an HTTP URL on a loopback host; an empty input is valid and
+// returns the empty string.
+func validClusterURL(url string) (string, bool) {
+	trimmed := strings.TrimSpace(url)
+	if trimmed == "" {
+		return "", true
+	}
+
+	parsed, err := urlpkg.Parse(trimmed)
+	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
+		return trimmed, false
+	}
+
+	switch strings.ToLower(parsed.Scheme) {
+	case "https":
+		return trimmed, true
+	case "http":
+		return trimmed, dns.IsLoopbackHost(parsed.Hostname())
+	default:
+		return trimmed, false
+	}
+}
+
+// SetJWKSUrl updates the configured JWKS endpoint for portal-issued JWTs
+// (HTTPS, or HTTP for loopback hosts only).
 func (c *Config) SetJWKSUrl(url string) {
 	if c == nil || c.options == nil {
 		return
 	}
 
-	trimmed := strings.TrimSpace(url)
-	if trimmed == "" {
-		c.options.JWKSUrl = ""
-		return
-	}
-
-	parsed, err := urlpkg.Parse(trimmed)
-	if err != nil || parsed == nil || parsed.Scheme == "" || parsed.Host == "" {
-		log.Warnf("config: ignoring JWKS URL %q (%v)", trimmed, err)
-		return
-	}
-
-	scheme := strings.ToLower(parsed.Scheme)
-	host := parsed.Hostname()
-
-	switch scheme {
-	case "https":
-		// Always allowed.
-	case "http":
-		if !dns.IsLoopbackHost(host) {
-			log.Warnf("config: rejecting JWKS URL %q (http only allowed for localhost/loopback)", trimmed)
-			return
-		}
-	default:
-		log.Warnf("config: rejecting JWKS URL %q (unsupported scheme)", trimmed)
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting JWKS URL %s (must be https, or http on loopback)", clean.Log(trimmed))
 		return
 	}
 
 	c.options.JWKSUrl = trimmed
+}
+
+// PortalLoginUrl returns the browser-facing Portal login page URL. Nodes
+// persist it from the Portal's register response, which derives it from the
+// Portal's SiteUrl and login route; the frontend uses it to land cluster
+// sign-outs on the Portal login instead of re-initiating the instance OIDC
+// roundtrip with a pinned return_to. Stored values are re-validated on read,
+// so an invalid or stale URL (e.g. from a hand-edited options.yml or env)
+// never becomes a browser redirect target.
+func (c *Config) PortalLoginUrl() string {
+	if v, ok := validClusterURL(c.options.PortalLoginUrl); ok {
+		return v
+	}
+
+	return ""
+}
+
+// SetPortalLoginUrl updates the browser-facing Portal login page URL
+// (HTTPS, or HTTP for loopback hosts only).
+func (c *Config) SetPortalLoginUrl(url string) {
+	if c == nil || c.options == nil {
+		return
+	}
+
+	trimmed, ok := validClusterURL(url)
+	if !ok {
+		log.Warnf("config: rejecting portal login URL %s (must be https, or http on loopback)", clean.Log(trimmed))
+		return
+	}
+
+	c.options.PortalLoginUrl = trimmed
 }
 
 // JWKSCacheTTL returns the JWKS cache lifetime in seconds (default 300, max 3600).
