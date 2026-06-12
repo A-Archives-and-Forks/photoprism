@@ -663,6 +663,33 @@ func TestBuildRegisterPayload_DisplayName(t *testing.T) {
 	})
 }
 
+func TestBuildRegisterPayload_GroupConfig(t *testing.T) {
+	c := newBootstrapTestConfig(t, "node-groupconfig")
+
+	t.Run("Default", func(t *testing.T) {
+		payload := buildRegisterPayload(c)
+		assert.Nil(t, payload.AllowGroups)
+		assert.Nil(t, payload.AllowGroupRoles)
+		assert.False(t, payload.GroupsFullView)
+	})
+	t.Run("DeclaresConfiguredPolicy", func(t *testing.T) {
+		c.Options().ClusterAllowGroups = []string{"Media-Acme-Viewer"}
+		c.Options().ClusterAllowGroupRoles = []string{"Media-Acme-Admin=admin"}
+		c.Options().ClusterGroupsFullView = true
+		defer func() {
+			c.Options().ClusterAllowGroups = nil
+			c.Options().ClusterAllowGroupRoles = nil
+			c.Options().ClusterGroupsFullView = false
+		}()
+
+		payload := buildRegisterPayload(c)
+		assert.Equal(t, []string{"media-acme-viewer", "media-acme-admin"}, payload.AllowGroups,
+			"role-map keys must be admitted too")
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin"}, payload.AllowGroupRoles)
+		assert.True(t, payload.GroupsFullView)
+	})
+}
+
 func TestRegister_404_NoRetry(t *testing.T) {
 	var hits int
 	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

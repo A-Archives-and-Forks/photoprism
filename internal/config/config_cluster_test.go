@@ -20,6 +20,58 @@ import (
 
 const shortTestJoinToken = "short-token"
 
+func TestConfig_ClusterAllowGroups(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Nil(t, c.ClusterAllowGroups())
+	})
+	t.Run("NormalizesAndSplits", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ClusterAllowGroups = []string{"Media-Acme-Admin, Media-Acme-Viewer", "media-acme-admin"}
+		assert.Equal(t, []string{"media-acme-admin", "media-acme-viewer"}, c.ClusterAllowGroups())
+	})
+	t.Run("IncludesRoleMapKeys", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ClusterAllowGroupRoles = []string{"Media-Acme-Admin=admin"}
+		assert.Equal(t, []string{"media-acme-admin"}, c.ClusterAllowGroups(),
+			"a role mapping alone must admit its groups")
+	})
+}
+
+func TestConfig_ClusterAllowGroupRoles(t *testing.T) {
+	t.Run("Default", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		assert.Nil(t, c.ClusterAllowGroupRoles())
+	})
+	t.Run("ParsesPairs", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ClusterAllowGroupRoles = []string{"Media-Acme-Admin=admin", "Media-Acme-Guests:guest"}
+		assert.Equal(t, map[string]string{"media-acme-admin": "admin", "media-acme-guests": "guest"}, c.ClusterAllowGroupRoles())
+	})
+	t.Run("DropsInvalidEntries", func(t *testing.T) {
+		c := NewConfig(CliTestContext())
+		c.options.ClusterAllowGroupRoles = []string{"a=cluster_admin", "b=visitor", "c=bogus", "=admin", "noseparator", ""}
+		assert.Nil(t, c.ClusterAllowGroupRoles(), "non-federatable roles and malformed pairs must be dropped")
+	})
+}
+
+func TestConfig_ClusterGroupsFullView(t *testing.T) {
+	c := NewConfig(CliTestContext())
+	assert.False(t, c.ClusterGroupsFullView())
+	c.options.ClusterGroupsFullView = true
+	assert.True(t, c.ClusterGroupsFullView())
+}
+
+func TestSplitGroupList(t *testing.T) {
+	assert.Equal(t, []string{"a", "b", "c"}, splitGroupList("a,b c"))
+	assert.Empty(t, splitGroupList("  ,  "))
+}
+
+func TestReportGroupRoles(t *testing.T) {
+	assert.Equal(t, "", reportGroupRoles(nil))
+	assert.Equal(t, "a=admin, b=guest", reportGroupRoles(map[string]string{"b": "guest", "a": "admin"}))
+}
+
 func TestConfig_PortalOIDCIssuer(t *testing.T) {
 	t.Run("DefaultsToSiteUrl", func(t *testing.T) {
 		c := NewConfig(CliTestContext())

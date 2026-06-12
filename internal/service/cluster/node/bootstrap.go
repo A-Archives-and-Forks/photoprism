@@ -391,6 +391,13 @@ func buildRegisterPayload(c *config.Config) cluster.RegisterRequest {
 		payload.SiteUrl = su
 	}
 
+	// Declare the instance's group-based admission config so it takes effect on
+	// first boot and every re-registration; an admin override on the Portal
+	// still wins (see the registry's group-config source precedence).
+	payload.AllowGroups = c.ClusterAllowGroups()
+	payload.AllowGroupRoles = c.ClusterAllowGroupRoles()
+	payload.GroupsFullView = c.ClusterGroupsFullView()
+
 	return payload
 }
 

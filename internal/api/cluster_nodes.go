@@ -343,6 +343,12 @@ func ClusterUpdateNode(router *gin.RouterGroup) {
 			n.GroupsFullView = req.GroupsFullView
 		}
 
+		// An admin edit pins the group config so instance registrations can't
+		// revert it; clearing all of it un-pins (see registry.applyGroupConfig).
+		if req.AllowGroups != nil || req.AllowGroupRoles != nil || req.GroupsFullView != nil {
+			n.GroupsSrc = entity.ClientGroupsSrcManual
+		}
+
 		n.UpdatedAt = time.Now().UTC().Format(time.RFC3339)
 
 		if err = regy.Put(n); err != nil {

@@ -6,9 +6,12 @@ import (
 	urlpkg "net/url"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
+	"unicode"
 
+	"github.com/photoprism/photoprism/internal/auth/acl"
 	"github.com/photoprism/photoprism/internal/service/cluster"
 	"github.com/photoprism/photoprism/internal/service/cluster/theme"
 	"github.com/photoprism/photoprism/pkg/clean"
@@ -114,6 +117,104 @@ func (c *Config) ClusterUUID() string {
 // Portal returns true if the configured node type is "portal".
 func (c *Config) Portal() bool {
 	return c.NodeRole() == cluster.RolePortal
+}
+
+// ClusterAllowGroups returns the normalized group identifiers admitted to this
+// instance for Portal cluster admission, including the keys of
+// ClusterAllowGroupRoles so a role mapping alone admits its groups.
+func (c *Config) ClusterAllowGroups() []string {
+	seen := make(map[string]struct{})
+	result := make([]string, 0, len(c.options.ClusterAllowGroups))
+
+	add := func(id string) {
+		if n := normalizeGroupID(id); n != "" {
+			if _, dup := seen[n]; !dup {
+				seen[n] = struct{}{}
+				result = append(result, n)
+			}
+		}
+	}
+
+	for _, entry := range c.options.ClusterAllowGroups {
+		for _, id := range splitGroupList(entry) {
+			add(id)
+		}
+	}
+
+	// Role-map keys join the admitted set in sorted order for stable output.
+	roles := c.ClusterAllowGroupRoles()
+	keys := make([]string, 0, len(roles))
+
+	for group := range roles {
+		keys = append(keys, group)
+	}
+
+	sort.Strings(keys)
+
+	for _, group := range keys {
+		add(group)
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterAllowGroupRoles maps normalized group identifiers to the instance
+// role granted on Portal cluster admission. Entries parse as GROUP=ROLE pairs
+// like OIDCGroupRoles; non-federatable roles (cluster_admin, visitor) and
+// malformed pairs are dropped.
+func (c *Config) ClusterAllowGroupRoles() map[string]string {
+	if len(c.options.ClusterAllowGroupRoles) == 0 {
+		return nil
+	}
+
+	result := make(map[string]string, len(c.options.ClusterAllowGroupRoles))
+
+	for _, entry := range c.options.ClusterAllowGroupRoles {
+		entry = strings.TrimSpace(entry)
+
+		if entry == "" {
+			continue
+		}
+
+		sep := strings.IndexAny(entry, "=:")
+
+		if sep < 1 || sep >= len(entry)-1 {
+			continue
+		}
+
+		group := normalizeGroupID(entry[:sep])
+		role := acl.ParseRole(entry[sep+1:])
+
+		if group == "" || !acl.IsFederatedRole(role) {
+			continue
+		}
+
+		result[group] = role.String()
+	}
+
+	if len(result) == 0 {
+		return nil
+	}
+
+	return result
+}
+
+// ClusterGroupsFullView reports whether the Portal should send the user's full
+// group set to this instance instead of only the contributing groups.
+func (c *Config) ClusterGroupsFullView() bool {
+	return c.options.ClusterGroupsFullView
+}
+
+// splitGroupList splits a raw option entry into group identifiers, accepting
+// comma- and whitespace-separated lists.
+func splitGroupList(s string) []string {
+	return strings.FieldsFunc(s, func(r rune) bool {
+		return r == ',' || unicode.IsSpace(r)
+	})
 }
 
 // PortalOIDCIssuer returns the issuer URL advertised by the Portal's OIDC OP

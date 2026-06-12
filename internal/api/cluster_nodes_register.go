@@ -11,7 +11,9 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/photoprism/photoprism/internal/auth/acl"
+	"github.com/photoprism/photoprism/internal/auth/oidc"
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/entity"
 	"github.com/photoprism/photoprism/internal/event"
 	"github.com/photoprism/photoprism/internal/photoprism/get"
 	"github.com/photoprism/photoprism/internal/server/limiter"
@@ -249,6 +251,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 				node.Theme = nodeTheme
 			}
 
+			applyRequestGroupConfig(node, &req)
+
 			if requestedUUID != "" {
 				oldUUID := node.UUID
 				if oldUUID != requestedUUID {
@@ -398,6 +402,8 @@ func ClusterNodesRegister(router *gin.RouterGroup) {
 			// Instance-reported name; NameSrc defaults to SrcAuto ("").
 			n.DisplayName = dn
 		}
+
+		applyRequestGroupConfig(n, &req)
 
 		// Generate node secret (must satisfy client secret format for entity.Client).
 		n.ClientSecret = rnd.ClientSecret()
@@ -550,6 +556,58 @@ func validateSiteURL(u string) bool {
 	}
 
 	return false
+}
+
+// applyRequestGroupConfig copies the instance-declared group admission config
+// from the registration request onto the node, normalizing identifiers and
+// dropping non-federatable roles. GroupsSrc is set to ClientGroupsSrcNode so
+// the registry applies admin-override-wins source precedence, and an instance
+// that declares nothing clears only values it previously declared.
+func applyRequestGroupConfig(n *reg.Node, req *cluster.RegisterRequest) {
+	n.AllowGroups = oidc.MergeGroups(req.AllowGroups)
+	n.AllowGroupRoles = sanitizeAllowGroupRoles(req.AllowGroupRoles)
+
+	if req.GroupsFullView {
+		v := true
+		n.GroupsFullView = &v
+	} else {
+		n.GroupsFullView = nil
+	}
+
+	n.GroupsSrc = entity.ClientGroupsSrcNode
+}
+
+// sanitizeAllowGroupRoles normalizes an instance-declared group → role mapping,
+// dropping malformed keys and non-federatable roles instead of failing the
+// registration — declarative env config must not turn a typo into a boot loop.
+func sanitizeAllowGroupRoles(in map[string]string) map[string]string {
+	if len(in) == 0 {
+		return nil
+	}
+
+	out := make(map[string]string, len(in))
+
+	for group, roleName := range in {
+		g := oidc.NormalizeGroupID(group)
+
+		if g == "" {
+			continue
+		}
+
+		role := acl.ParseRole(roleName)
+
+		if !acl.IsFederatedRole(role) {
+			continue
+		}
+
+		out[g] = role.String()
+	}
+
+	if len(out) == 0 {
+		return nil
+	}
+
+	return out
 }
 
 // normalizeRedirectURIs validates each entry and returns a deduplicated slice.
