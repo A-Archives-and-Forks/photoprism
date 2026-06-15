@@ -32,11 +32,6 @@ func UpdateClientConfig() {
 	clientConfig.PreviewToken = ""
 	clientConfig.DownloadToken = ""
 
-	// The people list is delivered per session via GET /config and kept current
-	// through people.* events, so it is omitted from this global broadcast. A nil
-	// slice serializes as JSON null, which the client's setValues() leaves untouched.
-	clientConfig.People = nil
-
 	go func() {
 		defer func() {
 			if r := recover(); r != nil {

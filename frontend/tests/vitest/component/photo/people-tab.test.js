@@ -98,6 +98,9 @@ describe("PTabPhotoPeople face actions", () => {
       };
       return subject;
     });
+
+    // Seed the cached name suggestions (normally loaded from typeaheadCache.getPeople).
+    wrapper.vm.people = mockPeople;
   });
 
   afterEach(() => {
@@ -155,8 +158,6 @@ describe("PTabPhotoPeople face actions", () => {
 
     expect(wrapper.vm.$notify.blockUI).toHaveBeenCalledWith("busy");
     expect(setCoverSpy).toHaveBeenCalledWith("hash-1234");
-    expect(wrapper.vm.$config.values.people[0].Thumb).toBe("hash-1234");
-    expect(wrapper.vm.$config.values.people[0].ThumbSrc).toBe("manual");
     expect(wrapper.vm.$notify.success).toHaveBeenCalledWith("Person cover updated");
     expect(wrapper.vm.busy).toBe(false);
   });

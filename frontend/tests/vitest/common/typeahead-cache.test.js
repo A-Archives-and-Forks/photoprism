@@ -1,6 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import Album from "model/album";
 import Label from "model/label";
+import Subject from "model/subject";
 import $event from "common/event";
 import { typeaheadCache, CAP } from "common/typeahead-cache";
 
@@ -195,6 +196,71 @@ describe("typeaheadCache.getAlbums", () => {
   });
 });
 
+describe("typeaheadCache.getPeople", () => {
+  it("fetches people on first call and caches the result", async () => {
+    const models = [{ Name: "Jane Doe", UID: "ps-1" }];
+    const spy = vi.spyOn(Subject, "search").mockResolvedValueOnce({ models });
+
+    const first = await typeaheadCache.getPeople();
+    const second = await typeaheadCache.getPeople();
+
+    expect(first).toEqual(models);
+    expect(second).toEqual(models);
+    expect(spy).toHaveBeenCalledTimes(1);
+    expect(spy).toHaveBeenCalledWith({ count: CAP, order: "name", type: "person" });
+  });
+
+  it("dedupes concurrent in-flight calls into one network request", async () => {
+    let resolveFn;
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockImplementationOnce(() => new Promise((resolve) => (resolveFn = resolve)));
+
+    const p1 = typeaheadCache.getPeople();
+    const p2 = typeaheadCache.getPeople();
+    expect(spy).toHaveBeenCalledTimes(1);
+
+    const models = [{ Name: "John Roe", UID: "ps-2" }];
+    resolveFn({ models });
+    await expect(p1).resolves.toEqual(models);
+    await expect(p2).resolves.toEqual(models);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  it("re-fetches after people.updated WS event evicts the cache", async () => {
+    const first = [{ Name: "First", UID: "ps-1" }];
+    const second = [{ Name: "Second", UID: "ps-1" }];
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getPeople()).toEqual(first);
+    $event.publishSync("people.updated", { entities: ["ps-1"] });
+    expect(await typeaheadCache.getPeople()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("re-fetches after subjects.updated WS event evicts the cache", async () => {
+    const first = [{ Name: "First", UID: "ps-1" }];
+    const second = [{ Name: "Renamed", UID: "ps-1" }];
+    const spy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: first })
+      .mockResolvedValueOnce({ models: second });
+
+    expect(await typeaheadCache.getPeople()).toEqual(first);
+    $event.publishSync("subjects.updated", { entities: ["ps-1"] });
+    expect(await typeaheadCache.getPeople()).toEqual(second);
+    expect(spy).toHaveBeenCalledTimes(2);
+  });
+
+  it("tolerates an empty or missing models payload", async () => {
+    vi.spyOn(Subject, "search").mockResolvedValueOnce({});
+    expect(await typeaheadCache.getPeople()).toEqual([]);
+  });
+});
+
 describe("typeaheadCache.evict / clear", () => {
   it("evictLabels forces a fresh fetch on the next read", async () => {
     const spy = vi
@@ -208,7 +274,7 @@ describe("typeaheadCache.evict / clear", () => {
     expect(spy).toHaveBeenCalledTimes(2);
   });
 
-  it("clear empties both lists", async () => {
+  it("clear empties all lists", async () => {
     const labelSpy = vi
       .spyOn(Label, "search")
       .mockResolvedValueOnce({ models: [{ Name: "L1", UID: "1" }] })
@@ -217,18 +283,25 @@ describe("typeaheadCache.evict / clear", () => {
       .spyOn(Album, "search")
       .mockResolvedValueOnce({ models: [{ Title: "A1", UID: "a1" }] })
       .mockResolvedValueOnce({ models: [{ Title: "A2", UID: "a2" }] });
+    const personSpy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: [{ Name: "P1", UID: "p1" }] })
+      .mockResolvedValueOnce({ models: [{ Name: "P2", UID: "p2" }] });
 
     await typeaheadCache.getLabels();
     await typeaheadCache.getAlbums();
+    await typeaheadCache.getPeople();
     typeaheadCache.clear();
 
     expect(await typeaheadCache.getLabels()).toEqual([{ Name: "L2", UID: "2" }]);
     expect(await typeaheadCache.getAlbums()).toEqual([{ Title: "A2", UID: "a2" }]);
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "P2", UID: "p2" }]);
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
+    expect(personSpy).toHaveBeenCalledTimes(2);
   });
 
-  it("session.logout clears both lists", async () => {
+  it("session.logout clears all lists", async () => {
     const labelSpy = vi
       .spyOn(Label, "search")
       .mockResolvedValueOnce({ models: [{ Name: "L1", UID: "1" }] })
@@ -237,15 +310,22 @@ describe("typeaheadCache.evict / clear", () => {
       .spyOn(Album, "search")
       .mockResolvedValueOnce({ models: [{ Title: "A1", UID: "a1" }] })
       .mockResolvedValueOnce({ models: [{ Title: "A2", UID: "a2" }] });
+    const personSpy = vi
+      .spyOn(Subject, "search")
+      .mockResolvedValueOnce({ models: [{ Name: "P1", UID: "p1" }] })
+      .mockResolvedValueOnce({ models: [{ Name: "P2", UID: "p2" }] });
 
     await typeaheadCache.getLabels();
     await typeaheadCache.getAlbums();
+    await typeaheadCache.getPeople();
     $event.publishSync("session.logout", {});
 
     expect(await typeaheadCache.getLabels()).toEqual([{ Name: "L2", UID: "2" }]);
     expect(await typeaheadCache.getAlbums()).toEqual([{ Title: "A2", UID: "a2" }]);
+    expect(await typeaheadCache.getPeople()).toEqual([{ Name: "P2", UID: "p2" }]);
     expect(labelSpy).toHaveBeenCalledTimes(2);
     expect(albumSpy).toHaveBeenCalledTimes(2);
+    expect(personSpy).toHaveBeenCalledTimes(2);
   });
 });
 

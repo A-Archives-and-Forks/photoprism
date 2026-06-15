@@ -60,7 +60,7 @@
                 <v-combobox
                   v-else
                   v-model:search="m.Name"
-                  :items="$config.values.people"
+                  :items="people"
                   item-title="Name"
                   item-value="Name"
                   :readonly="readonly"
@@ -99,6 +99,7 @@
 import Face from "model/face";
 import RestModel from "model/rest";
 import { MaxLength as SubjectMaxLength } from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
@@ -131,6 +132,7 @@ export default {
     return {
       view: "all",
       config: this.$config.values,
+      people: [],
       rules,
       SubjectMaxLength,
       subscriptions: [],
@@ -196,6 +198,7 @@ export default {
   },
   created() {
     this.search();
+    this.loadPeople();
 
     // No code currently publishes faces.* events — neither the frontend ($event bus) nor
     // the backend (and "faces" is not in the WebsocketTopics forward allowlist), so this
@@ -210,6 +213,16 @@ export default {
     }
   },
   methods: {
+    // loadPeople populates the name suggestions from the shared people cache;
+    // a denied or failed fetch leaves the list empty rather than throwing.
+    loadPeople() {
+      return typeaheadCache
+        .getPeople()
+        .then((models) => {
+          this.people = Array.isArray(models) ? models : [];
+        })
+        .catch(() => {});
+    },
     searchCount() {
       return this.batchSize;
     },
@@ -627,10 +640,10 @@ export default {
         return;
       }
 
-      const people = this.$config.values?.people;
+      const people = this.people;
 
-      if (people) {
-        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (Array.isArray(people)) {
+        const found = people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;

@@ -153,6 +153,7 @@
 <script>
 import Subject from "model/subject";
 import RestModel from "model/rest";
+import typeaheadCache from "common/typeahead-cache";
 import { MaxItems } from "common/clipboard";
 import $notify from "common/notify";
 import { ClickLong, ClickShort, Input, InputInvalid } from "common/input";
@@ -271,24 +272,29 @@ export default {
         return;
       }
 
-      const existing = this.$config.getPerson(m.Name);
-      if (!existing || existing.UID === m.UID) {
-        this.busy = true;
-        m.update()
-          .then(() => {
-            this.$notify.success(this.$gettext("Changes successfully saved"));
-            this.dialog.edit = false;
-          })
-          .finally(() => {
-            this.busy = false;
-            this.dialog.edit = false;
-          });
-      } else {
-        this.merge.subj1 = m;
-        this.merge.subj2 = existing;
-        this.dialog.edit = false;
-        this.merge.visible = true;
-      }
+      // Look up an existing person with the same name through the shared people
+      // cache to detect a merge (a different subject already owns the name).
+      const name = m.Name.toLowerCase();
+      typeaheadCache.getPeople().then((people) => {
+        const existing = people.find((p) => p.Name && p.Name.toLowerCase() === name) || null;
+        if (!existing || existing.UID === m.UID) {
+          this.busy = true;
+          m.update()
+            .then(() => {
+              this.$notify.success(this.$gettext("Changes successfully saved"));
+              this.dialog.edit = false;
+            })
+            .finally(() => {
+              this.busy = false;
+              this.dialog.edit = false;
+            });
+        } else {
+          this.merge.subj1 = m;
+          this.merge.subj2 = existing;
+          this.dialog.edit = false;
+          this.merge.visible = true;
+        }
+      });
     },
     onCancelMerge() {
       this.merge.visible = false;

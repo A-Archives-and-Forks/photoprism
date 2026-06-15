@@ -1,9 +1,11 @@
-// Module-scope cache for the labels and albums typeahead lists shared by the
-// sidebar info panel, batch-edit dialog, and edit-dialog labels tab.
-// getLabels / getAlbums return a Promise<Array> and coalesce concurrent callers
-// onto a single in-flight request. WS mutation events evict the matching slot.
+// Module-scope cache for the labels, albums, and people typeahead lists shared
+// by the sidebar info panel, batch-edit dialog, edit-dialog tabs, and the
+// people/face name pickers. getLabels / getAlbums / getPeople return a
+// Promise<Array> and coalesce concurrent callers onto a single in-flight
+// request. WS mutation events evict the matching slot.
 import Album from "model/album";
 import Label from "model/label";
+import Subject from "model/subject";
 import $event, { subscribeEntityActions } from "common/event";
 
 // Pragmatic ceiling shared by every consumer; over-cap libraries log a warning
@@ -13,6 +15,7 @@ export const CAP = 5000;
 const state = {
   labels: { data: null, fetch: null },
   albums: { data: null, fetch: null },
+  people: { data: null, fetch: null },
 };
 
 function evict(field) {
@@ -44,6 +47,16 @@ function fetchAlbums() {
   });
 }
 
+function fetchPeople() {
+  return Subject.search({ count: CAP, order: "name", type: "person" }).then((resp) => {
+    const models = Array.isArray(resp?.models) ? resp.models : [];
+    if (models.length === CAP) {
+      console.warn(`Subject.search returned ${CAP} results — list may be truncated.`);
+    }
+    return models;
+  });
+}
+
 function get(field, fetcher) {
   const slot = state[field];
   if (slot.data) {
@@ -70,11 +83,14 @@ function get(field, fetcher) {
 export const typeaheadCache = {
   getLabels: () => get("labels", fetchLabels),
   getAlbums: () => get("albums", fetchAlbums),
+  getPeople: () => get("people", fetchPeople),
   evictLabels: () => evict("labels"),
   evictAlbums: () => evict("albums"),
+  evictPeople: () => evict("people"),
   clear: () => {
     evict("labels");
     evict("albums");
+    evict("people");
   },
 };
 
@@ -83,15 +99,21 @@ export const typeaheadCache = {
 subscribeEntityActions("labels", () => evict("labels"));
 subscribeEntityActions("albums", () => evict("albums"));
 
+// People mutations surface on both the subjects and people channels (a rename
+// publishes subjects.updated and people.updated); either evicts the people slot.
+subscribeEntityActions("subjects", () => evict("people"));
+subscribeEntityActions("people", () => evict("people"));
+
 // Belt-and-braces eviction for album mutations that surface only as a config
 // reload (covers future config-touching mutations not on the entity channel).
 $event.subscribe("config.updated", () => evict("albums"));
 
-// Drop both lists on logout so user A's data cannot be served to user B in
+// Drop all lists on logout so user A's data cannot be served to user B in
 // the same tab; mirrors Photo.clearCache()'s session.logout path.
 $event.subscribe("session.logout", () => {
   evict("labels");
   evict("albums");
+  evict("people");
 });
 
 export default typeaheadCache;

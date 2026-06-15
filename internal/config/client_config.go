@@ -85,7 +85,6 @@ type ClientConfig struct {
 	Cameras          entity.Cameras      `json:"cameras"`
 	Lenses           entity.Lenses       `json:"lenses"`
 	Countries        entity.Countries    `json:"countries"`
-	People           entity.People       `json:"people"`
 	Thumbs           ThumbSizes          `json:"thumbs"`
 	Tier             int                 `json:"tier"`
 	Membership       string              `json:"membership"`
@@ -118,13 +117,6 @@ func (c *ClientConfig) ApplyACL(a acl.ACL, r acl.Role) *ClientConfig {
 	if !c.ACL[acl.ResourceUsers].Allow(acl.ActionView) {
 		c.Usage.UsersFreePct = -1
 		c.Usage.UsersUsedPct = -1
-	}
-
-	// Only include the people list and count for roles permitted to view or
-	// search people; other roles receive an empty list.
-	if !c.ACL[acl.ResourcePeople].Allow(acl.ActionView) && !c.ACL[acl.ResourcePeople].Allow(acl.ActionSearch) {
-		c.People = nil
-		c.Count.People = 0
 	}
 
 	return c
@@ -344,7 +336,6 @@ func (c *Config) ClientPublic() *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Tier:             c.Hub().Tier(),
 		Membership:       c.Hub().Membership(),
 		Customer:         "",
@@ -446,7 +437,6 @@ func (c *Config) ClientShare() *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		Tier:             c.Hub().Tier(),
@@ -555,7 +545,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 		Cameras:          entity.Cameras{},
 		Lenses:           entity.Lenses{},
 		Countries:        entity.Countries{},
-		People:           entity.People{},
 		Colors:           colors.All.List(),
 		Thumbs:           Thumbs,
 		Tier:             c.Hub().Tier(),
@@ -709,7 +698,6 @@ func (c *Config) ClientUser(withSettings bool) *ClientConfig {
 
 	// People are subjects with type person.
 	cfg.Count.People, _ = query.PeopleCount()
-	cfg.People, _ = query.People()
 
 	c.Db().
 		Where("id IN (SELECT photos.camera_id FROM photos WHERE photos.photo_quality > -1 OR photos.deleted_at IS NULL)").

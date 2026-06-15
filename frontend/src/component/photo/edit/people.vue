@@ -64,7 +64,7 @@
               <v-combobox
                 v-else
                 v-model:search="m.Name"
-                :items="$config.values.people"
+                :items="people"
                 item-title="Name"
                 item-value="Name"
                 :disabled="busy"
@@ -103,6 +103,7 @@
 <script>
 import Marker from "model/marker";
 import Subject, { MaxLength as SubjectMaxLength } from "model/subject";
+import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import PConfirmDialog from "component/confirm/dialog.vue";
 import PActionMenu from "component/action/menu.vue";
@@ -123,6 +124,7 @@ export default {
     return {
       view,
       markers: view.model.getMarkers(true),
+      people: [],
       busy: false,
       disabled: !this.$config.feature("edit"),
       config: this.$config.values,
@@ -158,11 +160,24 @@ export default {
       this.refresh();
     },
   },
+  created() {
+    this.loadPeople();
+  },
   methods: {
     refresh() {
       if (this.view.model) {
         this.markers = this.view.model.getMarkers(true);
       }
+    },
+    // loadPeople populates the name suggestions from the shared people cache;
+    // a denied or failed fetch leaves the list empty rather than throwing.
+    loadPeople() {
+      return typeaheadCache
+        .getPeople()
+        .then((models) => {
+          this.people = Array.isArray(models) ? models : [];
+        })
+        .catch(() => {});
     },
     onReject(model) {
       if (this.busy || !model) {
@@ -178,7 +193,7 @@ export default {
       });
     },
     findPerson(uid) {
-      const people = this.$config?.values?.people;
+      const people = this.people;
 
       if (!uid || !Array.isArray(people)) {
         return null;
@@ -186,24 +201,15 @@ export default {
 
       return people.find((person) => person.UID === uid) || null;
     },
+    // updatePersonList refreshes the name suggestions after a subject is assigned
+    // or changed; the people cache is evicted so the reload reflects the change.
     updatePersonList(subject) {
       if (!subject) {
         return;
       }
 
-      const people = this.$config?.values?.people;
-
-      if (!Array.isArray(people)) {
-        return;
-      }
-
-      const data = subject.getValues();
-      const index = people.findIndex((person) => person.UID === subject.UID);
-      if (index >= 0) {
-        people[index] = Object.assign({}, people[index], data);
-      } else {
-        people.push(data);
-      }
+      typeaheadCache.evictPeople();
+      return this.loadPeople();
     },
     hasFaceMenu(marker) {
       return this.getFaceActions(marker).some((action) => action.visible);
@@ -361,10 +367,10 @@ export default {
 
       this.confirm.model = model;
 
-      const people = this.$config.values?.people;
+      const people = this.people;
 
-      if (people) {
-        const found = people.find((person) => person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
+      if (Array.isArray(people)) {
+        const found = people.find((person) => person.Name && person.Name.localeCompare(name, "en", { sensitivity: "base" }) === 0);
         if (found) {
           model.Name = found.Name;
           model.SubjUID = found.UID;

@@ -111,25 +111,6 @@ func TestConfig_ClientShareConfig(t *testing.T) {
 	assert.Equal(t, false, result.ReadOnly)
 }
 
-func TestClientConfig_ApplyACL_People(t *testing.T) {
-	newCfg := func() *ClientConfig {
-		return &ClientConfig{
-			People: entity.People{{SubjUID: "ps6sg6be2lvl0y11", SubjName: "Jane Doe"}},
-			Count:  ClientCounts{People: 1},
-		}
-	}
-	t.Run("RoleAdminKeepsPeople", func(t *testing.T) {
-		cfg := newCfg().ApplyACL(acl.Rules, acl.RoleAdmin)
-		assert.Len(t, cfg.People, 1)
-		assert.Equal(t, 1, cfg.Count.People)
-	})
-	t.Run("RoleWithoutPeopleAccessGetsEmptyList", func(t *testing.T) {
-		cfg := newCfg().ApplyACL(acl.Rules, acl.RoleVisitor)
-		assert.Empty(t, cfg.People)
-		assert.Equal(t, 0, cfg.Count.People)
-	})
-}
-
 func TestConfig_ClientUser(t *testing.T) {
 	c := NewMinimalTestConfigWithDb("client-user", t.TempDir())
 	c.SetAuthMode(AuthModePasswd)
