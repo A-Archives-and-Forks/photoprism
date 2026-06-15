@@ -38,7 +38,7 @@ func TestLockFileHash(t *testing.T) {
 		var inCriticalSection int32
 		var entered int32
 
-		for i := 0; i < workers; i++ {
+		for range workers {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()

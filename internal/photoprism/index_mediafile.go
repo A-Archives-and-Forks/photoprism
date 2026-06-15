@@ -102,7 +102,8 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 		// Hold a per-hash lock until indexing is complete, so concurrent workers
 		// cannot miss the lookup below and index byte-identical files twice.
 		if fileHash != "" {
-			defer lockFileHash(fileHash)()
+			unlock := lockFileHash(fileHash)
+			defer unlock()
 		}
 
 		fileQuery = entity.UnscopedDb().First(&file, "file_hash = ?", fileHash)

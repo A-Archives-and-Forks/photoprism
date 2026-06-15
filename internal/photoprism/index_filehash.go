@@ -5,7 +5,7 @@ import "sync"
 // fileHashLock serializes indexing of files that share the same content hash.
 type fileHashLock struct {
 	sync.Mutex
-	refs int
+	refs int // Number of workers holding or awaiting this lock; the entry is removed when it reaches zero.
 }
 
 // fileHashLocksMutex guards fileHashLocks.
