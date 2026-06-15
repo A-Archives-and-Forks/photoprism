@@ -671,7 +671,7 @@ export async function helperAfterEach(t) {
       // Add
       for (const album of revertPhoto.data.Albums) {
         const exists = apiResponse.body.Albums.some(slug => slug.UID === album.UID);
-        if (exists) {
+        if (!exists) {
           const albumApiResponse = await t.request({
             url: `${testcafeconfig.api}albums/${album.UID}/photos`,
             method: 'post',

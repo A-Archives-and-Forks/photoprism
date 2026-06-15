@@ -654,7 +654,7 @@ test.meta("testID", "cleanup-010").meta({ type: "short", mode: "api" })("Common:
     await t.expect(afterPhotoResponse).eql(beforePhotoResponse);
 })
 
-test.meta("testID", "cleanup-010").meta({ type: "short", mode: "api" })("Common: Cleanup Labels remove 1 label from 2 photos", async (t) => {
+test.meta("testID", "cleanup-010b").meta({ type: "short", mode: "api" })("Common: Cleanup Labels remove 1 label from 2 photos", async (t) => {
     await helperBeforeEach(t);
     const stamp = Date.now();
     const labelTitle = `CleanupLabel-${stamp}`;
