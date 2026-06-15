@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+
+	"github.com/photoprism/photoprism/internal/form"
 )
 
 func TestNewLens(t *testing.T) {
@@ -144,5 +146,41 @@ func TestLensUpdateMakeModel(t *testing.T) {
 		lens := NewLens("", "4 39")
 		err := lens.UpdateMakeModel("Pentax", "smc PENTAX-FA 31mm F1.8 AL Limited")
 		assert.Error(t, err)
+	})
+	t.Run("EmptyMake", func(t *testing.T) {
+		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID, LensMake: "Apple", LensModel: "F380", LensName: "Apple F380", LensSlug: "lens-f-380"}
+		err := lens.UpdateMakeModel("  ", "F380")
+		assert.Error(t, err)
+		// The guard returns before any mutation, so existing values must be untouched.
+		assert.Equal(t, "Apple", lens.LensMake)
+		assert.Equal(t, "F380", lens.LensModel)
+	})
+	t.Run("EmptyModel", func(t *testing.T) {
+		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID, LensMake: "Apple", LensModel: "F380", LensName: "Apple F380", LensSlug: "lens-f-380"}
+		err := lens.UpdateMakeModel("Apple", "")
+		assert.Error(t, err)
+		assert.Equal(t, "Apple", lens.LensMake)
+		assert.Equal(t, "F380", lens.LensModel)
+	})
+}
+
+func TestLens_SaveForm(t *testing.T) {
+	t.Run("Success", func(t *testing.T) {
+		lens := Lens{}
+		assert.NoError(t, UnscopedDb().First(&lens, "id = ?", LensFixtures.Get("lens-f-380").ID).Error)
+		defer assert.NoError(t, UnscopedDb().Save(LensFixtures.Pointer("lens-f-380")).Error)
+		err := lens.SaveForm(&form.Lens{LensMake: "Sigma", LensModel: "85mm F1.4"})
+		assert.NoError(t, err)
+		assert.Equal(t, CameraMakes["Sigma"], lens.LensMake) // NewLens normalizes the make.
+		assert.Equal(t, "85mm F1.4", lens.LensModel)
+		assert.Equal(t, "lens-f-380", lens.LensSlug) // Slug is preserved across renames.
+	})
+	t.Run("NilForm", func(t *testing.T) {
+		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID}
+		assert.Error(t, lens.SaveForm(nil))
+	})
+	t.Run("EmptyMake", func(t *testing.T) {
+		lens := &Lens{ID: LensFixtures.Get("lens-f-380").ID}
+		assert.Error(t, lens.SaveForm(&form.Lens{LensMake: "", LensModel: "85mm F1.4"}))
 	})
 }

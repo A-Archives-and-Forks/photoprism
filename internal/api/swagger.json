@@ -920,6 +920,9 @@
                 "calendar": {
                     "type": "boolean"
                 },
+                "cameras": {
+                    "type": "boolean"
+                },
                 "delete": {
                     "type": "boolean"
                 },
@@ -2675,6 +2678,17 @@
             },
             "type": "object"
         },
+        "form.Camera": {
+            "properties": {
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                }
+            },
+            "type": "object"
+        },
         "form.ChangePassword": {
             "properties": {
                 "new": {
@@ -3951,6 +3965,44 @@
                 },
                 "Year": {
                     "type": "integer"
+                }
+            },
+            "type": "object"
+        },
+        "search.Camera": {
+            "properties": {
+                "CreatedAt": {
+                    "type": "string"
+                },
+                "DeletedAt": {
+                    "type": "string"
+                },
+                "Description": {
+                    "type": "string"
+                },
+                "ID": {
+                    "type": "integer"
+                },
+                "Make": {
+                    "type": "string"
+                },
+                "Model": {
+                    "type": "string"
+                },
+                "Name": {
+                    "type": "string"
+                },
+                "Notes": {
+                    "type": "string"
+                },
+                "Slug": {
+                    "type": "string"
+                },
+                "Type": {
+                    "type": "string"
+                },
+                "UpdatedAt": {
+                    "type": "string"
                 }
             },
             "type": "object"
@@ -6766,6 +6818,163 @@
                 ]
             }
         },
+        "/api/v1/cameras": {
+            "get": {
+                "operationId": "SearchCameras",
+                "parameters": [
+                    {
+                        "description": "maximum number of results",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 1,
+                        "name": "count",
+                        "required": true,
+                        "type": "integer"
+                    },
+                    {
+                        "description": "search result offset",
+                        "in": "query",
+                        "maximum": 100000,
+                        "minimum": 0,
+                        "name": "offset",
+                        "type": "integer"
+                    },
+                    {
+                        "description": "show where make is blank",
+                        "in": "query",
+                        "name": "nomake",
+                        "type": "boolean"
+                    },
+                    {
+                        "description": "search query",
+                        "in": "query",
+                        "name": "q",
+                        "type": "string"
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of cameras returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of cameras to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
+                        "schema": {
+                            "items": {
+                                "$ref": "#/definitions/search.Camera"
+                            },
+                            "type": "array"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "finds and returns cameras as JSON",
+                "tags": [
+                    "Cameras"
+                ]
+            }
+        },
+        "/api/v1/cameras/{id}": {
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "operationId": "UpdateCamera",
+                "parameters": [
+                    {
+                        "description": "Camera ID",
+                        "in": "path",
+                        "name": "id",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "description": "Properties to be updated, only Make and Model supported",
+                        "in": "body",
+                        "name": "camera",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/form.Camera"
+                        }
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/entity.Camera"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "403": {
+                        "description": "Forbidden",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    },
+                    "429": {
+                        "description": "Too Many Requests",
+                        "schema": {
+                            "$ref": "#/definitions/i18n.Response"
+                        }
+                    }
+                },
+                "summary": "updates camera name",
+                "tags": [
+                    "Cameras"
+                ]
+            }
+        },
         "/api/v1/cluster": {
             "get": {
                 "operationId": "ClusterSummary",
@@ -8736,6 +8945,20 @@
                 "responses": {
                     "200": {
                         "description": "OK",
+                        "headers": {
+                            "X-Count": {
+                                "description": "The actual number of lenses returned",
+                                "type": "number"
+                            },
+                            "X-Limit": {
+                                "description": "The limit of the number of lenses to be returned",
+                                "type": "number"
+                            },
+                            "X-Offset": {
+                                "description": "The offset that was used",
+                                "type": "number"
+                            }
+                        },
                         "schema": {
                             "items": {
                                 "$ref": "#/definitions/search.Lens"

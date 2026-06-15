@@ -61,6 +61,8 @@ var PhotoPrism = []*cli.Command{
 	DownloadCommand,
 	VisionCommands,
 	FacesCommands,
+	CamerasCommand,
+	LensesCommand,
 	PlacesCommands,
 	PurgeCommand,
 	CleanUpCommand,
@@ -85,7 +87,6 @@ var PhotoPrism = []*cli.Command{
 	EditionCommand,
 	ShowConfigCommand,
 	ConnectCommand,
-	LensesCommand,
 }
 
 // CountFlag represents a CLI flag to limit the number of report rows.

@@ -14,6 +14,7 @@ var ResourceNames = []Resource{
 	ResourcePeople,
 	ResourcePlaces,
 	ResourceLabels,
+	ResourceCameras,
 	ResourceLenses,
 	ResourceConfig,
 	ResourceSettings,

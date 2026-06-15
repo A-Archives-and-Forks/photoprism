@@ -10,11 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestSearchLenses(t *testing.T) {
+func TestSearchCameras(t *testing.T) {
 	t.Run("Success", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		SearchLenses(router)
-		r := PerformRequest(app, "GET", "/api/v1/lenses?count=15")
+		SearchCameras(router)
+		r := PerformRequest(app, "GET", "/api/v1/cameras?count=15")
 		count := gjson.Get(r.Body.String(), "#")
 		assert.Greater(t, count.Int(), int64(0))
 		assert.Equal(t, http.StatusOK, r.Code)
@@ -26,8 +26,8 @@ func TestSearchLenses(t *testing.T) {
 	})
 	t.Run("InvalidRequest", func(t *testing.T) {
 		app, router, _ := NewApiTest()
-		SearchLenses(router)
-		r := PerformRequest(app, "GET", "/api/v1/lenses?xxx=15")
+		SearchCameras(router)
+		r := PerformRequest(app, "GET", "/api/v1/cameras?xxx=15")
 		assert.Equal(t, http.StatusBadRequest, r.Code)
 	})
 }

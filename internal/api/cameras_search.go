@@ -12,31 +12,31 @@ import (
 	"github.com/photoprism/photoprism/pkg/txt"
 )
 
-// SearchLenses finds and returns lenses as JSON.
+// SearchCameras finds and returns cameras as JSON.
 //
-//	@Summary	finds and returns lenses as JSON
-//	@Id			SearchLenses
-//	@Tags		Lenses
+//	@Summary	finds and returns cameras as JSON
+//	@Id			SearchCameras
+//	@Tags		Cameras
 //	@Produce	json
-//	@Success	200				{array}		search.Lens
-//	@Header		200				{number}	X-Count		"The actual number of lenses returned"
-//	@Header		200				{number}	X-Limit		"The limit of the number of lenses to be returned"
+//	@Success	200				{array}		search.Camera
+//	@Header		200				{number}	X-Count		"The actual number of cameras returned"
+//	@Header		200				{number}	X-Limit		"The limit of the number of cameras to be returned"
 //	@Header		200				{number}	X-Offset	"The offset that was used"
 //	@Failure	401,429,403,400	{object}	i18n.Response
 //	@Param		count			query		int		true	"maximum number of results"	minimum(1)	maximum(100000)
 //	@Param		offset			query		int		false	"search result offset"		minimum(0)	maximum(100000)
 //	@Param		nomake			query		bool	false	"show where make is blank"
 //	@Param		q				query		string	false	"search query"
-//	@Router		/api/v1/lenses [get]
-func SearchLenses(router *gin.RouterGroup) {
-	router.GET("/lenses", func(c *gin.Context) {
-		s := Auth(c, acl.ResourceLenses, acl.ActionSearch)
+//	@Router		/api/v1/cameras [get]
+func SearchCameras(router *gin.RouterGroup) {
+	router.GET("/cameras", func(c *gin.Context) {
+		s := Auth(c, acl.ResourceCameras, acl.ActionSearch)
 
 		if s.Abort(c) {
 			return
 		}
 
-		var frm form.SearchLenses
+		var frm form.SearchCameras
 
 		err := c.MustBindWith(&frm, binding.Form)
 
@@ -45,8 +45,8 @@ func SearchLenses(router *gin.RouterGroup) {
 			return
 		}
 
-		// Search matching lenses.
-		result, err := search.Lenses(frm)
+		// Search matching cameras.
+		result, err := search.Cameras(frm)
 
 		if err != nil {
 			c.AbortWithStatusJSON(400, gin.H{"error": txt.UpperFirst(err.Error())})

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v2"
 
 	"github.com/photoprism/photoprism/internal/entity"
 )
@@ -82,6 +83,18 @@ func TestLensesCommand(t *testing.T) {
 		// assert.Contains(t, output, "photoprism lenses update [command options]")
 		assert.Len(t, output, 0)
 		assert.Contains(t, err.Error(), `Required flag "make" not set`)
+	})
+	t.Run("UpdateWithEmptyMakeAndModel", func(t *testing.T) {
+		// Explicit empty strings satisfy the Required flag check, so the guard in UpdateMakeModel
+		// must reject them to prevent blanking a lens.
+		output, err := RunWithTestContext(LensesCommand, []string{"lenses", "update", "--id=1000002", "--make=", "--model="})
+		assert.Error(t, err)
+		assert.Len(t, output, 0)
+		assert.Contains(t, err.Error(), "make and model must not be empty")
+		var exitErr cli.ExitCoder
+		if assert.ErrorAs(t, err, &exitErr) {
+			assert.Equal(t, 1, exitErr.ExitCode())
+		}
 	})
 	t.Run("UpdateValid", func(t *testing.T) {
 		defer assert.NoError(t, entity.Db().Save(entity.LensFixtures.Pointer("4-37")).Error)
