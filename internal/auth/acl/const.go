@@ -65,6 +65,7 @@ const (
 	ResourcePeople    Resource = "people"
 	ResourcePlaces    Resource = "places"
 	ResourceLabels    Resource = "labels"
+	ResourceLenses    Resource = "lenses"
 	ResourceConfig    Resource = "config"
 	ResourceSettings  Resource = "settings"
 	ResourcePasscode  Resource = "passcode"
