@@ -238,6 +238,22 @@ func TestClusterInstanceRole(t *testing.T) {
 	})
 }
 
+func TestClusterInstanceRolesCliUsageString(t *testing.T) {
+	u := ClusterInstanceRolesCliUsageString()
+
+	// Privilege order, comma-separated, with "or" before the last role.
+	assert.Equal(t, "admin, manager, user, contributor, viewer, or guest", u)
+
+	// The derived membership set and the slice source of truth must agree, and
+	// every listed role must be accepted by ClusterInstanceRole.
+	for _, role := range ClusterInstanceRoles {
+		assert.True(t, IsClusterInstanceRole(role), "%s missing from membership set", role)
+		assert.Contains(t, u, role.String())
+	}
+	assert.NotContains(t, u, "cluster_admin")
+	assert.NotContains(t, u, "visitor")
+}
+
 func TestFederatedRoleUpdate(t *testing.T) {
 	t.Run("AppliesChangedFederatableRole", func(t *testing.T) {
 		role, ok := FederatedRoleUpdate(RoleUser, RoleViewer)

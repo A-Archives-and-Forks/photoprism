@@ -59,17 +59,28 @@ func IsFederatedRole(role Role) bool {
 	}
 }
 
-// clusterInstanceRoles is the shared source of truth for the roles a cluster
+// ClusterInstanceRoles is the shared source of truth for the roles a cluster
 // group→role mapping or grant may assign as an instance login role, used by the
-// Portal resolver and the CE-shared node handlers. It excludes cluster_admin and visitor.
-var clusterInstanceRoles = map[Role]struct{}{
-	RoleAdmin:       {},
-	RoleManager:     {},
-	RoleUser:        {},
-	RoleContributor: {},
-	RoleViewer:      {},
-	RoleGuest:       {},
+// Portal resolver, the CE-shared node handlers, and CLI usage help. It is listed
+// in descending privilege order and excludes the Portal-only cluster_admin and
+// the anonymous visitor role.
+var ClusterInstanceRoles = []Role{
+	RoleAdmin,
+	RoleManager,
+	RoleUser,
+	RoleContributor,
+	RoleViewer,
+	RoleGuest,
 }
+
+// clusterInstanceRoles indexes ClusterInstanceRoles for O(1) membership checks.
+var clusterInstanceRoles = func() map[Role]struct{} {
+	m := make(map[Role]struct{}, len(ClusterInstanceRoles))
+	for _, role := range ClusterInstanceRoles {
+		m[role] = struct{}{}
+	}
+	return m
+}()
 
 // IsClusterInstanceRole reports whether role may be assigned to a user on a cluster instance.
 func IsClusterInstanceRole(role Role) bool {
@@ -84,6 +95,22 @@ func ClusterInstanceRole(s string) (Role, bool) {
 		return role, true
 	}
 	return RoleNone, false
+}
+
+// ClusterInstanceRolesCliUsageString returns ClusterInstanceRoles formatted for
+// CLI usage help (privilege order, with "or" before the last). It is the shared,
+// edition-independent source for the --oidc-group-role and
+// --cluster-allow-group-roles flag help, so the listed roles always match what
+// ClusterInstanceRole accepts regardless of which extension is built.
+func ClusterInstanceRolesCliUsageString() string {
+	s := make([]string, len(ClusterInstanceRoles))
+	for i, role := range ClusterInstanceRoles {
+		s[i] = role.String()
+	}
+	if l := len(s); l > 1 {
+		s[l-1] = "or " + s[l-1]
+	}
+	return strings.Join(s, ", ")
 }
 
 // FederatedRoleUpdate reports the account role an external identity provider may
