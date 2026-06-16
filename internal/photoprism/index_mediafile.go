@@ -459,13 +459,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				photo.SetMediaType(media.Live, entity.SrcFile)
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			if data.HasInstanceID() {
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
@@ -537,13 +530,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
@@ -635,13 +621,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -689,13 +668,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				file.InstanceID = data.InstanceID
 			}
 
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
-			}
-
 			file.FileCodec = data.Codec
 			file.FileWidth = m.Width()
 			file.FileHeight = m.Height()
@@ -741,13 +713,6 @@ func (ind *Index) UserMediaFile(m *MediaFile, o IndexOptions, originalName, phot
 				log.Infof("index: %s has instance_id %s", logName, clean.Log(data.InstanceID))
 
 				file.InstanceID = data.InstanceID
-			}
-
-			if file.OriginalName == "" && filepath.Base(file.FileName) != data.FileName {
-				file.OriginalName = data.FileName
-				if photo.OriginalName == "" {
-					photo.OriginalName = fs.StripKnownExt(data.FileName)
-				}
 			}
 
 			file.FileCodec = data.Codec
