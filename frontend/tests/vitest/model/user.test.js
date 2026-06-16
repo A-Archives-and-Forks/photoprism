@@ -375,6 +375,12 @@ describe("model/user", () => {
     it("returns false for an account without a role", () => {
       expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canHavePassword()).toBe(false);
     });
+    it("returns false for a remote LDAP account (credentials managed by the directory)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" }).canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account (a local password remains usable)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canHavePassword()).toBe(true);
+    });
     it("returns false when authentication is disabled (provider none)", () => {
       expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canHavePassword()).toBe(false);
     });

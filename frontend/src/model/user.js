@@ -237,12 +237,11 @@ export class User extends RestModel {
     return !this.AuthProvider || this.AuthProvider === "default" || this.AuthProvider === "local";
   }
 
-  // canHavePassword returns true when a local password can be set for this account.
-  // Mirrors the backend, which only allows passwords for registered accounts: system
-  // users, accounts with authentication disabled, visitors, and accounts without a role
-  // cannot have one.
+  // canHavePassword reports whether a local password can be set and used for this account.
+  // Excludes system users, role-less accounts, visitors, deactivated accounts (provider
+  // "none"), and remote accounts (LDAP), whose credentials are managed externally.
   canHavePassword() {
-    if (this.ID < 1 || !this.Name || this.AuthProvider === "none") {
+    if (this.ID < 1 || !this.Name || this.AuthProvider === "none" || this.isRemote()) {
       return false;
     }
 
