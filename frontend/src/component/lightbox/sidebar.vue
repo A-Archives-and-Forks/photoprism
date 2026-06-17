@@ -481,6 +481,7 @@ import * as formats from "options/formats";
 import { $faceMarkers } from "common/face-markers";
 
 import * as media from "common/media";
+import { is360Equirectangular } from "common/sphere";
 import typeaheadCache from "common/typeahead-cache";
 import { rules } from "common/form";
 import { Album, MaxLength as AlbumMaxLength } from "model/album";
@@ -1051,7 +1052,17 @@ export default {
       }
       return this.model?.Type || "";
     },
+    // mediaIs360 reports whether the active media is equirectangular 360° content,
+    // reusing the lightbox slide-routing discriminator (is360Equirectangular) so the
+    // file icon matches what opens in the sphere viewer. Checks both the thumb model
+    // and the photo since either may carry the projection / dimensions.
+    mediaIs360() {
+      return is360Equirectangular(this.model) || is360Equirectangular(this.photo);
+    },
     fileIcon() {
+      if (this.mediaIs360) {
+        return "mdi-panorama-variant-outline";
+      }
       switch (this.mediaType) {
         case media.Raw:
           return "mdi-raw";

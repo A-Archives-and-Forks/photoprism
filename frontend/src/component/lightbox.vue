@@ -128,6 +128,7 @@ import * as media from "common/media";
 import { getAppSessionStorage, getAppStorage } from "common/storage";
 import * as contexts from "options/contexts";
 import { $faceMarkers } from "common/face-markers";
+import { createSphereViewer, destroySphereViewer, findSphereVideoElement, is360Equirectangular } from "common/sphere";
 
 const VIDEO_EVENT_TYPES = [
   "loadstart",
@@ -149,6 +150,10 @@ const VIDEO_EVENT_TYPES = [
 ];
 
 const VIDEO_REMOTE_EVENT_TYPES = ["connect", "connecting", "disconnect"];
+
+// Max pointer travel (px) for a press on a 360° sphere to still count as a tap
+// rather than a pan, used to toggle the lightbox controls on touch devices.
+const SPHERE_TAP_SLOP = 10;
 
 import PLightboxMenu from "component/lightbox/menu.vue";
 import PLightboxSidebar from "component/lightbox/sidebar.vue";
@@ -659,6 +664,27 @@ export default {
         loading: false,
       };
 
+      // Route equirectangular 360° media to the lazy-loaded sphere viewer before the video branch,
+      // since panoramic videos are also Playable and would otherwise fall through. is360Equirectangular
+      // routes on the equirectangular projection when present, and falls back to the 2:1 frame for
+      // panorama-flagged videos that carry no readable projection tag — cubemap and ultrawide clips
+      // stay flat. See common/sphere.js for the discriminator.
+      const isEquirect = is360Equirectangular(model);
+      if (isEquirect && model?.Hash) {
+        const isVideo = model?.Type === media.Video || model?.Type === media.Animated;
+        const src = isVideo ? this.$util.videoUrl(model.Hash, model?.Codec, model?.Mime) : this.$util.thumb(model.Thumbs, 8192, 4096).src;
+        return {
+          type: "html",
+          html: `<div class="pswp__html"></div>`,
+          model: model,
+          isSphere: true,
+          isVideo: isVideo,
+          src: src,
+          msrc: img.src,
+          loading: true,
+        };
+      }
+
       // Check if content is playable and return the data needed to render it in "contentLoad".
       if (model?.Playable && model?.Hash) {
         /*
@@ -694,14 +720,157 @@ export default {
       return img;
     },
     isContentZoomable(isContentZoomable, content) {
+      if (content.data?.isSphere) {
+        return false;
+      }
       if (content.data?.model?.Type === media.Live) {
         isContentZoomable = true;
       }
 
       return isContentZoomable;
     },
+    // slideZoomable reports whether a slide supports the flat zoom button and
+    // pinch/click-to-zoom. 360° sphere slides own their zoom/pan, and videos and
+    // animations are never flatly zoomable; the result drives the `.is-zoomable`
+    // class that shows or hides the PhotoSwipe zoom button.
+    slideZoomable(data) {
+      if (data?.isSphere) {
+        return false;
+      }
+      return data?.model?.Type !== media.Video && data?.model?.Type !== media.Animated;
+    },
+    // trapSphereGestures stops PhotoSwipe's swipe/zoom gesture detection from running
+    // while the user interacts with a 360° sphere. It swallows pointer + wheel events
+    // on the sphere container during the bubble phase, before they reach PhotoSwipe's
+    // listeners on the scroll wrapper above it.
+    //
+    // Touch events are deliberately NOT trapped: PhotoSwipe binds pointer events on our
+    // browser baseline (it only falls back to touch when PointerEvent is unavailable),
+    // while Photo Sphere Viewer drives panning from touchmove/touchend listeners bound on
+    // `window`. A bubble-phase stopPropagation here would keep those events from reaching
+    // PSV and break 360° panning on touch devices. UI buttons (close, prev/next, sidebar)
+    // live on the PhotoSwipe wrapper outside this container and stay clickable.
+    //
+    // Trapping the pointer events also swallows PhotoSwipe's tap detection, which is what
+    // reveals the prev/next arrows and top bar on touch devices. To restore that, a short
+    // press without a pan toggles the controls here. Only touch/pen taps do so — mouse
+    // users still get the controls via mousemove, so desktop behavior is unchanged.
+    trapSphereGestures(el) {
+      const stop = (e) => e.stopPropagation();
+      let tapX = 0;
+      let tapY = 0;
+      let tapping = false;
+      el.addEventListener(
+        "pointerdown",
+        (e) => {
+          e.stopPropagation();
+          tapping = e.pointerType !== "mouse";
+          tapX = e.clientX;
+          tapY = e.clientY;
+        },
+        { capture: false }
+      );
+      el.addEventListener(
+        "pointerup",
+        (e) => {
+          e.stopPropagation();
+          if (tapping && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
+            this.toggleControls();
+          }
+          tapping = false;
+        },
+        { capture: false }
+      );
+      el.addEventListener(
+        "pointercancel",
+        (e) => {
+          e.stopPropagation();
+          tapping = false;
+        },
+        { capture: false }
+      );
+      ["pointermove", "wheel"].forEach((type) => {
+        el.addEventListener(type, stop, { capture: false });
+      });
+    },
+    // setSphereClass toggles the `pswp--sphere` marker on the PhotoSwipe root element so
+    // CSS can keep the prev/next arrows reachable on touch devices for 360° slides, where
+    // swipe is captured for panning instead of navigation. PhotoSwipe hides the arrows on
+    // touch by default, leaving such slides with no way to switch photos otherwise.
+    setSphereClass(enabled) {
+      const el = this.pswp()?.element;
+      if (el?.classList) {
+        el.classList.toggle("pswp--sphere", enabled);
+      }
+    },
     onContentLoad(ev) {
       const { content } = ev;
+      if (content.data?.isSphere) {
+        ev.preventDefault();
+
+        try {
+          const sphereEl = document.createElement("div");
+          sphereEl.setAttribute("class", "pswp__media pswp__media--sphere");
+          sphereEl.style.width = "100%";
+          sphereEl.style.height = "100%";
+          sphereEl.style.touchAction = "none";
+          this.trapSphereGestures(sphereEl);
+
+          content.element = sphereEl;
+          content.state = "loading";
+          content.data.loading = false;
+          content.onLoaded();
+
+          createSphereViewer(sphereEl, content.data.src, { isVideo: content.data.isVideo, muted: this.muted })
+            .then((viewer) => {
+              content.data.sphereViewer = viewer;
+              // For 360° videos, expose the underlying <video> element so the
+              // existing PhotoPrism lightbox video controls (play/pause/seek/cast)
+              // operate on it. Without this the slide has no HTMLMediaElement to
+              // drive — the PSV navbar is intentionally disabled.
+              if (content.data.isVideo) {
+                // The adapter creates the <video> element but never inserts it
+                // into the DOM (it's only a WebGL texture source). The shared
+                // setVideo() reaches for `video.parentElement.classList`, so we
+                // attach the element to a hidden host inside the slide before
+                // wiring it up. PSV keeps using the same reference for texture
+                // sampling either way.
+                const attempts = 30;
+                let tries = 0;
+                const bindWhenReady = () => {
+                  const videoEl = findSphereVideoElement(viewer);
+                  if (videoEl) {
+                    if (!videoEl.parentElement) {
+                      const host = document.createElement("div");
+                      host.className = "pswp__sphere-video-host";
+                      host.style.position = "absolute";
+                      host.style.width = "1px";
+                      host.style.height = "1px";
+                      host.style.overflow = "hidden";
+                      host.style.opacity = "0";
+                      host.style.pointerEvents = "none";
+                      host.appendChild(videoEl);
+                      sphereEl.appendChild(host);
+                    }
+                    content.data.sphereVideoEl = videoEl;
+                    this.bindSphereVideoControls(content, videoEl);
+                  } else if (++tries < attempts) {
+                    setTimeout(bindWhenReady, 100);
+                  }
+                };
+                bindWhenReady();
+              }
+            })
+            .catch((err) => {
+              this.log("failed to load sphere viewer", err);
+            });
+        } catch (err) {
+          this.log("failed to mount sphere", err);
+        }
+
+        return;
+      }
+
       if (content.data?.type === "html") {
         // Prevent default loading behavior.
         ev.preventDefault();
@@ -738,6 +907,11 @@ export default {
       }
     },
     onContentDestroy(ev) {
+      if (ev?.content?.data?.sphereViewer) {
+        destroySphereViewer(ev.content.data.sphereViewer);
+        ev.content.data.sphereViewer = null;
+      }
+
       if (typeof ev?.content?.data?.events === "object") {
         const data = ev.content.data;
 
@@ -1208,19 +1382,17 @@ export default {
           return;
         }
 
-        switch (data.model?.Type) {
-          case media.Video:
-          case media.Animated:
-            this.isZoomable = false;
-            break;
-          default:
-            this.isZoomable = true;
-        }
+        this.isZoomable = this.slideZoomable(data);
+        this.setSphereClass(data?.isSphere === true);
 
         let video;
 
-        // Get <video> element, if any.
-        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+        // Get <video> element, if any. For 360° video slides the HTMLMediaElement is
+        // owned by Photo Sphere Viewer and cached on the slide data rather than being
+        // the slide element's first child.
+        if (content?.data?.sphereVideoEl instanceof HTMLMediaElement) {
+          video = content.data.sphereVideoEl;
+        } else if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
           video = content.element.firstElementChild;
         } else {
           video = false;
@@ -1232,7 +1404,7 @@ export default {
         // a slideshow is active, or it's an animation or live photo.
         if (video) {
           if (data.loop || this.slideshow.active || firstPicture) {
-            this.playVideo(content.element.firstElementChild, data.loop);
+            this.playVideo(video, data.loop);
           }
         }
 
@@ -1247,8 +1419,11 @@ export default {
       this.lightbox.on("contentDeactivate", (ev) => {
         const { content } = ev;
 
-        // Stop any video currently playing on this slide.
-        if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
+        // Stop any video currently playing on this slide. For 360° video slides the
+        // element is owned by Photo Sphere Viewer and cached on the slide data.
+        if (content?.data?.sphereVideoEl instanceof HTMLMediaElement) {
+          this.pauseVideo(content.data.sphereVideoEl);
+        } else if (content?.element && content?.element.firstElementChild instanceof HTMLMediaElement) {
           this.pauseVideo(content.element.firstElementChild);
         }
       });
@@ -2102,6 +2277,12 @@ export default {
 
       return false;
     },
+    // activeSlideIsSphere reports whether the slide currently shown in PhotoSwipe is a
+    // 360° sphere, used to suppress swipe-to-navigate so a horizontal drag pans the
+    // sphere instead of switching photos.
+    activeSlideIsSphere() {
+      return this.pswp()?.currSlide?.content?.data?.isSphere === true;
+    },
     // Called when the lightbox receives a pointer down or up event.
     // Move events are ignored for now.
     onLightboxPointerEvent(ev, action) {
@@ -2122,6 +2303,19 @@ export default {
           ev.preventDefault();
           this.close();
         }
+        return;
+      }
+
+      // Suppress PhotoSwipe's swipe/drag navigation while a 360° sphere slide is active so
+      // the drag pans the sphere instead of switching photos. The per-element gesture trap
+      // (trapSphereGestures) relies on bubble-phase stopPropagation and is outrun by a fast
+      // swipe whose pointer leaves the sphere container before reaching PhotoSwipe's
+      // window-level pointer listeners — seen on touch-capable Windows. Marking the dispatched
+      // pointer event as default-prevented makes PhotoSwipe's gesture handler bail out at its
+      // source, independent of DOM propagation. UI controls navigate via their own click
+      // handlers and are excluded so buttons and the prev/next arrows stay usable.
+      if (!pswpControl && this.activeSlideIsSphere()) {
+        ev.preventDefault();
         return;
       }
 
@@ -2321,12 +2515,50 @@ export default {
 
       result.data = typeof result.content.data === "object" ? result.content.data : {};
 
-      // Get <video> element, if any.
-      if (result.content.element && result.content.element.firstElementChild instanceof HTMLMediaElement) {
+      // Get <video> element, if any. For 360° video slides, the HTMLMediaElement
+      // is owned by Photo Sphere Viewer and cached on the slide data.
+      if (result.data.sphereVideoEl instanceof HTMLMediaElement) {
+        result.video = result.data.sphereVideoEl;
+      } else if (result.content.element && result.content.element.firstElementChild instanceof HTMLMediaElement) {
         result.video = result.content.element.firstElementChild;
       }
 
       return result;
+    },
+    // bindSphereVideoControls wires the PhotoPrism lightbox video controls
+    // (play/pause/seek/duration/cast) to the HTMLMediaElement owned by Photo
+    // Sphere Viewer. Mirrors the event wiring that createVideoElement performs
+    // for the flat video path so that the existing reactive `video` state and
+    // the <p-lightbox__controls> template work without changes.
+    bindSphereVideoControls(content, videoEl) {
+      const data = content.data;
+      const ctrl = new AbortController();
+      data.events?.abort();
+      data.events = ctrl;
+
+      VIDEO_EVENT_TYPES.forEach((type) => {
+        videoEl.addEventListener(type, this.videoEventListener, { signal: ctrl.signal });
+      });
+
+      // Only push playback state into the shared reactive `video` singleton when this
+      // slide is the active one. PhotoSwipe preloads neighbors (preload: [1, 1]) and
+      // sphere binding resolves asynchronously, so a 360° video loaded next to the
+      // current photo would otherwise flip the controls bar on for that photo. When
+      // this slide is activated later, contentActivate re-resolves the cached element
+      // (data.sphereVideoEl) and sets the playback state then.
+      if (this.pswp()?.currSlide?.content !== content) {
+        return;
+      }
+
+      this.video.controls = true;
+      this.video.error = "";
+      this.video.errorCode = 0;
+      this.video.duration = Number.isFinite(videoEl.duration) ? videoEl.duration : 0;
+      this.video.time = videoEl.currentTime || 0;
+      this.video.seekable = videoEl.seekable && videoEl.seekable.length > 0;
+      this.video.playing = !videoEl.paused;
+      this.video.paused = videoEl.paused;
+      this.video.ended = videoEl.ended;
     },
     // Stops playback on the specified video element, if any.
     pauseVideo(video) {
