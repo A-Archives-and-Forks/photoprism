@@ -1073,7 +1073,7 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "ffmpeg-size",
-			Usage:   "encoding resolution limit in `PIXELS` (720-7680)",
+			Usage:   "encoding resolution limit in `PIXELS` (720-15360)",
 			Value:   thumb.Sizes[thumb.Fit4096].Width,
 			EnvVars: EnvVars("FFMPEG_SIZE"),
 		}}, {
@@ -1224,13 +1224,13 @@ var Flags = CliFlags{
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size",
-			Usage:   "maximum size of pre-generated thumbnails in `PIXELS` (720-7680)",
+			Usage:   "maximum size of pre-generated thumbnails in `PIXELS` (720-15360)",
 			Value:   thumb.SizeCached,
 			EnvVars: EnvVars("THUMB_SIZE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "thumb-size-uncached",
-			Usage:   "maximum size of thumbnails generated on demand in `PIXELS` (720-7680)",
+			Usage:   "maximum size of thumbnails generated on demand in `PIXELS` (720-15360)",
 			Value:   thumb.SizeOnDemand,
 			EnvVars: EnvVars("THUMB_SIZE_UNCACHED"),
 		}}, {
@@ -1250,13 +1250,13 @@ var Flags = CliFlags{
 		Flag: &cli.IntFlag{
 			Name:    "jpeg-size",
 			Usage:   "maximum size of generated JPEG images in `PIXELS` (720-30000)",
-			Value:   7680,
+			Value:   15360,
 			EnvVars: EnvVars("JPEG_SIZE"),
 		}}, {
 		Flag: &cli.IntFlag{
 			Name:    "png-size",
 			Usage:   "maximum size of generated PNG images in `PIXELS` (720-30000)",
-			Value:   7680,
+			Value:   15360,
 			EnvVars: EnvVars("PNG_SIZE"),
 		}}, {
 		Flag: &cli.StringFlag{
