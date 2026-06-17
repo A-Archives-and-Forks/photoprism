@@ -9,7 +9,7 @@ The following 3rd-party software packages may be used by or distributed with
 PhotoPrism. Any information relevant to third-party vendors listed below are
 collected using common, reasonable means.
 
-Date generated: 2026-06-15
+Date generated: 2026-06-17
 
 ================================================================================
 
@@ -267,8 +267,8 @@ limitations under the License.
 --------------------------------------------------------------------------------
 
 Package: github.com/abema/go-mp4
-Version: v1.6.0
-License: MIT (https://github.com/abema/go-mp4/blob/v1.6.0/LICENSE)
+Version: v1.7.1
+License: MIT (https://github.com/abema/go-mp4/blob/v1.7.1/LICENSE)
 
 MIT License
 

@@ -39,7 +39,7 @@ func loadXmp(t *testing.T, path string) *XmpDocument {
 
 // loadXmpString writes body to a temp file in t.TempDir(), loads it
 // through Load, and returns the populated XmpDocument. Avoids
-// inline-fixture boilerplate in tests that synthesise XMP on the fly.
+// inline-fixture boilerplate in tests that synthesize XMP on the fly.
 func loadXmpString(t *testing.T, body string) *XmpDocument {
 	t.Helper()
 	tmp := filepath.Join(t.TempDir(), "synthetic.xmp")

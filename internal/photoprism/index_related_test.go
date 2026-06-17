@@ -418,7 +418,7 @@ func TestIndexRelated(t *testing.T) {
 	})
 	t.Run("XmpSidecarGpsOverridesEmbedded", func(t *testing.T) {
 		// digikam.jpg carries embedded EXIF GPS in Berlin (52.46, 13.33).
-		// The synthesised XMP sidecar declares Tokyo coordinates so the
+		// The synthesized XMP sidecar declares Tokyo coordinates so the
 		// override is unambiguous: photo.PhotoLat/PhotoLng must match the
 		// sidecar and photo.PlaceSrc must be tagged SrcXmp because
 		// SrcPriority[SrcXmp]=32 > SrcPriority[SrcMeta]=16.

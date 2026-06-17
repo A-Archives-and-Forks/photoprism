@@ -109,7 +109,7 @@ func elemOrAttr(qname string) *xpath.Expr {
 	return mustCompile(fmt.Sprintf("//%s | //rdf:Description/@%s", qname, qname))
 }
 
-// Pre-compiled query handles. Compile-once-at-init amortises XPath
+// Pre-compiled query handles. Compile-once-at-init amortizes XPath
 // parsing across every sidecar in an indexer run.
 var (
 	// xmpTitleChain: dc:title (Alt/x-default) → first li → bare text → photoshop:Headline.
@@ -498,7 +498,7 @@ func (doc *XmpDocument) FNumber() float32 {
 	return float32(rationalAccessor(xmpFNumberChain, doc.doc))
 }
 
-// FocalLength returns the focal length in millimetres (rounded; the
+// FocalLength returns the focal length in millimeters (rounded; the
 // data field is int and sub-mm precision is discarded).
 // Priority: exif:FocalLength (native) → exif:FocalLengthIn35mmFilm.
 func (doc *XmpDocument) FocalLength() int {
@@ -591,7 +591,7 @@ func (doc *XmpDocument) Favorite() bool {
 	return false
 }
 
-// License returns the XMP licence statement.
+// License returns the XMP license statement.
 // Priority: xmpRights:UsageTerms (lang-alt: x-default → first rdf:Alt entry → bare text).
 func (doc *XmpDocument) License() string {
 	return SanitizeString(xmpLicenseChain.firstNonEmpty(doc.doc))
@@ -649,7 +649,7 @@ func gpsCoord(valueChain, refChain chainXPath, root *xmlquery.Node) float64 {
 	return decimal
 }
 
-// Altitude returns the GPS altitude in metres.
+// Altitude returns the GPS altitude in meters.
 // Priority: exif:GPSAltitude (parsed as rational, e.g. "3450/100" → 34.5).
 // Composition: exif:GPSAltitudeRef = "1" inverts the sign.
 func (doc *XmpDocument) Altitude() float64 {

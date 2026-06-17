@@ -242,8 +242,8 @@ var DialectMySQL = Migrations{
 		Dialect:    "mysql",
 		Stage:      "main",
 		Statements: []string{"ALTER TABLE photos MODIFY uuid VARBINARY(255);"},
-  },
-  {
+	},
+	{
 		ID:         "20260612-000001",
 		Dialect:    "mysql",
 		Stage:      "main",

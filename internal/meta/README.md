@@ -33,11 +33,11 @@ The `internal/meta` package extracts, normalizes, and reports metadata from imag
 
 The `.xmp` sidecar reader (`xmp.go` + `xmp_document.go`) is XPath-based on `antchfx/xmlquery` and namespace-aware via `xpath.CompileWithNS`. Each accessor declares a `chainXPath` priority list; the engine evaluates links left-to-right and returns the first non-empty match. Composition (Lat sign from `GPSLatitudeRef`, sub-second join from `SubSecTimeOriginal`, etc.) lives in the relevant accessor — never in the chain engine.
 
-- **Loader security guards.** `Load` rejects sidecars larger than 1 MiB (`ErrXmpFileTooLarge`) and documents nesting deeper than 64 elements (`ErrXmpTooDeep`). XXE and DTD attacks are mitigated by `encoding/xml`'s default behaviour (no external entity resolution); `xmp_security_test.go` is the regression guard.
+- **Loader security guards.** `Load` rejects sidecars larger than 1 MiB (`ErrXmpFileTooLarge`) and documents nesting deeper than 64 elements (`ErrXmpTooDeep`). XXE and DTD attacks are mitigated by `encoding/xml`'s default behavior (no external entity resolution); `xmp_security_test.go` is the regression guard.
 - **Element-or-attribute helper.** RDF/XML allows scalar properties to be expressed as either child elements or attributes on `rdf:Description`. The `elemOrAttr(qname)` helper builds a union XPath that matches both — required because digiKam emits `xmpMM:*`/`exif:*`/`tiff:*` as attributes while Adobe writes them as child elements.
 - **Adding an accessor.** Declare a `chainXPath` at package init using `mustCompile` (or `elemOrAttr` for scalar fields), document the priority chain in a one-line comment, then add the accessor that calls `firstNonEmpty` (for scalars) or `queryAll` (for `rdf:Bag`/`rdf:Seq`). Wire the new field into `xmp.go` with the existing "set only when non-empty" pattern.
 - **Source priority.** Sidecar values are tagged `SrcXmp` (priority 32), which outranks `SrcMeta` (priority 16) at the entity layer. Re-indexing a photo after the sidecar has been added overwrites previously-`SrcMeta` values without a database wipe.
-- **Coverage.** The proposal `specs/proposals/xmp-improvement.md` and the fixture corpus under `testdata/xmp/{adobe,darktable,digikam,synthetic}/` document the full set of supported tags and their per-fixture provenance.
+- **Coverage.** The fixture corpus under `testdata/xmp/{adobe,darktable,digikam,synthetic}/` documents the full set of supported tags and their per-fixture provenance.
 
 ### Motion Photos & Embedded Media
 
