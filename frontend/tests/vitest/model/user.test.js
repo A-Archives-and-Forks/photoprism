@@ -392,6 +392,34 @@ describe("model/user", () => {
     });
   });
 
+  // canEnableLogin gates the admin "Web Login" toggle: visitors, system users, role-less
+  // and deactivated accounts cannot log in, but LDAP and OIDC accounts can (unlike passwords).
+  describe("canEnableLogin", () => {
+    it("returns true for a registered local user", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "local" }).canEnableLogin()).toBe(true);
+    });
+    it("returns true for an LDAP account, unlike canHavePassword", () => {
+      const user = new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "ldap" });
+      expect(user.canEnableLogin()).toBe(true);
+      expect(user.canHavePassword()).toBe(false);
+    });
+    it("returns true for an OIDC account", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "oidc" }).canEnableLogin()).toBe(true);
+    });
+    it("returns false for a visitor", () => {
+      expect(new User({ ID: 1, Name: "guest", Role: "visitor", AuthProvider: "link" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false for an account without a role", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "", AuthProvider: "local" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false when authentication is disabled (provider none)", () => {
+      expect(new User({ ID: 1, Name: "max", Role: "user", AuthProvider: "none" }).canEnableLogin()).toBe(false);
+    });
+    it("returns false for a system user with ID below 1", () => {
+      expect(new User({ ID: 0, Name: "max", Role: "user" }).canEnableLogin()).toBe(false);
+    });
+  });
+
   // isCurrentUser drives the admin-UI self-lockout guards: the table login
   // toggle and the dialog role/auth/login fields lock for the signed-in user so
   // an operator cannot lock themselves out. See specs/portal/cluster-admin-ui.md.
