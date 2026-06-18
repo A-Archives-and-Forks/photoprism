@@ -22,6 +22,7 @@
     @keydown.tab="onTabKey"
     @click.capture="captureDialogClick"
     @pointerdown.capture="captureDialogPointerDown"
+    @wheel.capture="captureDialogWheel"
   >
     <div class="p-lightbox__underlay no-transition"></div>
     <div ref="container" class="p-lightbox__container no-transition">
@@ -758,16 +759,15 @@ export default {
     // press without a pan toggles the controls here. Only touch/pen taps do so — mouse
     // users still get the controls via mousemove, so desktop behavior is unchanged.
     //
-    // Grabbing or wheel-zooming the sphere also stops a running slideshow, matching flat
-    // slides (whose pointer events reach captureDialogPointerDown — this container swallows
-    // them first). When a tap is what paused it, the tap-toggle is skipped so the controls
-    // revealed by the pause stay visible and the user lands on the paused view.
+    // Pausing a running slideshow on interaction is NOT done here — the dialog's capture
+    // handlers (captureDialogPointerDown / captureDialogWheel) own that for every slide type.
+    // The tap-toggle only reads the `_slideshowPausedByPointer` flag they set, so a tap that
+    // paused the slideshow lands on the paused view with the revealed controls left intact.
     trapSphereGestures(el) {
       const stop = (e) => e.stopPropagation();
       let tapX = 0;
       let tapY = 0;
       let tapping = false;
-      let pausedByGesture = false;
       el.addEventListener(
         "pointerdown",
         (e) => {
@@ -775,10 +775,6 @@ export default {
           tapping = e.pointerType !== "mouse";
           tapX = e.clientX;
           tapY = e.clientY;
-          pausedByGesture = this.slideshow.active;
-          if (pausedByGesture) {
-            this.pauseSlideshow();
-          }
         },
         { capture: false }
       );
@@ -786,11 +782,12 @@ export default {
         "pointerup",
         (e) => {
           e.stopPropagation();
-          if (tapping && !pausedByGesture && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
+          // Skip the toggle when the dialog's capture handler paused the slideshow on this
+          // pointer: pauseSlideshow() already revealed the controls, so toggling would hide them.
+          if (tapping && !this._slideshowPausedByPointer && Math.abs(e.clientX - tapX) < SPHERE_TAP_SLOP && Math.abs(e.clientY - tapY) < SPHERE_TAP_SLOP) {
             this.toggleControls();
           }
           tapping = false;
-          pausedByGesture = false;
         },
         { capture: false }
       );
@@ -799,21 +796,12 @@ export default {
         (e) => {
           e.stopPropagation();
           tapping = false;
-          pausedByGesture = false;
         },
         { capture: false }
       );
-      el.addEventListener("pointermove", stop, { capture: false });
-      el.addEventListener(
-        "wheel",
-        (e) => {
-          e.stopPropagation();
-          if (this.slideshow.active) {
-            this.pauseSlideshow();
-          }
-        },
-        { capture: false }
-      );
+      ["pointermove", "wheel"].forEach((type) => {
+        el.addEventListener(type, stop, { capture: false });
+      });
     },
     // setSphereClass toggles the `pswp--sphere` marker on the PhotoSwipe root element so
     // CSS can keep the prev/next arrows reachable on touch devices for 360° slides, where
@@ -2397,7 +2385,10 @@ export default {
         ev.preventDefault();
       }
     },
-    // Capture pointer down events on the dialog component.
+    // captureDialogPointerDown pauses a running slideshow on any pointer interaction with the
+    // slide content and toggles video playback for media slides. It runs in the capture phase
+    // on the dialog, so it sees every pointerdown — including the imperatively-created 360°
+    // sphere container, whose bubble-phase gesture trap (trapSphereGestures) cannot suppress it.
     captureDialogPointerDown(ev) {
       if (!ev) {
         return;
@@ -2407,16 +2398,20 @@ export default {
         this.log(`dialog.capture.${ev.type}`, { ev, target: ev.target });
       }
 
+      // Any interaction with the slide content stops a running slideshow; controls
+      // (close / prev / next / play / ...) navigate via their own handlers and are excluded.
+      // The flag lets the sphere tap-toggle skip itself when this pointer caused the pause, so
+      // the controls pauseSlideshow() reveals stay visible instead of being toggled away again.
+      this._slideshowPausedByPointer = this.slideshow.active && !this.pswpControl(ev);
+      if (this._slideshowPausedByPointer) {
+        this.pauseSlideshow();
+      }
+
       // Handle the click and touch events on custom content.
       if (
         ev.target instanceof HTMLMediaElement ||
         (ev.target instanceof HTMLElement && (ev.target.classList.contains("pswp__image") || ev.target.classList.contains("pswp__play")))
       ) {
-        // Always stop slideshow after user interaction with the content.
-        if (this.slideshow.active) {
-          this.pauseSlideshow();
-        }
-
         // On touch devices, trigger the default event on the sides and when content is zoomed.
         if (this.hasTouch) {
           const { slide } = this.getContent();
@@ -2440,6 +2435,19 @@ export default {
         this.toggleVideo();
       }
     },
+    // captureDialogWheel pauses a running slideshow when the wheel zooms the slide content.
+    // Like the pointerdown capture it runs on the dialog, covering flat slides (PhotoSwipe's
+    // wheelToZoom) and 360° spheres alike; controls are excluded and propagation is left intact
+    // so PhotoSwipe and Photo Sphere Viewer keep handling the zoom.
+    captureDialogWheel(ev) {
+      if (!ev) {
+        return;
+      }
+
+      if (this.slideshow.active && !this.pswpControl(ev)) {
+        this.pauseSlideshow();
+      }
+    },
     // Handle user clicks on an image slide in the lightbox.
     onContentClick(ev) {
       if (!ev) {
@@ -2448,10 +2456,6 @@ export default {
 
       if (this.debug) {
         this.log(`content.${ev.type}`, { ev, target: ev.target, originalTarget: ev.originalEvent?.target });
-      }
-
-      if (this.slideshow.active) {
-        this.pauseSlideshow();
       }
 
       const pswp = this.pswp();

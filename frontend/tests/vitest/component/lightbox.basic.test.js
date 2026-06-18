@@ -1404,8 +1404,6 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
     const trap = () => {
       const wrapper = mountLightbox();
       wrapper.vm.toggleControls = vi.fn();
-      wrapper.vm.pauseSlideshow = vi.fn();
-      wrapper.vm.slideshow = { active: false };
       const registered = [];
       const el = { addEventListener: (type, handler, opts) => registered.push({ type, handler, opts }) };
       wrapper.vm.$options.methods.trapSphereGestures.call(wrapper.vm, el);
@@ -1455,30 +1453,89 @@ describe("PLightbox (low-mock, jsdom-friendly)", () => {
       fire("pointerup", { pointerType: "touch", clientX: 100, clientY: 100 });
       expect(vm.toggleControls).not.toHaveBeenCalled();
     });
-    it("pauses an active slideshow when the sphere is grabbed", () => {
+    it("does NOT toggle controls when the dialog capture handler paused on this pointer", () => {
       const { vm, fire } = trap();
-      vm.slideshow.active = true;
-      fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
-      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
-    });
-    it("does NOT pause when no slideshow is running", () => {
-      const { vm, fire } = trap();
-      fire("pointerdown", { pointerType: "mouse", clientX: 100, clientY: 100 });
-      expect(vm.pauseSlideshow).not.toHaveBeenCalled();
-    });
-    it("pauses an active slideshow when zooming the sphere with the wheel", () => {
-      const { vm, fire } = trap();
-      vm.slideshow.active = true;
-      fire("wheel", {});
-      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
-    });
-    it("keeps the controls shown when a touch tap pauses the slideshow", () => {
-      const { vm, fire } = trap();
-      vm.slideshow.active = true;
+      // captureDialogPointerDown sets this flag when its pause revealed the controls; the
+      // tap-toggle must then leave them visible instead of toggling them away again.
+      vm._slideshowPausedByPointer = true;
       fire("pointerdown", { pointerType: "touch", clientX: 100, clientY: 100 });
       fire("pointerup", { pointerType: "touch", clientX: 102, clientY: 101 });
-      expect(vm.pauseSlideshow).toHaveBeenCalledTimes(1);
       expect(vm.toggleControls).not.toHaveBeenCalled();
+    });
+  });
+
+  // The slideshow pauses on ANY interaction with the slide content — not just sphere
+  // gestures. The dialog's capture-phase handlers own this for every slide type, gated on
+  // pswpControl so a press on the chrome (close / arrows / top bar) does not pause.
+  describe("slideshow pause on content interaction", () => {
+    const methods = () => mountLightbox().vm.$options.methods;
+    const makeCtx = (active = true) => {
+      const m = methods();
+      const ctx = {
+        debug: false,
+        hasTouch: false,
+        slideshow: { active },
+        pauseSlideshow: vi.fn(function () {
+          this.slideshow.active = false;
+        }),
+        clearIdleTimeout: vi.fn(),
+        toggleVideo: vi.fn(),
+      };
+      ctx.pswpControl = (ev) => m.pswpControl.call(ctx, ev);
+      ctx.captureDialogPointerDown = (ev) => m.captureDialogPointerDown.call(ctx, ev);
+      ctx.captureDialogWheel = (ev) => m.captureDialogWheel.call(ctx, ev);
+      return ctx;
+    };
+    const evOn = (target) => ({ target, stopPropagation: vi.fn(), preventDefault: vi.fn() });
+    const control = () => {
+      const btn = document.createElement("button");
+      btn.className = "pswp__button";
+      return btn;
+    };
+
+    it("pointerdown on slide content pauses a running slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx._slideshowPausedByPointer).toBe(true);
+    });
+    it("pointerdown on a control does NOT pause so buttons keep working", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(control()));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+      expect(ctx._slideshowPausedByPointer).toBe(false);
+    });
+    it("pointerdown does not pause when no slideshow is running", () => {
+      const ctx = makeCtx(false);
+      ctx.captureDialogPointerDown(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+      expect(ctx._slideshowPausedByPointer).toBe(false);
+    });
+    it("pauses before toggling video so a media tap also stops the slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogPointerDown(evOn(document.createElement("video")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+      expect(ctx.toggleVideo).toHaveBeenCalledTimes(1);
+    });
+    it("wheel-zoom on slide content pauses a running slideshow", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogWheel(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).toHaveBeenCalledTimes(1);
+    });
+    it("wheel-zoom on a control does NOT pause", () => {
+      const ctx = makeCtx(true);
+      ctx.captureDialogWheel(evOn(control()));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    });
+    it("wheel-zoom does nothing when no slideshow is running", () => {
+      const ctx = makeCtx(false);
+      ctx.captureDialogWheel(evOn(document.createElement("div")));
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
+    });
+    it("ignores a missing wheel event", () => {
+      const ctx = makeCtx(true);
+      expect(() => ctx.captureDialogWheel(undefined)).not.toThrow();
+      expect(ctx.pauseSlideshow).not.toHaveBeenCalled();
     });
   });
 
