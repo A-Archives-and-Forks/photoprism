@@ -26,6 +26,7 @@ Additional information can be found in our Developer Guide:
 import $api from "common/api";
 import { $config } from "app/session";
 import $notify from "common/notify";
+import { $gettext } from "common/gettext";
 
 function poll(interval, maxAttempts) {
   let attempts = 0;
@@ -75,13 +76,13 @@ export function restart(uri) {
         })
         .catch(() => {
           $notify.ajaxEnd();
-          $notify.error("Failed to restart server");
+          $notify.error($gettext("Failed to restart server"));
           $notify.unblockUI();
         });
     })
     .catch(() => {
       $notify.ajaxEnd();
-      $notify.error("Failed to restart server");
+      $notify.error($gettext("Failed to restart server"));
       $notify.unblockUI();
     });
 }
