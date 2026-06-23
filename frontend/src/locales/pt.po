@@ -68,7 +68,7 @@ msgid "%{n} people found"
 msgstr "%{n} pessoas encontradas"
 
 #: src/page/album/photos.vue:385 src/page/album/photos.vue:576
-#: src/page/photos.vue:518 src/page/photos.vue:713
+#: src/page/photos.vue:519 src/page/photos.vue:714
 msgid "%{n} pictures found"
 msgstr "%{n} fotos encontradas"
 
@@ -76,7 +76,7 @@ msgstr "%{n} fotos encontradas"
 #: src/component/input/chip-selector.vue:277
 #: src/component/lightbox/sidebar.vue:1671
 #: src/component/photo/album/dialog.vue:143
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
 msgstr "%{s} é demasiado longo"
 
@@ -215,7 +215,7 @@ msgstr "contas"
 msgid "Accuracy"
 msgstr "Precisão"
 
-#: src/component/photo/edit/labels.vue:247
+#: src/component/photo/edit/labels.vue:248
 #: src/component/photo/edit/labels.vue:38
 msgid "Action"
 msgstr "Ação"
@@ -324,6 +324,10 @@ msgstr "Adiciona a todas as fotografias selecionadas"
 #: src/component/photo/edit/files.vue:274
 msgid "Added"
 msgstr "Adicionado"
+
+#: src/component/photo/edit/labels.vue:334
+msgid "Added %{name}"
+msgstr ""
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -465,7 +469,7 @@ msgstr "Todas as Cores"
 msgid "All Countries"
 msgstr "Todos os Países"
 
-#: src/page/library/import.vue:94
+#: src/page/library/import.vue:95
 msgid "All files from import folder"
 msgstr "Todos os arquivos da pasta importada"
 
@@ -477,7 +481,7 @@ msgstr "Todas as Lentes"
 msgid "All Months"
 msgstr "Todos os Meses"
 
-#: src/page/library/index.vue:91
+#: src/page/library/index.vue:92
 msgid "All originals"
 msgstr "Todos os Originais"
 
@@ -797,7 +801,7 @@ msgstr "Série da Câmera"
 msgid "Can't access your authenticator app or device?"
 msgstr "Não consegues aceder à tua aplicação ou dispositivo autenticador?"
 
-#: src/page/album/photos.vue:393 src/page/photos.vue:526
+#: src/page/album/photos.vue:393 src/page/photos.vue:527
 msgid "Can't load more, limit reached"
 msgstr "Não é possível carregar mais, limite alcançado"
 
@@ -946,7 +950,7 @@ msgstr "Escolhe uma instância para continuar:"
 msgid "Chroma"
 msgstr "Croma"
 
-#: src/page/library/index.vue:250
+#: src/page/library/index.vue:251
 msgid "Cleaning index and cache"
 msgstr "Limpar o índice e a cache"
 
@@ -1050,7 +1054,7 @@ msgstr "Comparar Edições"
 msgid "Complete Rescan"
 msgstr "Escaneamento completo"
 
-#: src/component/photo/edit/labels.vue:241
+#: src/component/photo/edit/labels.vue:242
 #: src/component/photo/edit/labels.vue:33
 msgid "Confidence"
 msgstr "Certeza"
@@ -1127,7 +1131,7 @@ msgstr "Continuar"
 msgid "Contributor"
 msgstr "Contribuinte"
 
-#: src/page/library/index.vue:260
+#: src/page/library/index.vue:261
 msgid "Converting"
 msgstr "A converter"
 
@@ -1205,7 +1209,7 @@ msgstr "Cria ficheiros YAML sidecar para fazer cópias de segurança dos metadad
 msgid "Created"
 msgstr "Criado"
 
-#: src/page/library/index.vue:266
+#: src/page/library/index.vue:267
 msgid "Creating thumbnails for"
 msgstr "Criando miniaturas para"
 
@@ -1743,6 +1747,10 @@ msgstr "Não conseguiste remover o marcador facial"
 msgid "Failed to remove name"
 msgstr "Falha ao remover o nome"
 
+#: src/common/server.js:79 src/common/server.js:85
+msgid "Failed to restart server"
+msgstr ""
+
 #: src/component/lightbox/sidebar.vue:1696
 #: src/component/lightbox/sidebar.vue:1940
 #: src/component/lightbox/sidebar.vue:1981
@@ -2068,6 +2076,10 @@ msgstr "Importação cancelada"
 msgid "Import completed in %d s"
 msgstr "Importação completa em %d"
 
+#: src/page/library/import.vue:205
+msgid "Import failed"
+msgstr "Falha na importação"
+
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Ficheiros importados serão organizados por data e receberão um nome único para evitar duplicações."
@@ -2114,7 +2126,7 @@ msgstr "Aumenta o tamanho do armazenamento ou elimina ficheiros para continuar."
 msgid "Index"
 msgstr "Indexar"
 
-#: src/page/library/index.vue:229 src/page/library/index.vue:235
+#: src/page/library/index.vue:230 src/page/library/index.vue:236
 msgid "Indexing"
 msgstr "Indexando"
 
@@ -2125,6 +2137,10 @@ msgstr "Indexação cancelada"
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
 msgstr "Indexação completa em %d"
+
+#: src/page/library/index.vue:212
+msgid "Indexing failed"
+msgstr "Falha ao indexar"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
@@ -2275,8 +2291,8 @@ msgstr "Palavra-chave"
 msgid "Keywords"
 msgstr "Palavras-chave"
 
-#: src/component/photo/edit/labels.vue:229
-#: src/component/photo/edit/labels.vue:23 src/model/label.js:122
+#: src/component/photo/edit/labels.vue:23
+#: src/component/photo/edit/labels.vue:230 src/model/label.js:122
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -2639,7 +2655,7 @@ msgstr "Silenciar"
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
@@ -2752,7 +2768,7 @@ msgstr "Nenhuma pessoa encontrada"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:572
-#: src/page/library/browse.vue:31 src/page/photos.vue:709
+#: src/page/library/browse.vue:31 src/page/photos.vue:710
 #: src/page/places.vue:765 src/page/places.vue:886
 msgid "No pictures found"
 msgstr "Nenhuma foto encontrada"
@@ -2927,7 +2943,7 @@ msgstr "Um rótulo encontrado"
 msgid "One person found"
 msgstr "Uma pessoa encontrada"
 
-#: src/page/album/photos.vue:574 src/page/photos.vue:711
+#: src/page/album/photos.vue:574 src/page/photos.vue:712
 msgid "One picture found"
 msgstr "Uma foto encontrada"
 
@@ -3438,6 +3454,10 @@ msgstr "Remove a instância selecionada do registo do cluster?"
 #: src/page/cluster/nodes.vue:268 src/locales.js:330
 msgid "Removed"
 msgstr "Removido"
+
+#: src/component/photo/edit/labels.vue:286
+msgid "Removed %{name}"
+msgstr ""
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
@@ -3956,7 +3976,7 @@ msgid "Sorted descending."
 msgstr "Ordenado de forma descendente."
 
 #: src/component/cluster/node/groups.vue:78
-#: src/component/photo/edit/labels.vue:235
+#: src/component/photo/edit/labels.vue:236
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "Fonte"
@@ -4212,7 +4232,7 @@ msgstr "Trocar visualização"
 msgid "Token"
 msgstr "Token"
 
-#: src/component/upload/dialog.vue:384
+#: src/component/upload/dialog.vue:385
 msgid "Too many files selected"
 msgstr "Demasiados ficheiros seleccionados"
 
@@ -4299,6 +4319,10 @@ msgstr "ID único"
 msgid "Unknown"
 msgstr "Desconhecido"
 
+#: src/page/photos.vue:445
+msgid "Unknown location"
+msgstr ""
+
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4335,15 +4359,15 @@ msgstr "Tipo não suportado"
 msgid "Updated"
 msgstr "Atualizado"
 
-#: src/page/library/index.vue:246
+#: src/page/library/index.vue:247
 msgid "Updating faces"
 msgstr "Atualização de rostos"
 
-#: src/page/library/index.vue:252
+#: src/page/library/index.vue:253
 msgid "Updating index"
 msgstr "Atualizando o índice"
 
-#: src/page/library/index.vue:244
+#: src/page/library/index.vue:245
 msgid "Updating moments"
 msgstr "Atualizando momentos"
 
@@ -4352,11 +4376,11 @@ msgstr "Atualizando momentos"
 msgid "Updating picture…"
 msgstr "Atualizando a imagem.."
 
-#: src/page/library/index.vue:248
+#: src/page/library/index.vue:249
 msgid "Updating previews"
 msgstr "Atualização de previsões"
 
-#: src/page/library/index.vue:242
+#: src/page/library/index.vue:243
 msgid "Updating stacks"
 msgstr "Atualizando pilhas"
 
@@ -4382,7 +4406,7 @@ msgstr "Atualize agora"
 #: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
-#: src/component/upload/dialog.vue:189 src/component/upload/dialog.vue:67
+#: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -4390,12 +4414,16 @@ msgstr "Atualize agora"
 msgid "Upload"
 msgstr "Enviar"
 
+#: src/component/upload/dialog.vue:479
+msgid "Upload complete"
+msgstr "Envio finalizado"
+
 #: src/component/upload/dialog.vue:31
 msgid "Upload complete. Indexing…"
 msgstr "Envio finalizado. Indexando…"
 
-#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:464
-#: src/locales.js:403
+#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
+#: src/component/upload/dialog.vue:484 src/locales.js:403
 msgid "Upload failed"
 msgstr "Envio falhou"
 
@@ -4426,8 +4454,8 @@ msgstr "Carregar Caminho"
 msgid "Uploading %{n} of %{t}…"
 msgstr "Enviando %{n} de %{t}…"
 
-#: src/component/upload/dialog.vue:273 src/component/upload/dialog.vue:281
-#: src/component/upload/dialog.vue:416
+#: src/component/upload/dialog.vue:274 src/component/upload/dialog.vue:282
+#: src/component/upload/dialog.vue:417
 msgid "Uploading photos…"
 msgstr "Enviando fotos…"
 
@@ -4924,17 +4952,8 @@ msgstr "Arquivo"
 #~ msgid "Continue with %{provider}"
 #~ msgstr "Continua com %{provider}"
 
-#~ msgid "Import failed"
-#~ msgstr "Falha na importação"
-
-#~ msgid "Indexing failed"
-#~ msgstr "Falha ao indexar"
-
 #~ msgid "r"
 #~ msgstr "r"
-
-#~ msgid "Upload complete"
-#~ msgstr "Envio finalizado"
 
 #~ msgid "Some albums could not be cloned"
 #~ msgstr "Alguns álbuns não puderam ser clonados"

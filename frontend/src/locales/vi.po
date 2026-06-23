@@ -65,7 +65,7 @@ msgid "%{n} people found"
 msgstr "Đã tìm thấy %{n} người"
 
 #: src/page/album/photos.vue:385 src/page/album/photos.vue:576
-#: src/page/photos.vue:518 src/page/photos.vue:713
+#: src/page/photos.vue:519 src/page/photos.vue:714
 msgid "%{n} pictures found"
 msgstr "Đã tìm thấy %{n} ảnh"
 
@@ -73,7 +73,7 @@ msgstr "Đã tìm thấy %{n} ảnh"
 #: src/component/input/chip-selector.vue:277
 #: src/component/lightbox/sidebar.vue:1671
 #: src/component/photo/album/dialog.vue:143
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
 msgstr "%{s} quá dài"
 
@@ -212,7 +212,7 @@ msgstr "Tài khoản"
 msgid "Accuracy"
 msgstr "Sự chính xác"
 
-#: src/component/photo/edit/labels.vue:247
+#: src/component/photo/edit/labels.vue:248
 #: src/component/photo/edit/labels.vue:38
 msgid "Action"
 msgstr "Hoạt động"
@@ -321,6 +321,10 @@ msgstr "Thêm vào tất cả các bức ảnh đã chọn"
 #: src/component/photo/edit/files.vue:274
 msgid "Added"
 msgstr "Thêm"
+
+#: src/component/photo/edit/labels.vue:334
+msgid "Added %{name}"
+msgstr ""
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -462,7 +466,7 @@ msgstr "Đủ màu sắc"
 msgid "All Countries"
 msgstr "Tất cả các nước"
 
-#: src/page/library/import.vue:94
+#: src/page/library/import.vue:95
 msgid "All files from import folder"
 msgstr "Tất cả các tệp từ thư mục nhập"
 
@@ -474,7 +478,7 @@ msgstr "Tất cả các ống kính"
 msgid "All Months"
 msgstr "Tất cả các tháng"
 
-#: src/page/library/index.vue:91
+#: src/page/library/index.vue:92
 msgid "All originals"
 msgstr "Tất cả bản gốc"
 
@@ -794,7 +798,7 @@ msgstr "Máy ảnh nối tiếp"
 msgid "Can't access your authenticator app or device?"
 msgstr "Không thể truy cập ứng dụng hoặc thiết bị xác thực của bạn?"
 
-#: src/page/album/photos.vue:393 src/page/photos.vue:526
+#: src/page/album/photos.vue:393 src/page/photos.vue:527
 msgid "Can't load more, limit reached"
 msgstr "Không thể tải thêm, đã đạt đến giới hạn"
 
@@ -943,7 +947,7 @@ msgstr "Chọn một phiên bản để tiếp tục:"
 msgid "Chroma"
 msgstr "sắc độ"
 
-#: src/page/library/index.vue:250
+#: src/page/library/index.vue:251
 msgid "Cleaning index and cache"
 msgstr "Làm sạch chỉ mục và bộ đệm"
 
@@ -1047,7 +1051,7 @@ msgstr "So sánh các phiên bản"
 msgid "Complete Rescan"
 msgstr "Quét lại hoàn tất"
 
-#: src/component/photo/edit/labels.vue:241
+#: src/component/photo/edit/labels.vue:242
 #: src/component/photo/edit/labels.vue:33
 msgid "Confidence"
 msgstr "Sự tự tin"
@@ -1124,7 +1128,7 @@ msgstr "Tiếp tục"
 msgid "Contributor"
 msgstr "Người đóng góp"
 
-#: src/page/library/index.vue:260
+#: src/page/library/index.vue:261
 msgid "Converting"
 msgstr "Chuyển đổi"
 
@@ -1202,7 +1206,7 @@ msgstr "Tạo các tệp sidecar YAML để sao lưu siêu dữ liệu hình ả
 msgid "Created"
 msgstr "Tạo"
 
-#: src/page/library/index.vue:266
+#: src/page/library/index.vue:267
 msgid "Creating thumbnails for"
 msgstr "Tạo hình thu nhỏ cho"
 
@@ -1740,6 +1744,10 @@ msgstr "Không thể xóa điểm đánh dấu khuôn mặt"
 msgid "Failed to remove name"
 msgstr "Không thể xóa tên"
 
+#: src/common/server.js:79 src/common/server.js:85
+msgid "Failed to restart server"
+msgstr ""
+
 #: src/component/lightbox/sidebar.vue:1696
 #: src/component/lightbox/sidebar.vue:1940
 #: src/component/lightbox/sidebar.vue:1981
@@ -2065,6 +2073,10 @@ msgstr "Đã hủy nhập"
 msgid "Import completed in %d s"
 msgstr "Quá trình nhập hoàn tất sau %d giây"
 
+#: src/page/library/import.vue:205
+msgid "Import failed"
+msgstr "Nhập không thành công"
+
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Các tệp đã nhập sẽ được sắp xếp theo ngày và đặt một tên duy nhất để tránh trùng lặp."
@@ -2111,7 +2123,7 @@ msgstr "Tăng dung lượng lưu trữ hoặc xóa tệp để tiếp tục."
 msgid "Index"
 msgstr "Mục lục"
 
-#: src/page/library/index.vue:229 src/page/library/index.vue:235
+#: src/page/library/index.vue:230 src/page/library/index.vue:236
 msgid "Indexing"
 msgstr "Lập chỉ mục"
 
@@ -2122,6 +2134,10 @@ msgstr "Đã hủy lập chỉ mục"
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
 msgstr "Việc lập chỉ mục hoàn tất sau %d giây"
+
+#: src/page/library/index.vue:212
+msgid "Indexing failed"
+msgstr "Lập chỉ mục không thành công"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
@@ -2272,8 +2288,8 @@ msgstr "Từ khóa"
 msgid "Keywords"
 msgstr "Từ khóa"
 
-#: src/component/photo/edit/labels.vue:229
-#: src/component/photo/edit/labels.vue:23 src/model/label.js:122
+#: src/component/photo/edit/labels.vue:23
+#: src/component/photo/edit/labels.vue:230 src/model/label.js:122
 msgid "Label"
 msgstr "Nhãn"
 
@@ -2636,7 +2652,7 @@ msgstr "Tắt tiếng"
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
@@ -2749,7 +2765,7 @@ msgstr "Không tìm thấy người nào"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:572
-#: src/page/library/browse.vue:31 src/page/photos.vue:709
+#: src/page/library/browse.vue:31 src/page/photos.vue:710
 #: src/page/places.vue:765 src/page/places.vue:886
 msgid "No pictures found"
 msgstr "Không tìm thấy hình ảnh nào"
@@ -2924,7 +2940,7 @@ msgstr "Đã tìm thấy một nhãn"
 msgid "One person found"
 msgstr "Một người được tìm thấy"
 
-#: src/page/album/photos.vue:574 src/page/photos.vue:711
+#: src/page/album/photos.vue:574 src/page/photos.vue:712
 msgid "One picture found"
 msgstr "Một hình ảnh được tìm thấy"
 
@@ -3435,6 +3451,10 @@ msgstr "Xóa phiên bản đã chọn khỏi sổ đăng ký cụm?"
 #: src/page/cluster/nodes.vue:268 src/locales.js:330
 msgid "Removed"
 msgstr "LOẠI BỎ"
+
+#: src/component/photo/edit/labels.vue:286
+msgid "Removed %{name}"
+msgstr ""
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
@@ -3953,7 +3973,7 @@ msgid "Sorted descending."
 msgstr "Sắp xếp theo thứ tự giảm dần."
 
 #: src/component/cluster/node/groups.vue:78
-#: src/component/photo/edit/labels.vue:235
+#: src/component/photo/edit/labels.vue:236
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "Nguồn"
@@ -4209,7 +4229,7 @@ msgstr "Chuyển đổi chế độ xem"
 msgid "Token"
 msgstr "Mã thông báo"
 
-#: src/component/upload/dialog.vue:384
+#: src/component/upload/dialog.vue:385
 msgid "Too many files selected"
 msgstr "Đã chọn quá nhiều tệp"
 
@@ -4296,6 +4316,10 @@ msgstr "ID duy nhất"
 msgid "Unknown"
 msgstr "không xác định"
 
+#: src/page/photos.vue:445
+msgid "Unknown location"
+msgstr ""
+
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4332,15 +4356,15 @@ msgstr "Loại không được hỗ trợ"
 msgid "Updated"
 msgstr "Đã cập nhật"
 
-#: src/page/library/index.vue:246
+#: src/page/library/index.vue:247
 msgid "Updating faces"
 msgstr "Cập nhật khuôn mặt"
 
-#: src/page/library/index.vue:252
+#: src/page/library/index.vue:253
 msgid "Updating index"
 msgstr "Đang cập nhật chỉ mục"
 
-#: src/page/library/index.vue:244
+#: src/page/library/index.vue:245
 msgid "Updating moments"
 msgstr "Cập nhật khoảnh khắc"
 
@@ -4349,11 +4373,11 @@ msgstr "Cập nhật khoảnh khắc"
 msgid "Updating picture…"
 msgstr "Đang cập nhật hình ảnh…"
 
-#: src/page/library/index.vue:248
+#: src/page/library/index.vue:249
 msgid "Updating previews"
 msgstr "Đang cập nhật bản xem trước"
 
-#: src/page/library/index.vue:242
+#: src/page/library/index.vue:243
 msgid "Updating stacks"
 msgstr "Cập nhật ngăn xếp"
 
@@ -4379,7 +4403,7 @@ msgstr "Nâng cấp ngay bây giờ"
 #: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
-#: src/component/upload/dialog.vue:189 src/component/upload/dialog.vue:67
+#: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -4387,12 +4411,16 @@ msgstr "Nâng cấp ngay bây giờ"
 msgid "Upload"
 msgstr "Tải lên"
 
+#: src/component/upload/dialog.vue:479
+msgid "Upload complete"
+msgstr "Tải lên hoàn tất"
+
 #: src/component/upload/dialog.vue:31
 msgid "Upload complete. Indexing…"
 msgstr "Tải lên hoàn tất. Lập chỉ mục…"
 
-#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:464
-#: src/locales.js:403
+#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
+#: src/component/upload/dialog.vue:484 src/locales.js:403
 msgid "Upload failed"
 msgstr "Tải lên không thành công"
 
@@ -4423,8 +4451,8 @@ msgstr "Đường dẫn tải lên"
 msgid "Uploading %{n} of %{t}…"
 msgstr "Đang tải lên %{n} trong số %{t}…"
 
-#: src/component/upload/dialog.vue:273 src/component/upload/dialog.vue:281
-#: src/component/upload/dialog.vue:416
+#: src/component/upload/dialog.vue:274 src/component/upload/dialog.vue:282
+#: src/component/upload/dialog.vue:417
 msgid "Uploading photos…"
 msgstr "Đang tải ảnh lên…"
 
@@ -4923,17 +4951,8 @@ msgstr "Lưu trữ"
 #~ msgid "Continue with %{provider}"
 #~ msgstr "Tiếp tục với %{provider}"
 
-#~ msgid "Import failed"
-#~ msgstr "Nhập không thành công"
-
-#~ msgid "Indexing failed"
-#~ msgstr "Lập chỉ mục không thành công"
-
 #~ msgid "r"
 #~ msgstr "r"
-
-#~ msgid "Upload complete"
-#~ msgstr "Tải lên hoàn tất"
 
 #~ msgid "Some albums could not be cloned"
 #~ msgstr "Một số album không thể sao chép được"

@@ -68,7 +68,7 @@ msgid "%{n} people found"
 msgstr "%{n} personer hittades"
 
 #: src/page/album/photos.vue:385 src/page/album/photos.vue:576
-#: src/page/photos.vue:518 src/page/photos.vue:713
+#: src/page/photos.vue:519 src/page/photos.vue:714
 msgid "%{n} pictures found"
 msgstr "%{n} bilder hittades"
 
@@ -76,7 +76,7 @@ msgstr "%{n} bilder hittades"
 #: src/component/input/chip-selector.vue:277
 #: src/component/lightbox/sidebar.vue:1671
 #: src/component/photo/album/dialog.vue:143
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 msgid "%{s} is too long"
 msgstr "%{s} är för lång"
 
@@ -215,7 +215,7 @@ msgstr "Konton"
 msgid "Accuracy"
 msgstr "Noggrannhet"
 
-#: src/component/photo/edit/labels.vue:247
+#: src/component/photo/edit/labels.vue:248
 #: src/component/photo/edit/labels.vue:38
 msgid "Action"
 msgstr "Åtgärd"
@@ -324,6 +324,10 @@ msgstr "Lägg till i alla valda foton"
 #: src/component/photo/edit/files.vue:274
 msgid "Added"
 msgstr "Tillagd"
+
+#: src/component/photo/edit/labels.vue:334
+msgid "Added %{name}"
+msgstr ""
 
 #: src/component/meta/camera/dialog.vue:18
 msgid "Adjust Camera Info"
@@ -465,7 +469,7 @@ msgstr "Alla färger"
 msgid "All Countries"
 msgstr "Alla länder"
 
-#: src/page/library/import.vue:94
+#: src/page/library/import.vue:95
 msgid "All files from import folder"
 msgstr "Alla filer från importmappen"
 
@@ -477,7 +481,7 @@ msgstr "Alla objektiv"
 msgid "All Months"
 msgstr "Alla månader"
 
-#: src/page/library/index.vue:91
+#: src/page/library/index.vue:92
 msgid "All originals"
 msgstr "Alla original"
 
@@ -797,7 +801,7 @@ msgstr "Serienummer på kameran"
 msgid "Can't access your authenticator app or device?"
 msgstr "Kan du inte komma åt din autentiseringsapp eller enhet?"
 
-#: src/page/album/photos.vue:393 src/page/photos.vue:526
+#: src/page/album/photos.vue:393 src/page/photos.vue:527
 msgid "Can't load more, limit reached"
 msgstr "Kan inte hämta mer, gränsen är nådd"
 
@@ -946,7 +950,7 @@ msgstr "Välj en instans för att fortsätta:"
 msgid "Chroma"
 msgstr "Chroma"
 
-#: src/page/library/index.vue:250
+#: src/page/library/index.vue:251
 msgid "Cleaning index and cache"
 msgstr "Rensning av index och cacheminne"
 
@@ -1050,7 +1054,7 @@ msgstr "Jämför utgåvor"
 msgid "Complete Rescan"
 msgstr "Fullständig omskanning"
 
-#: src/component/photo/edit/labels.vue:241
+#: src/component/photo/edit/labels.vue:242
 #: src/component/photo/edit/labels.vue:33
 msgid "Confidence"
 msgstr "Tillit"
@@ -1127,7 +1131,7 @@ msgstr "Fortsätta"
 msgid "Contributor"
 msgstr "Bidragsgivare"
 
-#: src/page/library/index.vue:260
+#: src/page/library/index.vue:261
 msgid "Converting"
 msgstr "Konverterar"
 
@@ -1205,7 +1209,7 @@ msgstr "Skapa YAML sidecar-filer för att säkerhetskopiera metadata för bilder
 msgid "Created"
 msgstr "Skapad"
 
-#: src/page/library/index.vue:266
+#: src/page/library/index.vue:267
 msgid "Creating thumbnails for"
 msgstr "Skapar miniatyrbilder för"
 
@@ -1743,6 +1747,10 @@ msgstr "Lyckades inte ta bort ansiktsmarkören"
 msgid "Failed to remove name"
 msgstr "Misslyckades med att ta bort namn"
 
+#: src/common/server.js:79 src/common/server.js:85
+msgid "Failed to restart server"
+msgstr ""
+
 #: src/component/lightbox/sidebar.vue:1696
 #: src/component/lightbox/sidebar.vue:1940
 #: src/component/lightbox/sidebar.vue:1981
@@ -2068,6 +2076,10 @@ msgstr "Importen avbruten"
 msgid "Import completed in %d s"
 msgstr "Importen slutfördes på %d s"
 
+#: src/page/library/import.vue:205
+msgid "Import failed"
+msgstr "Importen misslyckades"
+
 #: src/page/library/import.vue:52
 msgid "Imported files will be sorted by date and given a unique name to avoid duplicates."
 msgstr "Importerade filer sorteras efter datum och får ett unikt namn för att undvika dubbletter."
@@ -2114,7 +2126,7 @@ msgstr "Öka lagringsstorleken eller radera filer för att fortsätta."
 msgid "Index"
 msgstr "Index"
 
-#: src/page/library/index.vue:229 src/page/library/index.vue:235
+#: src/page/library/index.vue:230 src/page/library/index.vue:236
 msgid "Indexing"
 msgstr "Indexerar"
 
@@ -2125,6 +2137,10 @@ msgstr "Indexering avbruten"
 #: src/locales.js:444
 msgid "Indexing completed in %d s"
 msgstr "Indexering slutförd på %d s"
+
+#: src/page/library/index.vue:212
+msgid "Indexing failed"
+msgstr "Indexeringen misslyckades"
 
 #: src/locales.js:446
 msgid "Indexing files in %s"
@@ -2275,8 +2291,8 @@ msgstr "Sökord"
 msgid "Keywords"
 msgstr "Nyckelord"
 
-#: src/component/photo/edit/labels.vue:229
-#: src/component/photo/edit/labels.vue:23 src/model/label.js:122
+#: src/component/photo/edit/labels.vue:23
+#: src/component/photo/edit/labels.vue:230 src/model/label.js:122
 msgid "Label"
 msgstr "Etikett"
 
@@ -2639,7 +2655,7 @@ msgstr "Mute"
 #: src/component/photo/album/dialog.vue:143
 #: src/component/photo/edit/files.vue:417 src/component/photo/edit/info.vue:36
 #: src/component/photo/edit/info.vue:37 src/component/photo/edit/labels.vue:135
-#: src/component/photo/edit/labels.vue:298
+#: src/component/photo/edit/labels.vue:299
 #: src/component/photo/edit/people.vue:51 src/component/photo/view/list.vue:43
 #: src/component/service/edit.vue:155 src/component/settings/apps.vue:112
 #: src/component/settings/apps.vue:275 src/locales.js:323
@@ -2752,7 +2768,7 @@ msgstr "Inga personer hittades"
 
 #: src/component/photo/view/cards.vue:9 src/component/photo/view/list.vue:9
 #: src/component/photo/view/mosaic.vue:9 src/page/album/photos.vue:572
-#: src/page/library/browse.vue:31 src/page/photos.vue:709
+#: src/page/library/browse.vue:31 src/page/photos.vue:710
 #: src/page/places.vue:765 src/page/places.vue:886
 msgid "No pictures found"
 msgstr "Inga bilder hittades"
@@ -2927,7 +2943,7 @@ msgstr "En etikett hittat"
 msgid "One person found"
 msgstr "En person hittad"
 
-#: src/page/album/photos.vue:574 src/page/photos.vue:711
+#: src/page/album/photos.vue:574 src/page/photos.vue:712
 msgid "One picture found"
 msgstr "En bild hittades"
 
@@ -3438,6 +3454,10 @@ msgstr "Ta bort den valda instansen från klusterregistret?"
 #: src/page/cluster/nodes.vue:268 src/locales.js:330
 msgid "Removed"
 msgstr "Borttagen"
+
+#: src/component/photo/edit/labels.vue:286
+msgid "Removed %{name}"
+msgstr ""
 
 #: src/locales.js:448
 msgid "Removed %d files and %d photos"
@@ -3956,7 +3976,7 @@ msgid "Sorted descending."
 msgstr "Sorterad nedåtgående."
 
 #: src/component/cluster/node/groups.vue:78
-#: src/component/photo/edit/labels.vue:235
+#: src/component/photo/edit/labels.vue:236
 #: src/component/photo/edit/labels.vue:28
 msgid "Source"
 msgstr "Källa"
@@ -4212,7 +4232,7 @@ msgstr "Växla vy"
 msgid "Token"
 msgstr "Kod"
 
-#: src/component/upload/dialog.vue:384
+#: src/component/upload/dialog.vue:385
 msgid "Too many files selected"
 msgstr "För många filer valda"
 
@@ -4299,6 +4319,10 @@ msgstr "Unikt ID"
 msgid "Unknown"
 msgstr "Okänd"
 
+#: src/page/photos.vue:445
+msgid "Unknown location"
+msgstr ""
+
 #: src/component/navigation.vue:567 src/page/settings/account.vue:467
 #: src/page/settings/account.vue:475 src/component/navigation.vue:855
 #: src/page/settings/account.vue:375 src/page/settings/account.vue:383
@@ -4335,15 +4359,15 @@ msgstr "Denna typ stöds ej"
 msgid "Updated"
 msgstr "Senast uppdaterad"
 
-#: src/page/library/index.vue:246
+#: src/page/library/index.vue:247
 msgid "Updating faces"
 msgstr "Uppdatering av ansikten"
 
-#: src/page/library/index.vue:252
+#: src/page/library/index.vue:253
 msgid "Updating index"
 msgstr "Uppdatering av index"
 
-#: src/page/library/index.vue:244
+#: src/page/library/index.vue:245
 msgid "Updating moments"
 msgstr "Uppdatering av ögonblick"
 
@@ -4352,11 +4376,11 @@ msgstr "Uppdatering av ögonblick"
 msgid "Updating picture…"
 msgstr "Uppdatering av förhandsgranskningar…"
 
-#: src/page/library/index.vue:248
+#: src/page/library/index.vue:249
 msgid "Updating previews"
 msgstr "Uppdatering av förhandsgranskningar"
 
-#: src/page/library/index.vue:242
+#: src/page/library/index.vue:243
 msgid "Updating stacks"
 msgstr "Uppdatering av staplar"
 
@@ -4382,7 +4406,7 @@ msgstr "Uppgradera nu"
 #: src/component/photo/toolbar.vue:467 src/component/service/upload.vue:28
 #: src/component/service/upload.vue:29 src/component/service/upload.vue:38
 #: src/component/service/upload.vue:63 src/component/upload/dialog.vue:122
-#: src/component/upload/dialog.vue:189 src/component/upload/dialog.vue:67
+#: src/component/upload/dialog.vue:190 src/component/upload/dialog.vue:67
 #: src/component/upload/dialog.vue:68 src/component/upload/dialog.vue:79
 #: src/page/albums.vue:489 src/page/labels.vue:325
 #: src/page/library/import.vue:64 src/page/settings/general.vue:155
@@ -4390,12 +4414,16 @@ msgstr "Uppgradera nu"
 msgid "Upload"
 msgstr "Ladda upp"
 
+#: src/component/upload/dialog.vue:479
+msgid "Upload complete"
+msgstr "Uppladdningen är klar"
+
 #: src/component/upload/dialog.vue:31
 msgid "Upload complete. Indexing…"
 msgstr "Uppladdningen är klar. Indexerar…"
 
-#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:464
-#: src/locales.js:403
+#: src/component/upload/dialog.vue:27 src/component/upload/dialog.vue:465
+#: src/component/upload/dialog.vue:484 src/locales.js:403
 msgid "Upload failed"
 msgstr "Uppladdning misslyckades"
 
@@ -4426,8 +4454,8 @@ msgstr "Sökväg för uppladdning"
 msgid "Uploading %{n} of %{t}…"
 msgstr "Laddar upp %{n} av %{t}…"
 
-#: src/component/upload/dialog.vue:273 src/component/upload/dialog.vue:281
-#: src/component/upload/dialog.vue:416
+#: src/component/upload/dialog.vue:274 src/component/upload/dialog.vue:282
+#: src/component/upload/dialog.vue:417
 msgid "Uploading photos…"
 msgstr "Laddar upp foton…"
 
@@ -4924,17 +4952,8 @@ msgstr "Arkiv"
 #~ msgid "Continue with %{provider}"
 #~ msgstr "Fortsätt med %{provider}"
 
-#~ msgid "Import failed"
-#~ msgstr "Importen misslyckades"
-
-#~ msgid "Indexing failed"
-#~ msgstr "Indexeringen misslyckades"
-
 #~ msgid "r"
 #~ msgstr "r"
-
-#~ msgid "Upload complete"
-#~ msgstr "Uppladdningen är klar"
 
 #~ msgid "Some albums could not be cloned"
 #~ msgstr "Vissa album kunde inte klonas"
