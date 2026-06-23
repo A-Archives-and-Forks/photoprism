@@ -15,9 +15,9 @@ It's source code can be obtained on [GitHub](https://github.com/vslavik/poedit).
 
 Only asynchronous notifications and certain API responses need translation to provide a 
 consistent user experience.
-Asynchronous notifications are additionally rendered by the web frontend in each user's current 
-UI language (using the message identifier); the `default.po` translation here serves as a fallback 
-and for non-browser consumers such as the CLI.
+Asynchronous notifications and user-facing API error responses are additionally rendered by the web 
+frontend in each user's current UI language (using the message identifier); the `default.po` translation 
+here serves as a fallback and for non-browser consumers such as the CLI.
 Technical log messages should be in English to avoid ambiguities and (even slightly) wrong translations. 
 
 `default.po` files in subdirectories contain localized messages for each 

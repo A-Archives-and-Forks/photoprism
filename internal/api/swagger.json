@@ -3435,13 +3435,13 @@
                 "error": {
                     "type": "string"
                 },
-                "id": {
-                    "type": "string"
-                },
                 "message": {
                     "type": "string"
                 },
-                "params": {
+                "messageId": {
+                    "type": "string"
+                },
+                "messageParams": {
                     "items": {},
                     "type": "array"
                 }

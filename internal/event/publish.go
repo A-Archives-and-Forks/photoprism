@@ -45,7 +45,7 @@ func Warn(msg string) {
 func publishMsg(level logrus.Level, topic string, id i18n.Message, params ...any) {
 	msg := i18n.Msg(id, params...)
 	Log.Log(level, strings.ToLower(msg))
-	Publish(topic, Data{"message": msg, "id": i18n.Source(id), "params": params})
+	Publish(topic, Data{"message": msg, "messageId": i18n.Source(id), "messageParams": params})
 }
 
 // ErrorMsg publishes a localized error notification.

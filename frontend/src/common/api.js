@@ -111,9 +111,9 @@ $api.interceptors.response.use(
         code = data.code;
       }
 
-      if (data.id) {
+      if (data.messageId) {
         // Render the backend message in the current UI locale from its source id and params.
-        errorMessage = Tp(data.id, data.params);
+        errorMessage = Tp(data.messageId, data.messageParams);
       } else if (data.message) {
         errorMessage = data.message;
       } else if (data.error) {

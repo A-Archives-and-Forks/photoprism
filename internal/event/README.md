@@ -20,11 +20,12 @@ event.Warn("low disk space")
 ```
 
 The `*Msg` helpers (`SuccessMsg`/`ErrorMsg`/`InfoMsg`/`WarnMsg`) publish a structured payload
-`Data{"message", "id", "params"}`: `message` is the server-rendered string in the instance locale,
-`id` is the untranslated source string (`i18n.Source(id)`), and `params` are the substitution values.
-The Web UI renders the notification from `id` + `params` in each user's current UI language; `message`
-is a fallback. The plain `Success`/`Error`/`Info`/`Warn` string forms publish only `message` and are
-**not** localized — reserve them for already-translated or non-user-facing text.
+`Data{"message", "messageId", "messageParams"}`: `message` is the server-rendered string in the
+instance locale, `messageId` is the untranslated source string (`i18n.Source(id)`), and
+`messageParams` are the substitution values. The Web UI renders the notification from `messageId` +
+`messageParams` in each user's current UI language; `message` is a fallback. The plain
+`Success`/`Error`/`Info`/`Warn` string forms publish only `message` and are **not** localized —
+reserve them for already-translated or non-user-facing text.
 
 Subscribe to topics:
 ```go

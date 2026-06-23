@@ -5,15 +5,15 @@ import "strings"
 // Response represents an i18n-aware response payload.
 //
 // Err/Msg carry the server-rendered string in the instance locale (a fallback for non-browser
-// consumers); ID and Params carry the untranslated source id and its parameters so the Web UI can
-// render the message in each user's current UI locale.
+// consumers); MessageID and MessageParams carry the untranslated source string and its parameters
+// so the Web UI can render the message in each user's current UI locale.
 type Response struct {
-	Code    int    `json:"code"`
-	Err     string `json:"error,omitempty"`
-	Msg     string `json:"message,omitempty"`
-	Details string `json:"details,omitempty"`
-	ID      string `json:"id,omitempty"`
-	Params  []any  `json:"params,omitempty"`
+	Code          int    `json:"code"`
+	Err           string `json:"error,omitempty"`
+	Msg           string `json:"message,omitempty"`
+	MessageID     string `json:"messageId,omitempty"`
+	MessageParams []any  `json:"messageParams,omitempty"`
+	Details       string `json:"details,omitempty"`
 }
 
 func (r Response) String() string {
@@ -42,7 +42,7 @@ func (r Response) Success() bool {
 // It carries the untranslated source string (ID) and Params so the frontend can render the message
 // in the current UI locale, in addition to the server-rendered Err/Msg fallback.
 func NewResponse(code int, id Message, params ...any) Response {
-	r := Response{Code: code, ID: Source(id), Params: params}
+	r := Response{Code: code, MessageID: Source(id), MessageParams: params}
 	if code < 400 {
 		r.Msg = Msg(id, params...)
 	} else {

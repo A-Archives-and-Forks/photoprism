@@ -15,8 +15,8 @@ func TestSuccessMsg(t *testing.T) {
 		msg := <-s.Receiver
 		assert.Equal(t, "notify.success", msg.Name)
 		assert.Equal(t, "Album Holiday deleted", msg.Fields["message"])
-		assert.Equal(t, "Album %s deleted", msg.Fields["id"])
-		assert.Equal(t, []any{"Holiday"}, msg.Fields["params"])
+		assert.Equal(t, "Album %s deleted", msg.Fields["messageId"])
+		assert.Equal(t, []any{"Holiday"}, msg.Fields["messageParams"])
 		Unsubscribe(s)
 	})
 	t.Run("WithoutParams", func(t *testing.T) {
@@ -25,7 +25,7 @@ func TestSuccessMsg(t *testing.T) {
 		msg := <-s.Receiver
 		assert.Equal(t, "notify.success", msg.Name)
 		assert.Equal(t, "Album created", msg.Fields["message"])
-		assert.Equal(t, "Album created", msg.Fields["id"])
+		assert.Equal(t, "Album created", msg.Fields["messageId"])
 		Unsubscribe(s)
 	})
 }
@@ -36,8 +36,8 @@ func TestErrorMsg(t *testing.T) {
 	msg := <-s.Receiver
 	assert.Equal(t, "notify.error", msg.Name)
 	assert.Equal(t, "A cat already exists", msg.Fields["message"])
-	assert.Equal(t, "%s already exists", msg.Fields["id"])
-	assert.Equal(t, []any{"A cat"}, msg.Fields["params"])
+	assert.Equal(t, "%s already exists", msg.Fields["messageId"])
+	assert.Equal(t, []any{"A cat"}, msg.Fields["messageParams"])
 	Unsubscribe(s)
 }
 
@@ -47,8 +47,8 @@ func TestInfoMsg(t *testing.T) {
 	msg := <-s.Receiver
 	assert.Equal(t, "notify.info", msg.Name)
 	assert.Equal(t, "Indexing files in /photos", msg.Fields["message"])
-	assert.Equal(t, "Indexing files in %s", msg.Fields["id"])
-	assert.Equal(t, []any{"/photos"}, msg.Fields["params"])
+	assert.Equal(t, "Indexing files in %s", msg.Fields["messageId"])
+	assert.Equal(t, []any{"/photos"}, msg.Fields["messageParams"])
 	Unsubscribe(s)
 }
 
@@ -58,6 +58,6 @@ func TestWarnMsg(t *testing.T) {
 	msg := <-s.Receiver
 	assert.Equal(t, "notify.warning", msg.Name)
 	assert.Equal(t, "Busy, please try again later", msg.Fields["message"])
-	assert.Equal(t, "Busy, please try again later", msg.Fields["id"])
+	assert.Equal(t, "Busy, please try again later", msg.Fields["messageId"])
 	Unsubscribe(s)
 }
