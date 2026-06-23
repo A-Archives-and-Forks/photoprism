@@ -109,7 +109,7 @@ spec:
                 secretKeyRef:
                   name: {{ printf "%s-secrets" (include "photoprism-plus.fullname" .) }}
                   key: PHOTOPRISM_DATABASE_PASSWORD
-            {{- end}}
+            {{- end }}
             - name: PHOTOPRISM_DATABASE_TIMEOUT
               value: {{ printf "%v" .Values.database.timeout | quote }}
             - name: PHOTOPRISM_DATABASE_CONNS

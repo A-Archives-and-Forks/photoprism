@@ -90,8 +90,8 @@ You can provide the database password in two ways:
      password: "changeme"
    ```
 
-If both are set, `database.passwordSecretName` takes precedence. If neither is set, no password env var is injected (
-suitable for SQLite).
+If both are set, `database.passwordSecretName` takes precedence and the inline `database.password` is ignored (it is not
+copied into the managed Secret). If neither is set, no password env var is injected (suitable for SQLite).
 
 ## Security Tips
 
