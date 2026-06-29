@@ -32,6 +32,14 @@ func TestNewConvertCmd(t *testing.T) {
 		assert.Equal(t, "/usr/bin/sips -Z 123 -s format jpeg --out file.jpeg file.heic", result.String())
 		assert.Equal(t, media.ResetOrientation, result.Orientation)
 	})
+	t.Run("WithImageVerification", func(t *testing.T) {
+		result := NewConvertCmd(
+			exec.Command("exiftool", "-q", "-q", "-b", "-PreviewImage", "file.cr3"),
+		)
+		assert.False(t, result.VerifyImage)
+		assert.Same(t, result, result.WithImageVerification())
+		assert.True(t, result.VerifyImage)
+	})
 }
 
 func TestNewConvertCmds(t *testing.T) {

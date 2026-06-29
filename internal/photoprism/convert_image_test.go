@@ -9,6 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 
 	"github.com/photoprism/photoprism/internal/config"
+	"github.com/photoprism/photoprism/internal/thumb"
 	"github.com/photoprism/photoprism/pkg/fs"
 )
 
@@ -47,6 +48,38 @@ func TestConvert_ToImage(t *testing.T) {
 		assert.Truef(t, fs.FileExists(img.FileName()), "output file does not exist: %s", img.FileName())
 
 		t.Logf("video metadata: %+v", img.MetaData())
+
+		_ = os.Remove(outputName)
+	})
+	t.Run("JpegXL", func(t *testing.T) {
+		if cnf.JpegXLDecoderBin() == "" {
+			t.Skip("djxl must be available for the JPEG XL conversion path")
+		}
+
+		fileName := filepath.Join(cnf.SamplesPath(), "dice.jxl")
+		outputName := filepath.Join(cnf.SidecarPath(), cnf.SamplesPath(), "dice.jxl.jpg")
+
+		_ = os.Remove(outputName)
+
+		mf, err := NewMediaFile(fileName)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		assert.True(t, mf.IsJpegXL())
+
+		img, err := convert.ToImage(mf, false)
+
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		// With djxl available the native libvips path is skipped (some builds
+		// mis-render JPEG XL); the djxl-produced preview must be decodable.
+		assert.Equal(t, outputName, img.FileName())
+		assert.True(t, img.IsPreviewImage())
+		assert.NoError(t, thumb.Verify(img.FileName()))
 
 		_ = os.Remove(outputName)
 	})

@@ -11,6 +11,7 @@ import (
 type ConvertCmd struct {
 	Cmd         *exec.Cmd
 	Orientation media.Orientation
+	VerifyImage bool
 }
 
 // String returns the conversion command as string e.g. for logging.
@@ -31,6 +32,13 @@ func (c *ConvertCmd) WithOrientation(o media.Orientation) *ConvertCmd {
 // ResetOrientation resets the media Orientation after successful conversion.
 func (c *ConvertCmd) ResetOrientation() *ConvertCmd {
 	return c.WithOrientation(media.ResetOrientation)
+}
+
+// WithImageVerification marks the command's output for a decode check before acceptance,
+// so corrupt embedded previews are rejected and the loop tries the next command.
+func (c *ConvertCmd) WithImageVerification() *ConvertCmd {
+	c.VerifyImage = true
+	return c
 }
 
 // NewConvertCmd returns a new file converter command with default options.

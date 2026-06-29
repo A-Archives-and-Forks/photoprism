@@ -95,11 +95,11 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		if w.conf.ExifToolEnabled() {
 			result = append(result, NewConvertCmd(
 				// #nosec G204 -- arguments are built from validated config and file paths.
-				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-JpgFromRaw", f.FileName())),
+				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-JpgFromRaw", f.FileName())).WithImageVerification(),
 			)
 			result = append(result, NewConvertCmd(
 				// #nosec G204 -- arguments are built from validated config and file paths.
-				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())),
+				exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())).WithImageVerification(),
 			)
 		}
 
@@ -121,7 +121,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 		// Example: exiftool -b -PreviewImage -w IMG_4691.DNG.jpg IMG_4691.DNG
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
-			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())),
+			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PreviewImage", f.FileName())).WithImageVerification(),
 		)
 	}
 
@@ -165,7 +165,7 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 	if (f.IsTiff() || f.IsPsd()) && w.conf.ExifToolEnabled() {
 		result = append(result, NewConvertCmd(
 			// #nosec G204 -- arguments are built from validated config and file paths.
-			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PhotoshopThumbnail", f.FileName())),
+			exec.Command(w.conf.ExifToolBin(), "-q", "-q", "-b", "-PhotoshopThumbnail", f.FileName())).WithImageVerification(),
 		)
 	}
 
