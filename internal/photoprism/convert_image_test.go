@@ -390,7 +390,70 @@ func TestConvert_JpegConvertCmds_RawEmbeddedPreview(t *testing.T) {
 	if cnf.RawTherapeeEnabled() {
 		assert.GreaterOrEqual(t, rawTherapee, 0, "expected a RawTherapee command")
 		assert.Less(t, rawTherapee, jpgFromRaw, "RawTherapee must be tried before the embedded preview")
-		assert.Contains(t, rawTherapeeCmd.RejectStderr, raw.WhiteBalanceError, "RawTherapee output must be rejected on a white-balance failure")
+		assert.Empty(t, rawTherapeeCmd.RejectStderr, "a non-gated RAW format (.dng) must keep its render, so no stderr rejection is attached")
+	}
+}
+
+// TestConvert_JpegConvertCmds_DiscardRenderGate verifies that the RawTherapee stderr rejection is
+// attached only for formats in the discard set (raw.DiscardRenderOnWarning, e.g. CR3), so a magenta
+// CR3 falls back to its embedded preview, while formats RawTherapee alone can decode (e.g. .raw/.kdc)
+// keep their render.
+func TestConvert_JpegConvertCmds_DiscardRenderGate(t *testing.T) {
+	cnf := config.TestConfig()
+
+	if !cnf.RawTherapeeEnabled() {
+		t.Skip("RawTherapee must be available for the discard-render gate")
+	}
+
+	convert := NewConvert(cnf)
+	dir := t.TempDir()
+
+	cases := []struct {
+		name, ext string
+		gated     bool
+	}{
+		{"Cr3", ".cr3", true},
+		{"Raw", ".raw", false},
+		{"Kdc", ".kdc", false},
+		{"Cr2", ".cr2", false},
+	}
+
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			rawFile := filepath.Join(dir, "sample"+tc.ext)
+			if err := os.WriteFile(rawFile, []byte("raw"), fs.ModeFile); err != nil {
+				t.Fatal(err)
+			}
+
+			mediaFile, err := NewMediaFile(rawFile)
+			if err != nil {
+				t.Fatal(err)
+			}
+			assert.True(t, mediaFile.IsRaw(), "%s must be recognized as RAW", tc.ext)
+
+			cmds, _, err := convert.JpegConvertCmds(mediaFile, rawFile+".jpg", "")
+			if err != nil {
+				t.Fatal(err)
+			}
+
+			var rtCmd *ConvertCmd
+			for _, cmd := range cmds {
+				if filepath.Base(cmd.Cmd.Path) == filepath.Base(cnf.RawTherapeeBin()) {
+					rtCmd = cmd
+					break
+				}
+			}
+
+			if rtCmd == nil {
+				t.Fatalf("expected a RawTherapee command for %s", tc.ext)
+			}
+
+			if tc.gated {
+				assert.Contains(t, rtCmd.RejectStderr, raw.WhiteBalanceError, "%s is gated, so its render must be rejected on a decode warning", tc.ext)
+			} else {
+				assert.Empty(t, rtCmd.RejectStderr, "%s is not gated, so its render must be kept", tc.ext)
+			}
+		})
 	}
 }
 

@@ -22,7 +22,7 @@ For a RAW input, `JpegConvertCmds` appends commands in this order, and the conve
 2. **RawTherapee** — full RAW developer (when Darktable is unavailable or fails).
 3. **Embedded camera preview** via ExifTool (largest first) — the last resort.
 
-The embedded preview is last because a full render is higher quality, but it has correct colors when the RAW developers cannot identify the sensor (e.g. very recent Canon CR3 bodies otherwise come out magenta), so it wins whenever the developers are unavailable or untrustworthy.
+The embedded preview is last because a full render is higher quality, but it has correct colors when the RAW developers cannot identify the sensor (e.g. very recent Canon CR3 bodies otherwise come out magenta), so it wins when the developers are unavailable or — for the gated formats described below — produce an untrustworthy render.
 
 ### Conversion Gating (`--disable-raw`)
 
@@ -36,10 +36,16 @@ The embedded preview is last because a full render is higher quality, but it has
 The three tools fail differently, so they are guarded differently:
 
 - **Darktable** signals an unsupported sensor with a **non-zero exit code** and writes no file (its diagnostics go to stdout, e.g. `[libraw_open] detected unsupported image`). The convert loop's exit-code check skips it, so no stderr inspection is needed.
-- **RawTherapee** can **exit 0 yet produce wrong colors** (e.g. a default white balance for an unidentified sensor) while printing a dcraw-derived message to stderr. Its command is therefore tagged with `ConvertCmd.WithStderrRejection(raw.DecoderErrors...)`; a match discards the output and the loop falls through to the embedded preview. `WhiteBalanceError` is the canonical case; `DecoderErrors` adds the other untrustworthy-decode messages (sourced from `dcraw.c`).
+- **RawTherapee** can **exit 0 yet produce wrong colors** (e.g. a default white balance for an unidentified sensor) while printing a dcraw-derived message to stderr. For formats in the discard set (`DiscardRenderOnWarning`, default `.cr3`) its command is tagged with `ConvertCmd.WithStderrRejection(raw.DecoderErrors...)`; a match discards the output and the loop falls through to the embedded preview. `WhiteBalanceError` is the canonical case; `DecoderErrors` adds the other untrustworthy-decode messages (sourced from `dcraw.c`). Other RAW formats keep the render — see *Discard-on-Warning Gate* below.
 - **Embedded previews** can be header-valid yet fail the thumbnailer (a bogus Huffman table only surfaces during shrink-on-load), so they are tagged `WithImageVerification`, which runs `thumb.Verify` to force the decode before acceptance.
 
 Because of this, `StderrRejected` is RawTherapee-specific by design — Darktable does not need it (it fails via exit code, not via accepted-but-wrong output).
+
+### Discard-on-Warning Gate
+
+`DiscardRenderOnWarning(ext)` decides, per RAW format, whether a RawTherapee render is discarded when its stderr matches `DecoderErrors`. It defaults to Canon CR3 (`.cr3`): recent CR3 bodies, which neither RAW developer can demosaic, render magenta, but they reliably embed a good preview to fall back to. The white-balance warning alone cannot tell a magenta render from a fine one — RawTherapee emits it for any sensor whose coefficients it cannot read, including obscure bodies whose default-WB render is perfectly fine — so the rejection is gated on the format as well as the warning.
+
+Formats RawTherapee alone can decode (e.g. `.raw`, `.kdc`) are deliberately left out: they have no embedded preview to fall back to, so discarding the render would leave nothing to index. The set is overridable via `PHOTOPRISM_RAW_DISCARD_ON_WARNING_EXT` (a comma-separated list that **replaces** the default), an escape hatch — outside the CLI/config surface — for adding a newly found magenta-prone format without a rebuild. A gated format must allow embedded-preview extraction (`PreviewExtAllowed`); otherwise its render would be discarded with no fallback, so PhotoPrism logs a warning at startup if an override names such a format.
 
 ### Preview-Unsafe Formats
 

@@ -68,14 +68,22 @@ func (w *Convert) JpegConvertCmds(f *MediaFile, jpegName string, xmpName string)
 				result = append(result, NewConvertCmd(cmd))
 			}
 
-			// Render the RAW with RawTherapee when Darktable is unavailable or fails. Output is
-			// rejected on an untrustworthy decode (raw.DecoderErrors) so the embedded preview wins.
+			// Render the RAW with RawTherapee when Darktable is unavailable or fails. For formats in the
+			// discard set (e.g. CR3) the output is rejected on an untrustworthy decode (raw.DecoderErrors)
+			// so the embedded preview wins; other RAW formats (e.g. .raw/.kdc) keep the render because
+			// RawTherapee may be their only working decoder.
 			if w.conf.RawTherapeeEnabled() && w.rawTherapeeExclude.Allow(fileExt) {
 				profile := filepath.Join(conf.AssetsPath(), "profiles", "raw.pp3")
 
-				result = append(result, NewConvertCmd(
+				rtCmd := NewConvertCmd(
 					raw.TherapeeCmd(w.conf.RawTherapeeBin(), f.FileName(), jpegName, profile, int(w.conf.JpegQuality())),
-				).WithStderrRejection(raw.DecoderErrors...))
+				)
+
+				if raw.DiscardRenderOnWarning(fileExt) {
+					rtCmd = rtCmd.WithStderrRejection(raw.DecoderErrors...)
+				}
+
+				result = append(result, rtCmd)
 			}
 		}
 

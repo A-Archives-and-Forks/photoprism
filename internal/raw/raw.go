@@ -1,7 +1,8 @@
 /*
 Package raw provides command builders and helpers for converting camera RAW
 images to JPEG with Darktable, RawTherapee, and ExifTool, including the
-heuristics for detecting an untrustworthy decode and skipping unusable previews.
+heuristics that decide, per format, when to discard an untrustworthy decode and
+when to skip an unusable embedded preview.
 
 Copyright (c) 2018 - 2026 PhotoPrism UG. All rights reserved.
 
@@ -25,3 +26,9 @@ Additional information can be found in our Developer Guide:
 <https://docs.photoprism.app/developer-guide/>
 */
 package raw
+
+import (
+	"github.com/photoprism/photoprism/internal/event"
+)
+
+var log = event.Log
